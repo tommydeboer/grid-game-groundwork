@@ -35,11 +35,6 @@ public class Game : MonoBehaviour
     {
         instance = this;
         Application.targetFrameRate = 60;
-
-        if (Application.isEditor && !SaveData.initialized)
-        {
-            SaveData.LoadGame(1);
-        }
     }
 
     void Start()

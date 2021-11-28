@@ -2,19 +2,7 @@
 
 public class Player : Mover
 {
-    public static Player instance;
-
-    public static Player Get()
-    {
-        return instance;
-    }
-
     Vector3 direction = Vector3.zero;
-
-    void Awake()
-    {
-        instance = this;
-    }
 
     void Update()
     {
@@ -24,12 +12,12 @@ public class Player : Mover
         }
     }
 
-    public bool CanInput()
+    static bool CanInput()
     {
-        return !Game.isMoving && !Game.Get().holdingUndo;
+        return !Game.isMoving && !Game.instance.holdingUndo;
     }
 
-    public void CheckInput()
+    void CheckInput()
     {
         float hor = Input.GetAxisRaw("Horizontal");
         float ver = Input.GetAxisRaw("Vertical");
@@ -71,7 +59,7 @@ public class Player : Mover
         if (CanMove(direction))
         {
             MoveIt(direction);
-            Game.Get().MoveStart(direction);
+            Game.instance.MoveStart(direction);
         }
         else
         {

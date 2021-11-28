@@ -14,11 +14,6 @@ public class Game : MonoBehaviour
 
     public static Game instance;
 
-    public static Game Get()
-    {
-        return instance;
-    }
-
     public static Mover[] movers;
     public static Wall[] walls;
     public static List<Mover> moversToMove = new();

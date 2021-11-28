@@ -8,7 +8,7 @@ public class Mover : MonoBehaviour
     [HideInInspector]
     public Vector3 goalPosition;
 
-    public List<Tile> tiles = new();
+    public readonly List<Tile> tiles = new();
 
     [HideInInspector]
     public bool isFalling;
@@ -27,8 +27,7 @@ public class Mover : MonoBehaviour
         {
             if (child.gameObject.CompareTag("Tile"))
             {
-                Tile tile = new Tile();
-                tile.t = child;
+                Tile tile = new Tile {t = child};
                 tiles.Add(tile);
             }
         }
@@ -39,7 +38,7 @@ public class Mover : MonoBehaviour
         isFalling = false;
     }
 
-    public virtual bool CanMove(Vector3 dir)
+    protected virtual bool CanMove(Vector3 dir)
     {
         foreach (Tile tile in tiles)
         {
@@ -71,7 +70,7 @@ public class Mover : MonoBehaviour
         return true;
     }
 
-    public void MoveIt(Vector3 dir)
+    protected void MoveIt(Vector3 dir)
     {
         if (!Game.moversToMove.Contains(this))
         {
@@ -80,7 +79,7 @@ public class Mover : MonoBehaviour
         }
     }
 
-    public virtual bool ShouldFall()
+    bool ShouldFall()
     {
         if (GroundBelow())
         {
@@ -90,18 +89,18 @@ public class Mover : MonoBehaviour
         return true;
     }
 
-    public virtual void FallStart()
+    public void FallStart()
     {
         if (ShouldFall())
         {
             if (!isFalling)
             {
                 isFalling = true;
-                Game.Get().movingCount++;
+                Game.instance.movingCount++;
             }
 
             goalPosition = transform.position + Vector3.forward;
-            transform.DOMove(goalPosition, Game.Get().fallTime).OnComplete(FallAgain).SetEase(Ease.Linear);
+            transform.DOMove(goalPosition, Game.instance.fallTime).OnComplete(FallAgain).SetEase(Ease.Linear);
         }
         else
         {
@@ -120,17 +119,17 @@ public class Mover : MonoBehaviour
         FallStart();
     }
 
-    public void FallEnd()
+    void FallEnd()
     {
         if (isFalling)
         {
             isFalling = false;
-            Game.Get().movingCount--;
-            Game.Get().FallEnd();
+            Game.instance.movingCount--;
+            Game.instance.FallEnd();
         }
     }
 
-    public bool GroundBelow()
+    bool GroundBelow()
     {
         foreach (Tile tile in tiles)
         {

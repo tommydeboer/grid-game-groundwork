@@ -8,15 +8,12 @@ public class Mover : MonoBehaviour
     [HideInInspector]
     public Vector3 goalPosition;
 
-    public List<Tile> tiles = new List<Tile>();
+    public List<Tile> tiles = new();
 
     [HideInInspector]
-    public bool isFalling = false;
+    public bool isFalling;
 
-    public bool isPlayer
-    {
-        get { return CompareTag("Player"); }
-    }
+    public bool isPlayer => CompareTag("Player");
 
     void Start()
     {

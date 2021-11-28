@@ -21,14 +21,14 @@ public class Game : MonoBehaviour
 
     public static Mover[] movers;
     public static Wall[] walls;
-    public static List<Mover> moversToMove = new List<Mover>();
+    public static List<Mover> moversToMove = new();
 
     public float moveTime = 0.18f; // time it takes to move 1 unit
     public float fallTime = 0.1f; // time it takes to fall 1 unit
 
-    public static bool isMoving = false;
-    public int movingCount = 0;
-    public bool holdingUndo = false;
+    public static bool isMoving;
+    public int movingCount;
+    public bool holdingUndo;
     public static bool isPolyban = true;
 
     void Awake()

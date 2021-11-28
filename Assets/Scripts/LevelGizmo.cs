@@ -3,7 +3,7 @@
 public class LevelGizmo : MonoBehaviour
 {
     public static Vector3 pos { get; private set; }
-    static Color color = new Color(2f, 2f, 2f);
+    static Color color = new(2f, 2f, 2f);
     public static bool drawEnabled { get; private set; }
 
     public static void UpdateGizmo(Vector3 v, Color c)

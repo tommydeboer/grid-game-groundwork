@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PipeUtils
 {
-    static List<Spout> spouts = new List<Spout>();
+    static List<Spout> spouts = new();
 
     public static Spout[] GetSpoutsAtPos(Vector3 pos) {
         spouts.Clear();

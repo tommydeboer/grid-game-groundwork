@@ -6,14 +6,10 @@ public class Spout : MonoBehaviour
     public Transform target;
     public Transform origin;
     public GameObject water;
-    public bool debug = false;
+    public bool debug;
     bool isFlowing;
 
-    public Vector3Int direction {
-        get {
-            return Utils.Vec3ToInt(target.position - origin.position);
-        }
-    }
+    public Vector3Int direction => Utils.Vec3ToInt(target.position - origin.position);
 
     public void StartFlow() {
         if (isFlowing) return;

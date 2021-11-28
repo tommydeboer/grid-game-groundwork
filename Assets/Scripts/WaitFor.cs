@@ -17,7 +17,7 @@ public static class WaitFor
     }
 
     static Dictionary<float, WaitForSeconds> _timeInterval =
-        new Dictionary<float, WaitForSeconds>(100, new FloatComparer());
+        new(100, new FloatComparer());
 
     public static WaitForSeconds Seconds(float seconds)
     {
@@ -28,7 +28,7 @@ public static class WaitFor
     }
 
     static Dictionary<float, WaitForSecondsRealtime> _realtimeInterval =
-        new Dictionary<float, WaitForSecondsRealtime>(100, new FloatComparer());
+        new(100, new FloatComparer());
 
     public static WaitForSecondsRealtime SecondsRealtime(float seconds)
     {
@@ -38,17 +38,11 @@ public static class WaitFor
         return wfs;
     }
 
-    static WaitForEndOfFrame _endOfFrame = new WaitForEndOfFrame();
+    static WaitForEndOfFrame _endOfFrame = new();
 
-    public static WaitForEndOfFrame EndOfFrame
-    {
-        get { return _endOfFrame; }
-    }
+    public static WaitForEndOfFrame EndOfFrame => _endOfFrame;
 
-    static WaitForFixedUpdate _fixedUpdate = new WaitForFixedUpdate();
+    static WaitForFixedUpdate _fixedUpdate = new();
 
-    public static WaitForFixedUpdate FixedUpdate
-    {
-        get { return _fixedUpdate; }
-    }
+    public static WaitForFixedUpdate FixedUpdate => _fixedUpdate;
 }

@@ -6,7 +6,7 @@ using System.Linq;
 
 public class Utils
 {
-    public static List<Mover> movers = new List<Mover>();
+    public static List<Mover> movers = new();
     static int maxColliders = 5;
 
     public static IEnumerator LoadScene(string scene)

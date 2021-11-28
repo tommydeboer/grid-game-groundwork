@@ -12,7 +12,7 @@ public class State
         public List<Vector3Int> rotations;
     }
 
-    public static List<MoverToTrack> moversToTrack = new List<MoverToTrack>();
+    public static List<MoverToTrack> moversToTrack = new();
     public static int undoIndex;
 
     public static void AddMover(Mover mover)

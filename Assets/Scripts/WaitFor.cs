@@ -9,13 +9,16 @@ public static class WaitFor
         {
             return x == y;
         }
+
         int IEqualityComparer<float>.GetHashCode(float obj)
         {
             return obj.GetHashCode();
         }
     }
 
-    static Dictionary<float, WaitForSeconds> _timeInterval = new Dictionary<float, WaitForSeconds>(100, new FloatComparer());
+    static Dictionary<float, WaitForSeconds> _timeInterval =
+        new Dictionary<float, WaitForSeconds>(100, new FloatComparer());
+
     public static WaitForSeconds Seconds(float seconds)
     {
         WaitForSeconds wfs;
@@ -24,7 +27,9 @@ public static class WaitFor
         return wfs;
     }
 
-    static Dictionary<float, WaitForSecondsRealtime> _realtimeInterval = new Dictionary<float, WaitForSecondsRealtime>(100, new FloatComparer());
+    static Dictionary<float, WaitForSecondsRealtime> _realtimeInterval =
+        new Dictionary<float, WaitForSecondsRealtime>(100, new FloatComparer());
+
     public static WaitForSecondsRealtime SecondsRealtime(float seconds)
     {
         WaitForSecondsRealtime wfs;
@@ -34,12 +39,14 @@ public static class WaitFor
     }
 
     static WaitForEndOfFrame _endOfFrame = new WaitForEndOfFrame();
+
     public static WaitForEndOfFrame EndOfFrame
     {
         get { return _endOfFrame; }
     }
 
     static WaitForFixedUpdate _fixedUpdate = new WaitForFixedUpdate();
+
     public static WaitForFixedUpdate FixedUpdate
     {
         get { return _fixedUpdate; }

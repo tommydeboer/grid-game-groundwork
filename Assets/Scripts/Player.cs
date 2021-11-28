@@ -1,57 +1,81 @@
 ﻿using UnityEngine;
 
-public class Player : Mover {
+public class Player : Mover
+{
+    public static Player instance;
 
-	public static Player instance;
-	public static Player Get() { return instance; }
-	Vector3 direction = Vector3.zero;
+    public static Player Get()
+    {
+        return instance;
+    }
 
-	void Awake() {
-		instance = this;
-	}
-	
-	void Update () {
-		if (CanInput()) {
-			CheckInput();
-		}
-	}
+    Vector3 direction = Vector3.zero;
 
-	public bool CanInput() {
-		return !Game.isMoving && !Game.Get().holdingUndo;
-	}
+    void Awake()
+    {
+        instance = this;
+    }
 
-	public void CheckInput() {
+    void Update()
+    {
+        if (CanInput())
+        {
+            CheckInput();
+        }
+    }
 
-		float hor = Input.GetAxisRaw("Horizontal");
-		float ver = Input.GetAxisRaw("Vertical");
+    public bool CanInput()
+    {
+        return !Game.isMoving && !Game.Get().holdingUndo;
+    }
 
-		if (hor == 0 && ver == 0) {
-			return;
-		}
+    public void CheckInput()
+    {
+        float hor = Input.GetAxisRaw("Horizontal");
+        float ver = Input.GetAxisRaw("Vertical");
 
-		if (hor != 0 && ver != 0) {
-			if (direction == Vector3.right || direction == Vector3.left) {
-				hor = 0;
-			} else {
-				ver = 0;
-			}
-		}
+        if (hor == 0 && ver == 0)
+        {
+            return;
+        }
 
-		if (hor == 1) {
-			direction = Vector3.right;
-		} else if (hor == -1) { 
-			direction = Vector3.left;
-		} else if (ver == -1) {
-			direction = Vector3.down;
-		} else if (ver == 1) {
-			direction = Vector3.up;
-		}
+        if (hor != 0 && ver != 0)
+        {
+            if (direction == Vector3.right || direction == Vector3.left)
+            {
+                hor = 0;
+            }
+            else
+            {
+                ver = 0;
+            }
+        }
 
-		if (CanMove(direction)) {
-			MoveIt(direction);
-			Game.Get().MoveStart(direction);
-		} else {
-			Game.moversToMove.Clear();
-		}
-	}
+        if (hor == 1)
+        {
+            direction = Vector3.right;
+        }
+        else if (hor == -1)
+        {
+            direction = Vector3.left;
+        }
+        else if (ver == -1)
+        {
+            direction = Vector3.down;
+        }
+        else if (ver == 1)
+        {
+            direction = Vector3.up;
+        }
+
+        if (CanMove(direction))
+        {
+            MoveIt(direction);
+            Game.Get().MoveStart(direction);
+        }
+        else
+        {
+            Game.moversToMove.Clear();
+        }
+    }
 }

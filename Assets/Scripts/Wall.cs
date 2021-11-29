@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class Wall : MonoBehaviour
 {
-    public bool isStatic = true;
     public List<Transform> tiles = new();
 
     void OnValidate()

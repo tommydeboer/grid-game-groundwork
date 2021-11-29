@@ -3,26 +3,29 @@
 
 using UnityEditor;
 
-public static class TagHelper
+namespace Editor
 {
-    public static void AddTag(string tagname)
+    public static class TagHelper
     {
-        UnityEngine.Object[] asset = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
-
-        if (asset != null && asset.Length > 0)
+        public static void AddTag(string tagname)
         {
-            SerializedObject so = new SerializedObject(asset[0]);
-            SerializedProperty tags = so.FindProperty("tags");
+            UnityEngine.Object[] asset = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
 
-            for (int i = 0; i < tags.arraySize; i++)
+            if (asset != null && asset.Length > 0)
             {
-                if (tags.GetArrayElementAtIndex(i).stringValue == tagname) return;
-            }
+                SerializedObject so = new SerializedObject(asset[0]);
+                SerializedProperty tags = so.FindProperty("tags");
 
-            tags.InsertArrayElementAtIndex(tags.arraySize);
-            tags.GetArrayElementAtIndex(tags.arraySize - 1).stringValue = tagname;
-            so.ApplyModifiedProperties();
-            so.Update();
+                for (int i = 0; i < tags.arraySize; i++)
+                {
+                    if (tags.GetArrayElementAtIndex(i).stringValue == tagname) return;
+                }
+
+                tags.InsertArrayElementAtIndex(tags.arraySize);
+                tags.GetArrayElementAtIndex(tags.arraySize - 1).stringValue = tagname;
+                so.ApplyModifiedProperties();
+                so.Update();
+            }
         }
     }
 }

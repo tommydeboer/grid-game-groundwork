@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,21 +10,21 @@ namespace Editor
 {
     public class LevelEditor : EditorWindow
     {
-        int selGridInt = 0;
+        int selGridInt;
         string[] selectStrings;
 
-        int rotateInt = 0;
+        int rotateInt;
 
-        string[] rotateStrings = new string[]
+        readonly string[] rotateStrings =
         {
             "0", "90", "180", "270"
         };
 
-        int spawnHeight = 0;
+        int spawnHeight;
         string currentLevel;
         string newLevelName = "";
-        string levelPath = "Assets/Resources/Levels/";
-        bool overwriteLevel = false;
+        const string levelPath = "Assets/Resources/Levels/";
+        bool overwriteLevel;
 
         public GameObject[] prefabs;
 
@@ -36,13 +37,10 @@ namespace Editor
         Event e;
         bool titleIsSet;
 
-        static string textFilePath
-        {
-            get { return Application.dataPath + "/leveleditorprefabs.txt"; }
-        }
+        static string textFilePath => Application.dataPath + "/leveleditorprefabs.txt";
 
-        public List<string> savedLevels = new List<string>();
-        int savedLevelIndex = 0;
+        public List<string> savedLevels = new();
+        int savedLevelIndex;
         int sceneLevelIndex;
         bool snapToGrid = true;
         bool isLoading;
@@ -50,9 +48,9 @@ namespace Editor
         Vector3 prevPosition;
         Vector2 scrollPos;
         Color gizmoColor = Color.white;
-        Vector2 mousePosOnClick = new Vector2();
+        Vector2 mousePosOnClick;
 
-        GameObject level
+        GameObject Level
         {
             get
             {
@@ -62,7 +60,7 @@ namespace Editor
             }
         }
 
-        GameObject FindOrCreate(string s, Transform parentObj = null)
+        static GameObject FindOrCreate(string s, Transform parentObj = null)
         {
             GameObject go = GameObject.Find(s);
             if (go == null)
@@ -80,12 +78,12 @@ namespace Editor
             return go;
         }
 
-        List<string> sceneLevels = new List<string>();
+        readonly List<string> sceneLevels = new();
 
         [MenuItem("Window/Level Editor")]
         public static void ShowWindow()
         {
-            EditorWindow.GetWindow(typeof(LevelEditor));
+            GetWindow(typeof(LevelEditor));
         }
 
         void OnEnable()
@@ -133,7 +131,7 @@ namespace Editor
             RefreshSavedLevels();
         }
 
-        void CreateGizmoObject()
+        static void CreateGizmoObject()
         {
             LevelGizmo levelGizmo = FindObjectOfType<LevelGizmo>();
             if (levelGizmo == null)
@@ -146,18 +144,11 @@ namespace Editor
         {
             if (prefabs.Length == 0 && File.Exists(textFilePath))
             {
-                List<GameObject> newPrefabs = new List<GameObject>();
                 string[] prefabNames = File.ReadAllLines(textFilePath);
-                foreach (string prefabName in prefabNames)
-                {
-                    GameObject go = Resources.Load<GameObject>(prefabName);
-                    if (go != null)
-                    {
-                        newPrefabs.Add(go);
-                    }
-                }
 
-                prefabs = newPrefabs.ToArray();
+                prefabs = prefabNames
+                    .Select(Resources.Load<GameObject>)
+                    .Where(go => go != null).ToArray();
             }
         }
 
@@ -181,7 +172,7 @@ namespace Editor
             }
         }
 
-        void EnsureTagsExist()
+        static void EnsureTagsExist()
         {
             TagHelper.AddTag("Level");
             TagHelper.AddTag("Tile");
@@ -206,12 +197,12 @@ namespace Editor
             GUIStyle myStyle = new GUIStyle(GUI.skin.window);
             myStyle.padding = new RectOffset(15, 15, 15, 15);
 
-            windowRect = GUILayout.Window(1, windowRect, GetWindows, "", myStyle);
+            GUILayout.Window(1, windowRect, GetWindows, "", myStyle);
             EndWindows();
 
             if (previousLevel != currentLevel)
             {
-                Selection.activeGameObject = level;
+                Selection.activeGameObject = Level;
             }
         }
 
@@ -369,13 +360,13 @@ namespace Editor
                 }
                 else
                 {
-                    newLevelName = level.name;
+                    newLevelName = Level.name;
                 }
             }
 
             if (!string.IsNullOrEmpty(newLevelName) && GUILayout.Button("Save Level As", GUILayout.Width(150)))
             {
-                level.transform.name = currentLevel = newLevelName;
+                Level.transform.name = currentLevel = newLevelName;
                 newLevelName = RemoveInvalidChars(newLevelName);
                 string path = "Assets/Resources/Levels/" + newLevelName + ".txt";
 
@@ -450,27 +441,29 @@ namespace Editor
             EditorGUILayout.Space();
         }
 
-        public string RemoveInvalidChars(string filename)
+        static string RemoveInvalidChars(string filename)
         {
             return string.Concat(filename.Split(Path.GetInvalidFileNameChars()));
         }
 
         void SaveToDisk(string levelName)
         {
-            if (!System.IO.Directory.Exists(levelPath))
+            if (!Directory.Exists(levelPath))
             {
-                System.IO.Directory.CreateDirectory(levelPath);
+                Directory.CreateDirectory(levelPath);
             }
 
             string path = levelPath + levelName + ".txt";
             StreamWriter writer = new StreamWriter(path, false);
 
-            foreach (Transform child in level.transform)
+            foreach (Transform child in Level.transform)
             {
                 writer.WriteLine(child.name);
-                writer.WriteLine(child.localPosition.x + "|" + child.localPosition.y + "|" + child.localPosition.z);
-                writer.WriteLine(child.localEulerAngles.x + "|" + child.localEulerAngles.y + "|" +
-                                 child.localEulerAngles.z);
+                var localPosition = child.localPosition;
+                writer.WriteLine(localPosition.x + "|" + localPosition.y + "|" + localPosition.z);
+                var localEulerAngles = child.localEulerAngles;
+                writer.WriteLine(localEulerAngles.x + "|" + localEulerAngles.y + "|" +
+                                 localEulerAngles.z);
             }
 
             writer.Close();
@@ -517,8 +510,8 @@ namespace Editor
                 {
                     case 0:
                         GameObject prefab = Resources.Load(line) as GameObject;
-                        go = PrefabUtility.InstantiatePrefab(prefab as GameObject) as GameObject;
-                        go.transform.parent = level.transform;
+                        go = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+                        go.transform.parent = Level.transform;
                         Undo.RegisterCreatedObjectUndo(go, "Create object");
                         counter++;
                         break;
@@ -540,7 +533,7 @@ namespace Editor
             reader.Close();
 
             RefreshSceneLevels();
-            level.transform.position = levelPosition;
+            Level.transform.position = levelPosition;
             newLevelName = levelName;
             isLoading = false;
             isDirty = false;
@@ -600,7 +593,7 @@ namespace Editor
             newGameObject.transform.eulerAngles = eulerAngles;
         }
 
-        public void SceneGUI(SceneView sceneView)
+        void SceneGUI(SceneView sceneView)
         {
             e = Event.current;
             in2DMode = sceneView.in2DMode;
@@ -623,10 +616,10 @@ namespace Editor
             }
 
             HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
-            var controlID = GUIUtility.GetControlID(FocusType.Passive);
+            int controlID = GUIUtility.GetControlID(FocusType.Passive);
             var eventType = e.GetTypeForControl(controlID);
 
-            if (SceneView.mouseOverWindow != sceneView)
+            if (mouseOverWindow != sceneView)
             {
                 Reset();
             }
@@ -668,9 +661,8 @@ namespace Editor
                     {
                         selGridInt = 0;
                         Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
-                        RaycastHit hit = new RaycastHit();
 
-                        if (Physics.Raycast(ray, out hit, 1000.0f))
+                        if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
                         {
                             for (int i = 0; i < prefabs.Length; i++)
                             {
@@ -713,8 +705,7 @@ namespace Editor
             {
                 Ray ray = HandleUtility.GUIPointToWorldRay(mousePos);
 
-                RaycastHit hit = new RaycastHit();
-                if (Physics.Raycast(ray, out hit, 1000.0f))
+                if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
                 {
                     Vector3 pos = hit.point + (hit.normal * 0.5f);
                     if (selGridInt == 1)
@@ -726,27 +717,13 @@ namespace Editor
                 }
 
                 Plane hPlane = new Plane(Vector3.forward, Vector3.zero);
-                float distance = 0;
-                if (hPlane.Raycast(ray, out distance))
+                if (hPlane.Raycast(ray, out float distance))
                 {
                     return Utils.Vec3ToInt(ray.GetPoint(distance));
                 }
             }
 
             return Vector3.zero;
-        }
-
-        GameObject GetPrefabByName(string s)
-        {
-            foreach (GameObject prefab in prefabs)
-            {
-                if (prefab.transform.name.Contains(s))
-                {
-                    return prefab;
-                }
-            }
-
-            return null;
         }
 
         void CreateObject(Vector3 pos)
@@ -759,10 +736,10 @@ namespace Editor
             {
                 GameObject prefab = prefabs[selGridInt - 2];
 
-                newGameObject = PrefabUtility.InstantiatePrefab(prefab as GameObject) as GameObject;
+                newGameObject = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
                 newGameObject.transform.position = pos;
 
-                newGameObject.transform.parent = level.transform;
+                newGameObject.transform.parent = Level.transform;
 
                 int z = 0;
                 switch (rotateInt)
@@ -806,13 +783,13 @@ namespace Editor
 
         void RotateLevel(int degrees)
         {
-            level.transform.eulerAngles += new Vector3(0, 0, degrees);
+            Level.transform.eulerAngles += new Vector3(0, 0, degrees);
             isDirty = true;
         }
 
         void InvertLevel(string axis)
         {
-            foreach (Transform child in level.transform)
+            foreach (Transform child in Level.transform)
             {
                 Vector3 p = child.position;
                 Vector3 s = child.localScale;
@@ -837,13 +814,14 @@ namespace Editor
             while (foundSomething)
             {
                 foundSomething = false;
-                foreach (Transform child in level.transform)
+                foreach (Transform child in Level.transform)
                 {
                     foreach (Transform tile in child)
                     {
+                        var position1 = tile.position;
                         bool atPosition = (in2DMode)
-                            ? Utils.VectorRoughly2D(tile.position, pos)
-                            : Utils.VectorRoughly(tile.position, pos);
+                            ? Utils.VectorRoughly2D(position1, pos)
+                            : Utils.VectorRoughly(position1, pos);
                         if (tile.CompareTag("Tile") && atPosition)
                         {
                             foundSomething = true;

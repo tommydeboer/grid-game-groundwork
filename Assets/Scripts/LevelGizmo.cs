@@ -2,9 +2,9 @@
 
 public class LevelGizmo : MonoBehaviour
 {
-    public static Vector3 pos { get; private set; }
+    static Vector3 pos { get; set; }
     static Color color = new(2f, 2f, 2f);
-    public static bool drawEnabled { get; private set; }
+    static bool DrawEnabled { get; set; }
 
     public static void UpdateGizmo(Vector3 v, Color c)
     {
@@ -14,12 +14,12 @@ public class LevelGizmo : MonoBehaviour
 
     public static void Enable(bool b)
     {
-        drawEnabled = b;
+        DrawEnabled = b;
     }
 
     void OnDrawGizmos()
     {
-        if (drawEnabled)
+        if (DrawEnabled)
         {
             Gizmos.color = color;
             Gizmos.DrawWireCube(pos, Vector3.one);

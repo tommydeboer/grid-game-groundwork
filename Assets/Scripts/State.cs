@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class State
+public static class State
 {
-    public struct MoverToTrack
+    struct MoverToTrack
     {
         public Mover mover;
         public Vector3 initialPos;
@@ -12,27 +12,34 @@ public class State
         public List<Vector3Int> rotations;
     }
 
-    public static List<MoverToTrack> moversToTrack = new();
+    static readonly List<MoverToTrack> moversToTrack = new();
     public static int undoIndex;
 
-    public static void AddMover(Mover mover)
+    static void AddMover(Mover mover)
     {
-        MoverToTrack newMover = new MoverToTrack();
-        newMover.mover = mover;
-        newMover.initialPos = mover.transform.position;
-        newMover.initialRot = mover.transform.eulerAngles;
-        newMover.positions = new List<Vector3Int>();
-        newMover.rotations = new List<Vector3Int>();
+        var transform = mover.transform;
+        MoverToTrack newMover = new MoverToTrack
+        {
+            mover = mover,
+            initialPos = transform.position,
+            initialRot = transform.eulerAngles,
+            positions = new List<Vector3Int>(),
+            rotations = new List<Vector3Int>()
+        };
         moversToTrack.Add(newMover);
     }
 
-    public static void Init()
+    public static void Init(IEnumerable<Mover> movers)
     {
-        undoIndex = 0;
-        moversToTrack.Clear();
+        foreach (Mover mover in movers)
+        {
+            AddMover(mover);
+        }
+
+        AddToUndoStack();
     }
 
-    public static void AddToUndoStack()
+    static void AddToUndoStack()
     {
         foreach (MoverToTrack m in moversToTrack)
         {
@@ -41,14 +48,15 @@ public class State
         }
     }
 
-    public static void RemoveFromUndoStack()
+    static void RemoveFromUndoStack()
     {
         foreach (MoverToTrack m in moversToTrack)
         {
             m.positions.RemoveAt(m.positions.Count - 1);
             m.rotations.RemoveAt(m.rotations.Count - 1);
-            m.mover.transform.position = m.positions[m.positions.Count - 1];
-            m.mover.transform.eulerAngles = m.rotations[m.rotations.Count - 1];
+            var transform = m.mover.transform;
+            transform.position = m.positions[^1];
+            transform.eulerAngles = m.rotations[^1];
         }
     }
 
@@ -76,8 +84,9 @@ public class State
     {
         foreach (MoverToTrack m in moversToTrack)
         {
-            m.mover.transform.position = m.initialPos;
-            m.mover.transform.eulerAngles = m.initialRot;
+            var transform = m.mover.transform;
+            transform.position = m.initialPos;
+            transform.eulerAngles = m.initialRot;
         }
 
         OnMoveComplete();

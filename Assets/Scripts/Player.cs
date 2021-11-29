@@ -59,7 +59,7 @@ public class Player : Mover
         if (CanMove(direction))
         {
             MoveIt(direction);
-            Game.instance.MoveStart(direction);
+            Game.instance.MoveStart();
         }
         else
         {

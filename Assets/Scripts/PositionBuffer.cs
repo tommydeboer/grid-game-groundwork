@@ -2,13 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PositionBuffer
+public static class PositionBuffer
 {
-    private static Dictionary<Vector3Int, List<GameObject>> gameObjects;
-    public static int size = 300;
-    public static int stackSize = 5;
-
-    public static Dictionary<Vector3Int, List<GameObject>> GameObjects
+    static Dictionary<Vector3Int, List<GameObject>> gameObjects;
+    static Dictionary<Vector3Int, List<GameObject>> GameObjects
     {
         get
         {
@@ -39,7 +36,7 @@ public class PositionBuffer
         }
     }
 
-    internal static List<GameObject> Get(Vector3Int pos)
+    static List<GameObject> Get(Vector3Int pos)
     {
         if (gameObjects == null)
         {
@@ -51,7 +48,7 @@ public class PositionBuffer
     }
 
 
-    public static Wall GetWallAtPos(Vector3Int pos)
+    static Wall GetWallAtPos(Vector3Int pos)
     {
         var colliders = Get(pos);
         if (colliders == null) return null;

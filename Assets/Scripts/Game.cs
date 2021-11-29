@@ -15,8 +15,7 @@ public class Game : MonoBehaviour
     public static Game instance;
 
     public static Mover[] movers;
-    public static Wall[] walls;
-    public static List<Mover> moversToMove = new();
+    public static readonly List<Mover> moversToMove = new();
 
     public float moveTime = 0.18f; // time it takes to move 1 unit
     public float fallTime = 0.1f; // time it takes to fall 1 unit
@@ -35,20 +34,13 @@ public class Game : MonoBehaviour
     void Start()
     {
         movers = FindObjectsOfType<Mover>();
-        State.Init();
-        foreach (Mover mover in movers)
-        {
-            State.AddMover(mover);
-        }
-
-        State.AddToUndoStack();
+        State.Init(movers);
         isMoving = false;
     }
 
     public void EditorRefresh()
     {
         movers = FindObjectsOfType<Mover>();
-        walls = FindObjectsOfType<Wall>();
     }
 
     void Update()
@@ -70,9 +62,10 @@ public class Game : MonoBehaviour
         }
     }
 
-    public void Refresh()
+    void Refresh()
     {
         isMoving = false;
+        Debug.Assert(moversToMove.Count == 0 && movingCount == 0, "Not all movers have finished");
         moversToMove.Clear();
         movingCount = 0;
     }
@@ -128,7 +121,7 @@ public class Game : MonoBehaviour
 
     /////////////////////////////////////////////////////////////////// MOVE
 
-    public void MoveStart(Vector3 dir)
+    public void MoveStart()
     {
         isMoving = true;
         foreach (Mover m in moversToMove)
@@ -138,7 +131,7 @@ public class Game : MonoBehaviour
         }
     }
 
-    public void MoveEnd()
+    void MoveEnd()
     {
         movingCount--;
         if (movingCount == 0)
@@ -148,10 +141,10 @@ public class Game : MonoBehaviour
         }
     }
 
-    public void FallStart()
+    void FallStart()
     {
         isMoving = true;
-        movers = movers.OrderBy((c) => -c.transform.position.z).ToArray();
+        movers = movers.OrderBy(mover => -mover.transform.position.z).ToArray();
 
         foreach (Mover m in movers)
         {
@@ -174,12 +167,9 @@ public class Game : MonoBehaviour
         }
     }
 
-    public void CompleteMove()
+    static void CompleteMove()
     {
         State.OnMoveComplete();
-        if (onMoveComplete != null)
-        {
-            onMoveComplete();
-        }
+        onMoveComplete?.Invoke();
     }
 }

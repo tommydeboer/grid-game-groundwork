@@ -61,9 +61,5 @@ public class Player : Mover
             MoveIt(direction);
             Game.instance.MoveStart();
         }
-        else
-        {
-            Game.moversToMove.Clear();
-        }
     }
 }

@@ -65,7 +65,7 @@ public class Game : MonoBehaviour
     void Refresh()
     {
         isMoving = false;
-        Debug.Assert(moversToMove.Count == 0 && movingCount == 0, "Not all movers have finished");
+        Debug.Assert(movingCount == 0, "Not all movers have finished");
         moversToMove.Clear();
         movingCount = 0;
     }

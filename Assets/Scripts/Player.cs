@@ -49,11 +49,11 @@ public class Player : Mover
         }
         else if (ver == -1)
         {
-            direction = Vector3.down;
+            direction = Vector3.back;
         }
         else if (ver == 1)
         {
-            direction = Vector3.up;
+            direction = Vector3.forward;
         }
 
         if (CanMove(direction))

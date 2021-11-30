@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using DG.Tweening;
 
@@ -99,7 +100,7 @@ public class Mover : MonoBehaviour
                 Game.instance.movingCount++;
             }
 
-            goalPosition = transform.position + Vector3.forward;
+            goalPosition = transform.position + Vector3.down;
             transform.DOMove(goalPosition, Game.instance.fallTime).OnComplete(FallAgain).SetEase(Ease.Linear);
         }
         else
@@ -131,25 +132,12 @@ public class Mover : MonoBehaviour
 
     bool GroundBelow()
     {
-        foreach (Tile tile in tiles)
-        {
-            if (Utils.Roughly(tile.pos.z, 0))
-            {
-                return true;
-            }
-
-            if (GroundBelowTile(tile))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return tiles.Any(GroundBelowTile);
     }
 
     bool GroundBelowTile(Tile tile)
     {
-        Vector3Int posToCheck = Vector3Int.RoundToInt(tile.pos + Vector3.forward);
+        Vector3Int posToCheck = Vector3Int.RoundToInt(tile.pos + Vector3.down);
         if (PositionBuffer.WallIsAtPos(posToCheck))
         {
             return true;

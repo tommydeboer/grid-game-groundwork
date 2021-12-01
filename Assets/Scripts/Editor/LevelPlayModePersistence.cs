@@ -5,12 +5,9 @@ using UnityEngine;
 
 namespace Editor
 {
-    public class LevelPlayModePersistence
+    public static class LevelPlayModePersistence
     {
-        static string textFilePath
-        {
-            get { return Application.persistentDataPath + "/playmodechanges.txt"; }
-        }
+        static string textFilePath => Application.persistentDataPath + "/playmodechanges.txt";
 
         public struct Job
         {
@@ -19,9 +16,9 @@ namespace Editor
             public Vector3 eulerAngles;
         }
 
-        public static Job[] GetJobs()
+        public static IEnumerable<Job> GetJobs()
         {
-            List<Job> jobs = new List<Job>();
+            var jobs = new List<Job>();
             if (File.Exists(textFilePath))
             {
                 string[] lines = File.ReadAllLines(textFilePath);
@@ -52,12 +49,11 @@ namespace Editor
 
         static Vector3 Vec3FromStrings(string stringX, string stringY, string stringZ)
         {
-            int x, y, z;
-            if (Int32.TryParse(stringX, out x))
+            if (int.TryParse(stringX, out int x))
             {
-                if (Int32.TryParse(stringY, out y))
+                if (int.TryParse(stringY, out int y))
                 {
-                    if (Int32.TryParse(stringZ, out z))
+                    if (int.TryParse(stringZ, out int z))
                     {
                         return new Vector3(x, y, z);
                     }
@@ -77,17 +73,9 @@ namespace Editor
             WriteText(s);
         }
 
-        public static void ClearAtPosition(Vector3 vector3)
-        {
-            Vector3Int v = Utils.Vec3ToInt(vector3);
-            string s = "clear|" + v.x + "|" + v.y + "|" + v.z;
-            WriteText(s);
-        }
-
         static void WriteText(string newText)
         {
-            List<string> lines = new List<string>();
-            lines.Add(newText);
+            var lines = new List<string> {newText};
             File.AppendAllLines(textFilePath, lines);
         }
     }

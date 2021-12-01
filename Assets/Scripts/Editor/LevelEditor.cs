@@ -22,8 +22,6 @@ namespace Editor
 
         int spawnHeight;
         string currentLevel;
-        string newLevelName = "";
-        const string levelPath = "Assets/Resources/Levels/";
         bool overwriteLevel;
 
         public GameObject[] prefabs;
@@ -39,12 +37,9 @@ namespace Editor
 
         static string textFilePath => Application.dataPath + "/leveleditorprefabs.txt";
 
-        public List<string> savedLevels = new();
-        int savedLevelIndex;
         int sceneLevelIndex;
         bool snapToGrid = true;
         bool isLoading;
-        bool isDirty;
         Vector3 prevPosition;
         Vector2 scrollPos;
         Color gizmoColor = Color.white;
@@ -128,7 +123,6 @@ namespace Editor
             }
 
             RefreshSceneLevels();
-            RefreshSavedLevels();
         }
 
         static void CreateGizmoObject()
@@ -149,16 +143,6 @@ namespace Editor
                 prefabs = prefabNames
                     .Select(Resources.Load<GameObject>)
                     .Where(go => go != null).ToArray();
-            }
-        }
-
-        void RefreshSavedLevels()
-        {
-            savedLevels.Clear();
-            DirectoryInfo d = new DirectoryInfo(levelPath);
-            foreach (var file in d.GetFiles("*.txt"))
-            {
-                savedLevels.Add(file.Name.Replace(".txt", ""));
             }
         }
 
@@ -194,8 +178,10 @@ namespace Editor
             BeginWindows();
             Rect windowRect = new Rect(20, 20, 420, 650);
 
-            GUIStyle myStyle = new GUIStyle(GUI.skin.window);
-            myStyle.padding = new RectOffset(15, 15, 15, 15);
+            GUIStyle myStyle = new GUIStyle(GUI.skin.window)
+            {
+                padding = new RectOffset(15, 15, 15, 15)
+            };
 
             GUILayout.Window(1, windowRect, GetWindows, "", myStyle);
             EndWindows();
@@ -216,8 +202,6 @@ namespace Editor
                 DrawingWindow();
             }
 
-            RefreshSavedLevels();
-            SaveLoadWindow();
             EditorGUILayout.EndScrollView();
         }
 
@@ -259,16 +243,9 @@ namespace Editor
 
             if (prefabs != null && prefabs.Length > 0)
             {
-                List<string> selectStringsTmp = new List<string>();
-                selectStringsTmp.Add("None");
-                selectStringsTmp.Add("Erase");
-                foreach (GameObject prefab in prefabs)
-                {
-                    if (prefab != null)
-                    {
-                        selectStringsTmp.Add(prefab.transform.name);
-                    }
-                }
+                var selectStringsTmp = new List<string> {"None", "Erase"};
+                selectStringsTmp.AddRange(
+                    from prefab in prefabs where prefab != null select prefab.transform.name);
 
                 selectStrings = selectStringsTmp.ToArray();
             }
@@ -340,203 +317,11 @@ namespace Editor
             BigSpace();
         }
 
-        void SaveLoadWindow()
-        {
-            if (savedLevels.Count > 0)
-            {
-                GUILayout.Label("SAVING AND LOADING", EditorStyles.centeredGreyMiniLabel);
-            }
-
-            BigSpace();
-
-
-            EditorGUILayout.BeginHorizontal();
-
-            if (string.IsNullOrEmpty(newLevelName))
-            {
-                if (GameObject.FindGameObjectWithTag("Level") == null)
-                {
-                    GUILayout.Label("To create a new level, give it a name: ");
-                }
-                else
-                {
-                    newLevelName = Level.name;
-                }
-            }
-
-            if (!string.IsNullOrEmpty(newLevelName) && GUILayout.Button("Save Level As", GUILayout.Width(150)))
-            {
-                Level.transform.name = currentLevel = newLevelName;
-                newLevelName = RemoveInvalidChars(newLevelName);
-                string path = "Assets/Resources/Levels/" + newLevelName + ".txt";
-
-                if (File.Exists(path))
-                {
-                    if (EditorUtility.DisplayDialog("Overwrite Level?",
-                        "Are you sure you want to overwrite '" + newLevelName + "'?", "Yes", "No"))
-                    {
-                        SaveToDisk(newLevelName);
-                    }
-                }
-                else
-                {
-                    SaveToDisk(newLevelName);
-                }
-            }
-
-            newLevelName = EditorGUILayout.TextField(newLevelName);
-            EditorGUILayout.EndHorizontal();
-
-            BigSpace();
-
-
-            if (savedLevels.Count > 0)
-            {
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Label("Overwrite level(s) in scene ");
-                overwriteLevel = EditorGUILayout.Toggle(overwriteLevel);
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Load Level", GUILayout.Width(150)))
-                {
-                    if (!isDirty || !overwriteLevel || EditorUtility.DisplayDialog(
-                        "Load " + savedLevels[savedLevelIndex] + "?",
-                        "Load " + savedLevels[savedLevelIndex] + "? Any unsaved changes to " + currentLevel +
-                        " will be lost.", "Confirm", "Cancel"))
-                    {
-                        if (overwriteLevel)
-                        {
-                            GameObject[] levels = GameObject.FindGameObjectsWithTag("Level");
-                            foreach (GameObject l in levels)
-                            {
-                                Undo.DestroyObjectImmediate(l);
-                            }
-                        }
-
-                        currentLevel = savedLevels[savedLevelIndex];
-                        LoadFromDisk(currentLevel);
-                    }
-                }
-
-                savedLevelIndex = EditorGUILayout.Popup(savedLevelIndex, savedLevels.ToArray());
-                EditorGUILayout.EndHorizontal();
-
-                BigSpace();
-
-                ScriptableObject scriptableObj = this;
-                SerializedObject serialObj = new SerializedObject(scriptableObj);
-                SerializedProperty serialProp = serialObj.FindProperty("prefabs");
-                EditorGUILayout.PropertyField(serialProp, true);
-                serialObj.ApplyModifiedProperties();
-
-                BigSpace();
-            }
-        }
-
         void BigSpace()
         {
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             EditorGUILayout.Space();
-        }
-
-        static string RemoveInvalidChars(string filename)
-        {
-            return string.Concat(filename.Split(Path.GetInvalidFileNameChars()));
-        }
-
-        void SaveToDisk(string levelName)
-        {
-            if (!Directory.Exists(levelPath))
-            {
-                Directory.CreateDirectory(levelPath);
-            }
-
-            string path = levelPath + levelName + ".txt";
-            StreamWriter writer = new StreamWriter(path, false);
-
-            foreach (Transform child in Level.transform)
-            {
-                writer.WriteLine(child.name);
-                var localPosition = child.localPosition;
-                writer.WriteLine(localPosition.x + "|" + localPosition.y + "|" + localPosition.z);
-                var localEulerAngles = child.localEulerAngles;
-                writer.WriteLine(localEulerAngles.x + "|" + localEulerAngles.y + "|" +
-                                 localEulerAngles.z);
-            }
-
-            writer.Close();
-            AssetDatabase.ImportAsset(path);
-            RefreshSavedLevels();
-
-            isDirty = false;
-        }
-
-        void LoadFromDisk(string levelName)
-        {
-            if (isLoading)
-            {
-                return;
-            }
-
-            Vector3 levelPosition = Vector3.zero;
-            GameObject existingLevel = GameObject.Find(levelName);
-            if (existingLevel != null && existingLevel.CompareTag("Level"))
-            {
-                levelPosition = existingLevel.transform.position;
-                Undo.DestroyObjectImmediate(existingLevel);
-            }
-
-            string path = levelPath + levelName + ".txt";
-
-            if (!File.Exists(path))
-            {
-                Debug.LogError("No level data found at " + path);
-                return;
-            }
-
-            isLoading = true;
-
-            string line;
-            int counter = 0;
-            GameObject go = null;
-
-            StreamReader reader = new StreamReader(path);
-
-            while ((line = reader.ReadLine()) != null)
-            {
-                switch (counter)
-                {
-                    case 0:
-                        GameObject prefab = Resources.Load(line) as GameObject;
-                        go = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-                        go.transform.parent = Level.transform;
-                        Undo.RegisterCreatedObjectUndo(go, "Create object");
-                        counter++;
-                        break;
-                    case 1:
-                        string[] p = line.Split('|');
-                        go.transform.localPosition = new Vector3(Utils.StringToInt(p[0]), Utils.StringToInt(p[1]),
-                            Utils.StringToInt(p[2]));
-                        counter++;
-                        break;
-                    case 2:
-                        string[] r = line.Split('|');
-                        go.transform.localEulerAngles = new Vector3(Utils.StringToInt(r[0]), Utils.StringToInt(r[1]),
-                            Utils.StringToInt(r[2]));
-                        counter = 0;
-                        break;
-                }
-            }
-
-            reader.Close();
-
-            RefreshSceneLevels();
-            Level.transform.position = levelPosition;
-            newLevelName = levelName;
-            isLoading = false;
-            isDirty = false;
         }
 
         void Update()
@@ -565,7 +350,7 @@ namespace Editor
 
         void GetPlayModeJobs()
         {
-            LevelPlayModePersistence.Job[] jobs = LevelPlayModePersistence.GetJobs();
+            IEnumerable<LevelPlayModePersistence.Job> jobs = LevelPlayModePersistence.GetJobs();
             foreach (LevelPlayModePersistence.Job job in jobs)
             {
                 if (job.name == "clear")
@@ -777,14 +562,11 @@ namespace Editor
             }
 
             Refresh();
-
-            isDirty = true;
         }
 
         void RotateLevel(int degrees)
         {
             Level.transform.eulerAngles += new Vector3(0, 0, degrees);
-            isDirty = true;
         }
 
         void InvertLevel(string axis)
@@ -804,8 +586,6 @@ namespace Editor
                     child.localScale = new Vector3(s.x, -s.y, s.z);
                 }
             }
-
-            isDirty = true;
         }
 
         void ClearObjectsAtPosition(Vector3Int pos)
@@ -831,8 +611,6 @@ namespace Editor
                     }
                 }
             }
-
-            isDirty = true;
         }
     }
 }

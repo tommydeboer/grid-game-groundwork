@@ -7,7 +7,7 @@ namespace Editor
 {
     public static class TagHelper
     {
-        public static void AddTag(string tagname)
+        public static void AddTag(string name)
         {
             UnityEngine.Object[] asset = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
 
@@ -18,11 +18,11 @@ namespace Editor
 
                 for (int i = 0; i < tags.arraySize; i++)
                 {
-                    if (tags.GetArrayElementAtIndex(i).stringValue == tagname) return;
+                    if (tags.GetArrayElementAtIndex(i).stringValue == name) return;
                 }
 
                 tags.InsertArrayElementAtIndex(tags.arraySize);
-                tags.GetArrayElementAtIndex(tags.arraySize - 1).stringValue = tagname;
+                tags.GetArrayElementAtIndex(tags.arraySize - 1).stringValue = name;
                 so.ApplyModifiedProperties();
                 so.Update();
             }

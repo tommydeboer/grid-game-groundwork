@@ -274,50 +274,9 @@ namespace Editor
             snapToGrid = EditorGUILayout.Toggle("Snap to grid:", snapToGrid);
 
             BigSpace();
-
-            ///////////////// ROTATION //////////////////
-
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("Rotate Level:", EditorStyles.boldLabel);
-            if (GUILayout.Button("90° CW", GUILayout.Width(80)))
-            {
-                RotateLevel(90);
-            }
-
-            if (GUILayout.Button("90° CCW", GUILayout.Width(80)))
-            {
-                RotateLevel(-90);
-            }
-
-            if (GUILayout.Button("180°", GUILayout.Width(80)))
-            {
-                RotateLevel(180);
-            }
-
-            EditorGUILayout.EndHorizontal();
-
-            BigSpace();
-
-            ///////////////// INVERSION //////////////////
-
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("Invert Level:", EditorStyles.boldLabel);
-            if (GUILayout.Button("X axis", GUILayout.Width(80)))
-            {
-                InvertLevel("x");
-            }
-
-            if (GUILayout.Button("Y axis", GUILayout.Width(80)))
-            {
-                InvertLevel("y");
-            }
-
-            EditorGUILayout.EndHorizontal();
-
-            BigSpace();
         }
 
-        void BigSpace()
+        static void BigSpace()
         {
             EditorGUILayout.Space();
             EditorGUILayout.Space();
@@ -562,30 +521,6 @@ namespace Editor
             }
 
             Refresh();
-        }
-
-        void RotateLevel(int degrees)
-        {
-            Level.transform.eulerAngles += new Vector3(0, 0, degrees);
-        }
-
-        void InvertLevel(string axis)
-        {
-            foreach (Transform child in Level.transform)
-            {
-                Vector3 p = child.position;
-                Vector3 s = child.localScale;
-                if (axis == "x")
-                {
-                    child.position = new Vector3(-p.x, p.y, p.z);
-                    child.localScale = new Vector3(-s.x, s.y, s.z);
-                }
-                else
-                {
-                    child.position = new Vector3(p.x, -p.y, p.z);
-                    child.localScale = new Vector3(s.x, -s.y, s.z);
-                }
-            }
         }
 
         void ClearObjectsAtPosition(Vector3Int pos)

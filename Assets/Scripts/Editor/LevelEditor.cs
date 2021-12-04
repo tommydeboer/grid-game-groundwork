@@ -28,7 +28,6 @@ namespace Editor
 
         bool isHoldingAlt;
         bool mouseButtonDown;
-        bool in2DMode;
         Vector3 drawPos;
         static GameObject newGameObject;
         static bool playModeActive;
@@ -340,7 +339,6 @@ namespace Editor
         void SceneGUI(SceneView sceneView)
         {
             e = Event.current;
-            in2DMode = sceneView.in2DMode;
 
             if (e.modifiers != EventModifiers.None)
             {
@@ -440,31 +438,23 @@ namespace Editor
 
         Vector3 GetPosition(Vector3 mousePos)
         {
-            if (in2DMode)
+            Ray ray = HandleUtility.GUIPointToWorldRay(mousePos);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
             {
-                Vector3 screenPosition = HandleUtility.GUIPointToWorldRay(mousePos).origin;
-                return Utils.Vec3ToInt(new Vector3(screenPosition.x, screenPosition.y, 0));
+                Vector3 pos = hit.point + (hit.normal * 0.5f);
+                if (selectedPrefabId == 1)
+                {
+                    pos = hit.transform.position;
+                }
+
+                return Utils.Vec3ToInt(pos);
             }
-            else
+
+            Plane hPlane = new Plane(Vector3.forward, Vector3.zero);
+            if (hPlane.Raycast(ray, out float distance))
             {
-                Ray ray = HandleUtility.GUIPointToWorldRay(mousePos);
-
-                if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
-                {
-                    Vector3 pos = hit.point + (hit.normal * 0.5f);
-                    if (selectedPrefabId == 1)
-                    {
-                        pos = hit.transform.position;
-                    }
-
-                    return Utils.Vec3ToInt(pos);
-                }
-
-                Plane hPlane = new Plane(Vector3.forward, Vector3.zero);
-                if (hPlane.Raycast(ray, out float distance))
-                {
-                    return Utils.Vec3ToInt(ray.GetPoint(distance));
-                }
+                return Utils.Vec3ToInt(ray.GetPoint(distance));
             }
 
             return Vector3.zero;
@@ -534,9 +524,7 @@ namespace Editor
                     foreach (Transform tile in child)
                     {
                         var position1 = tile.position;
-                        bool atPosition = (in2DMode)
-                            ? Utils.VectorRoughly2D(position1, pos)
-                            : Utils.VectorRoughly(position1, pos);
+                        bool atPosition = Utils.VectorRoughly(position1, pos);
                         if (tile.CompareTag("Tile") && atPosition)
                         {
                             foundSomething = true;

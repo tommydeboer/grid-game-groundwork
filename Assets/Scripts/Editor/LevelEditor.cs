@@ -10,7 +10,7 @@ namespace Editor
 {
     public class LevelEditor : EditorWindow
     {
-        int selGridInt;
+        int selectedPrefabId;
         string[] selectStrings;
 
         int rotateInt;
@@ -256,7 +256,7 @@ namespace Editor
             }
 
             GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
-            selGridInt = GUILayout.SelectionGrid(selGridInt, selectStrings, 3, GUILayout.Width(370));
+            selectedPrefabId = GUILayout.SelectionGrid(selectedPrefabId, selectStrings, 3, GUILayout.Width(370));
 
             BigSpace();
 
@@ -329,7 +329,7 @@ namespace Editor
             {
                 if (prefabs[i].transform.name == objName)
                 {
-                    selGridInt = i + 2;
+                    selectedPrefabId = i + 2;
                 }
             }
 
@@ -353,7 +353,7 @@ namespace Editor
             }
 
             Vector3 currentPos = GetPosition(e.mousePosition);
-            if (selGridInt != 1)
+            if (selectedPrefabId != 1)
             {
                 currentPos += (Vector3.back * spawnHeight);
                 currentPos = Utils.AvoidIntersect(currentPos);
@@ -392,7 +392,7 @@ namespace Editor
 
                 if (eventType == EventType.MouseDown)
                 {
-                    if (e.button == 0 && selGridInt != 0)
+                    if (e.button == 0 && selectedPrefabId != 0)
                     {
                         e.Use();
                         Refresh();
@@ -403,7 +403,7 @@ namespace Editor
                     }
                     else if (e.button == 1)
                     {
-                        selGridInt = 0;
+                        selectedPrefabId = 0;
                         Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
 
                         if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
@@ -412,7 +412,7 @@ namespace Editor
                             {
                                 if (prefabs[i].transform.name == hit.transform.parent.name)
                                 {
-                                    selGridInt = i + 2;
+                                    selectedPrefabId = i + 2;
                                 }
                             }
                         }
@@ -433,7 +433,7 @@ namespace Editor
             }
 
             LevelGizmo.UpdateGizmo(currentPos, gizmoColor);
-            LevelGizmo.Enable(selGridInt != 0);
+            LevelGizmo.Enable(selectedPrefabId != 0);
             sceneView.Repaint();
             Repaint();
         }
@@ -452,7 +452,7 @@ namespace Editor
                 if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
                 {
                     Vector3 pos = hit.point + (hit.normal * 0.5f);
-                    if (selGridInt == 1)
+                    if (selectedPrefabId == 1)
                     {
                         pos = hit.transform.position;
                     }
@@ -472,13 +472,13 @@ namespace Editor
 
         void CreateObject(Vector3 pos)
         {
-            if (selGridInt == 1)
+            if (selectedPrefabId == 1)
             {
                 ClearObjectsAtPosition(Vector3Int.RoundToInt(pos));
             }
             else
             {
-                GameObject prefab = prefabs[selGridInt - 2];
+                GameObject prefab = prefabs[selectedPrefabId - 2];
 
                 newGameObject = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
                 newGameObject.transform.position = pos;

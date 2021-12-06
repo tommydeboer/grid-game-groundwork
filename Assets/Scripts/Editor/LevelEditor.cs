@@ -82,21 +82,6 @@ namespace Editor
         void OnEnable()
         {
             SceneView.duringSceneGui += SceneGUI;
-            EditorApplication.playModeStateChanged += ChangedPlayModeState;
-        }
-
-        void ChangedPlayModeState(PlayModeStateChange state)
-        {
-            switch (state)
-            {
-                case PlayModeStateChange.EnteredPlayMode:
-                    playModeActive = true;
-                    break;
-                case PlayModeStateChange.EnteredEditMode:
-                    playModeActive = false;
-                    GetPlayModeJobs();
-                    break;
-            }
         }
 
         void OnValidate()
@@ -303,36 +288,6 @@ namespace Editor
                     }
                 }
             }
-        }
-
-        void GetPlayModeJobs()
-        {
-            IEnumerable<LevelPlayModePersistence.Job> jobs = LevelPlayModePersistence.GetJobs();
-            foreach (LevelPlayModePersistence.Job job in jobs)
-            {
-                if (job.name == "clear")
-                {
-                    Level.ClearAt(Utils.Vec3ToInt(job.position));
-                }
-                else
-                {
-                    PlayModeCreateObject(job.name, job.position, job.eulerAngles);
-                }
-            }
-        }
-
-        void PlayModeCreateObject(string objName, Vector3 position, Vector3 eulerAngles)
-        {
-            for (int i = 0; i < prefabs.Length; i++)
-            {
-                if (prefabs[i].transform.name == objName)
-                {
-                    selectedPrefabId = i + 2;
-                }
-            }
-
-            Level.CreateAt(GetSelectedPrefab(), position, eulerAngles);
-            Refresh();
         }
 
         void SceneGUI(SceneView sceneView)

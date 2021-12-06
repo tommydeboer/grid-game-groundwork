@@ -42,13 +42,6 @@ namespace Editor
                 // }
 
                 Utils.AvoidIntersect(obj.transform);
-
-                // TODO let LevelPlayModePersistence handle this if
-                // if (playModeActive)
-                // {
-                //     LevelPlayModePersistence.SaveNewObject(obj);
-                // }
-
                 Undo.RegisterCreatedObjectUndo(obj, "Create object");
             }
         }

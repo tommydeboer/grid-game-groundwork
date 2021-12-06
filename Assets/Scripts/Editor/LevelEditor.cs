@@ -29,7 +29,6 @@ namespace Editor
         bool isHoldingAlt;
         bool mouseButtonDown;
         Vector3 drawPos;
-        static GameObject newGameObject;
         static bool playModeActive;
         Event e;
         bool titleIsSet;
@@ -44,13 +43,13 @@ namespace Editor
         Color gizmoColor = Color.white;
         Vector2 mousePosOnClick;
 
-        GameObject Level
+        Level Level
         {
             get
             {
                 GameObject l = FindOrCreate(currentLevel, FindOrCreate("Levels").transform);
                 l.tag = "Level";
-                return l;
+                return new Level(l.transform);
             }
         }
 
@@ -187,7 +186,7 @@ namespace Editor
 
             if (previousLevel != currentLevel)
             {
-                Selection.activeGameObject = Level;
+                Selection.activeGameObject = Level.Root.gameObject;
             }
         }
 
@@ -313,7 +312,7 @@ namespace Editor
             {
                 if (job.name == "clear")
                 {
-                    ClearObjectsAtPosition(Utils.Vec3ToInt(job.position));
+                    Level.ClearAt(Utils.Vec3ToInt(job.position));
                 }
                 else
                 {
@@ -332,8 +331,8 @@ namespace Editor
                 }
             }
 
-            CreateObject(position);
-            newGameObject.transform.eulerAngles = eulerAngles;
+            Level.CreateAt(GetSelectedPrefab(), position, eulerAngles);
+            Refresh();
         }
 
         void SceneGUI(SceneView sceneView)
@@ -395,7 +394,8 @@ namespace Editor
                         e.Use();
                         Refresh();
                         drawPos = currentPos;
-                        CreateObject(Utils.Vec3ToInt(drawPos));
+                        Level.CreateAt(GetSelectedPrefab(), Utils.Vec3ToInt(drawPos));
+                        Refresh();
                         mouseButtonDown = true;
                         mousePosOnClick = e.mousePosition;
                     }
@@ -423,7 +423,8 @@ namespace Editor
                         if (!Utils.VectorRoughly2D(drawPos, currentPos, 0.75f))
                         {
                             drawPos = Utils.Vec3ToInt(currentPos);
-                            CreateObject(drawPos);
+                            Level.CreateAt(GetSelectedPrefab(), drawPos);
+                            Refresh();
                             mousePosOnClick = e.mousePosition;
                         }
                     }
@@ -460,80 +461,14 @@ namespace Editor
             return Vector3.zero;
         }
 
-        void CreateObject(Vector3 pos)
+        GameObject GetSelectedPrefab()
         {
             if (selectedPrefabId == 1)
             {
-                ClearObjectsAtPosition(Vector3Int.RoundToInt(pos));
-            }
-            else
-            {
-                GameObject prefab = prefabs[selectedPrefabId - 2];
-
-                newGameObject = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-                newGameObject.transform.position = pos;
-
-                newGameObject.transform.parent = Level.transform;
-
-                int z = 0;
-                switch (rotateInt)
-                {
-                    case 0:
-                        z = 0;
-                        break;
-                    case 1:
-                        z = 90;
-                        break;
-                    case 2:
-                        z = 180;
-                        break;
-                    case 3:
-                        z = 270;
-                        break;
-                }
-
-                newGameObject.transform.eulerAngles = new Vector3(0, 0, z);
-
-                Vector3 p = newGameObject.transform.position;
-                if (spawnHeight < p.z)
-                {
-                    newGameObject.transform.position = new Vector3(p.x, p.y, -Mathf.Abs(spawnHeight));
-                }
-
-                Utils.AvoidIntersect(newGameObject.transform);
-
-                if (playModeActive)
-                {
-                    LevelPlayModePersistence.SaveNewObject(newGameObject);
-                }
-
-                Undo.RegisterCreatedObjectUndo(newGameObject, "Create object");
+                return null;
             }
 
-            Refresh();
-        }
-
-        void ClearObjectsAtPosition(Vector3Int pos)
-        {
-            bool foundSomething = true;
-            while (foundSomething)
-            {
-                foundSomething = false;
-                foreach (Transform child in Level.transform)
-                {
-                    foreach (Transform tile in child)
-                    {
-                        var position1 = tile.position;
-                        bool atPosition = Utils.VectorRoughly(position1, pos);
-                        if (tile.CompareTag("Tile") && atPosition)
-                        {
-                            foundSomething = true;
-                            Undo.DestroyObjectImmediate(child.gameObject);
-                            break;
-                        }
-                    }
-                }
-            }
+            return prefabs[selectedPrefabId - 2];
         }
     }
 }

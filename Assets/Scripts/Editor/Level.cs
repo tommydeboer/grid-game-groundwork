@@ -5,13 +5,11 @@ namespace Editor
 {
     public class Level
     {
-        readonly Transform root;
-
-        public Transform Root => root;
+        public Transform Root { get; }
 
         public Level(Transform root)
         {
-            this.root = root;
+            Root = root;
         }
 
         public void CreateAt(Object prefab, Vector3 pos, Vector3? eulerAngles = null)
@@ -52,7 +50,7 @@ namespace Editor
             while (foundSomething)
             {
                 foundSomething = false;
-                foreach (Transform child in root)
+                foreach (Transform child in Root)
                 {
                     foreach (Transform tile in child)
                     {

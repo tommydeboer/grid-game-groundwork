@@ -8,6 +8,8 @@ using UnityEngine;
 
 namespace Editor
 {
+    //TODO add play mode persistence: https://stackoverflow.com/questions/56594340/store-editor-values-between-editor-sessions
+    //TODO configure prefabs via ScriptableObject instead of a text file
     public class LevelEditor : EditorWindow
     {
         int selectedPrefabId;
@@ -31,7 +33,6 @@ namespace Editor
         Vector3 drawPos;
         static bool playModeActive;
         Event e;
-        bool titleIsSet;
 
         static string textFilePath => Application.dataPath + "/leveleditorprefabs.txt";
 
@@ -76,7 +77,9 @@ namespace Editor
         [MenuItem("Window/Level Editor")]
         public static void ShowWindow()
         {
-            GetWindow(typeof(LevelEditor));
+            EditorWindow editorWindow = GetWindow(typeof(LevelEditor));
+            var texture = Resources.Load<Texture2D>("ggg");
+            editorWindow.titleContent = new GUIContent("Level Editor", texture);
         }
 
         void OnEnable()
@@ -148,13 +151,6 @@ namespace Editor
         void OnGUI()
         {
             string previousLevel = currentLevel;
-
-            if (!titleIsSet)
-            {
-                titleIsSet = true;
-                var texture = Resources.Load<Texture2D>("ggg");
-                titleContent = new GUIContent("Level Editor", texture);
-            }
 
             GUI.backgroundColor = Color.grey;
 

@@ -1,6 +1,0 @@
-Crate
-Crate L
-Player
-Wall
-WallAlt
-Target

@@ -13,7 +13,6 @@ namespace Editor
     public class LevelEditor : EditorWindow
     {
         int selectedPrefabId;
-        string[] selectStrings;
 
         int rotateInt;
 
@@ -26,15 +25,11 @@ namespace Editor
         string currentLevel;
         bool overwriteLevel;
 
-        public GameObject[] prefabs;
-
         bool isHoldingAlt;
         bool mouseButtonDown;
         Vector3 drawPos;
         static bool playModeActive;
         Event e;
-
-        static string textFilePath => Application.dataPath + "/leveleditorprefabs.txt";
 
         int sceneLevelIndex;
         bool snapToGrid = true;
@@ -43,6 +38,9 @@ namespace Editor
         Vector2 scrollPos;
         Color gizmoColor = Color.white;
         Vector2 mousePosOnClick;
+
+        static EditorPrefabs editorPrefabs;
+        static List<GameObject> Prefabs => editorPrefabs.Prefabs;
 
         Level Level
         {
@@ -74,6 +72,19 @@ namespace Editor
 
         readonly List<string> sceneLevels = new();
 
+        [InitializeOnLoadMethod]
+        static void OnLoad()
+        {
+            if (!editorPrefabs)
+            {
+                editorPrefabs = AssetDatabase.LoadAssetAtPath<EditorPrefabs>("Assets/Resources/EditorPrefabs.asset");
+                if (editorPrefabs) return;
+                editorPrefabs = CreateInstance<EditorPrefabs>();
+                AssetDatabase.CreateAsset(editorPrefabs, "Assets/CustomMenuData.asset");
+                AssetDatabase.Refresh();
+            }
+        }
+
         [MenuItem("Window/Level Editor")]
         public static void ShowWindow()
         {
@@ -85,6 +96,15 @@ namespace Editor
         void OnEnable()
         {
             SceneView.duringSceneGui += SceneGUI;
+
+            if (string.IsNullOrEmpty(currentLevel))
+            {
+                GameObject level = GameObject.FindGameObjectWithTag("Level");
+                if (level != null)
+                {
+                    currentLevel = level.name;
+                }
+            }
         }
 
         void OnValidate()
@@ -120,18 +140,6 @@ namespace Editor
             }
         }
 
-        void PopulateList()
-        {
-            if (prefabs.Length == 0 && File.Exists(textFilePath))
-            {
-                string[] prefabNames = File.ReadAllLines(textFilePath);
-
-                prefabs = prefabNames
-                    .Select(Resources.Load<GameObject>)
-                    .Where(go => go != null).ToArray();
-            }
-        }
-
         void RefreshSceneLevels()
         {
             sceneLevels.Clear();
@@ -154,15 +162,46 @@ namespace Editor
 
             BigSpace();
 
-            if (string.IsNullOrEmpty(currentLevel))
-            {
-                GameObject level = GameObject.FindGameObjectWithTag("Level");
-                if (level != null)
-                {
-                    currentLevel = level.name;
-                }
-            }
+            if (!DrawLevelSelection()) return;
 
+            BigSpace();
+
+            DrawPlacementUI();
+
+            BigSpace();
+
+            gizmoColor = EditorGUILayout.ColorField("Gizmo Color:", gizmoColor);
+
+            ///////////////// SPAWN //////////////////
+
+            spawnHeight = EditorGUILayout.IntSlider("Spawn at height:", spawnHeight, 0, 20);
+
+            snapToGrid = EditorGUILayout.Toggle("Snap to grid:", snapToGrid);
+
+            BigSpace();
+
+            SerializedObject serialObj = new SerializedObject(editorPrefabs);
+            SerializedProperty serialProp = serialObj.FindProperty("prefabs");
+            EditorGUILayout.PropertyField(serialProp, true);
+            serialObj.ApplyModifiedProperties();
+        }
+
+        void DrawPlacementUI()
+        {
+            var labels = new List<string> {"None", "Erase"};
+            labels.AddRange(from prefab in Prefabs select prefab.transform.name);
+
+            GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
+            selectedPrefabId = GUILayout.SelectionGrid(selectedPrefabId, labels.ToArray(), 1);
+
+            BigSpace();
+
+            GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
+            rotateInt = GUILayout.SelectionGrid(rotateInt, rotateStrings, 4);
+        }
+
+        bool DrawLevelSelection()
+        {
             GUILayout.Label("Currently Editing: ", EditorStyles.boldLabel);
 
             sceneLevelIndex = 0;
@@ -179,44 +218,10 @@ namespace Editor
 
             if (currentLevel == null)
             {
-                return;
+                return false;
             }
 
-            BigSpace();
-
-            if (prefabs != null && prefabs.Length > 0)
-            {
-                var selectStringsTmp = new List<string> {"None", "Erase"};
-                selectStringsTmp.AddRange(
-                    from prefab in prefabs where prefab != null select prefab.transform.name);
-
-                selectStrings = selectStringsTmp.ToArray();
-            }
-            else
-            {
-                PopulateList();
-                return;
-            }
-
-            GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
-            selectedPrefabId = GUILayout.SelectionGrid(selectedPrefabId, selectStrings, 3, GUILayout.Width(370));
-
-            BigSpace();
-
-            GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
-            rotateInt = GUILayout.SelectionGrid(rotateInt, rotateStrings, 4, GUILayout.Width(330));
-
-            BigSpace();
-
-            gizmoColor = EditorGUILayout.ColorField("Gizmo Color:", gizmoColor);
-
-            ///////////////// SPAWN //////////////////
-
-            spawnHeight = EditorGUILayout.IntSlider("Spawn at height:", spawnHeight, 0, 20);
-
-            snapToGrid = EditorGUILayout.Toggle("Snap to grid:", snapToGrid);
-
-            BigSpace();
+            return true;
         }
 
 
@@ -322,9 +327,9 @@ namespace Editor
 
                         if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
                         {
-                            for (int i = 0; i < prefabs.Length; i++)
+                            for (int i = 0; i < Prefabs.Count; i++)
                             {
-                                if (prefabs[i].transform.name == hit.transform.parent.name)
+                                if (Prefabs[i].transform.name == hit.transform.parent.name)
                                 {
                                     selectedPrefabId = i + 2;
                                 }
@@ -384,7 +389,7 @@ namespace Editor
                 return null;
             }
 
-            return prefabs[selectedPrefabId - 2];
+            return Prefabs[selectedPrefabId - 2];
         }
     }
 }

@@ -150,42 +150,6 @@ namespace Editor
 
         void OnGUI()
         {
-            string previousLevel = currentLevel;
-
-            GUI.backgroundColor = Color.grey;
-
-            BeginWindows();
-            Rect windowRect = new Rect(20, 20, 420, 650);
-
-            GUIStyle myStyle = new GUIStyle(GUI.skin.window)
-            {
-                padding = new RectOffset(15, 15, 15, 15)
-            };
-
-            GUILayout.Window(1, windowRect, GetWindows, "", myStyle);
-            EndWindows();
-
-            if (previousLevel != currentLevel)
-            {
-                Selection.activeGameObject = Level.Root.gameObject;
-            }
-        }
-
-        void GetWindows(int unusedWindowID)
-        {
-            scrollPos = GUILayout.BeginScrollView(scrollPos);
-
-            RefreshSceneLevels();
-            if (sceneLevels.Count > 0)
-            {
-                DrawingWindow();
-            }
-
-            EditorGUILayout.EndScrollView();
-        }
-
-        void DrawingWindow()
-        {
             GUILayout.Label("DRAWING", EditorStyles.centeredGreyMiniLabel);
 
             BigSpace();
@@ -254,6 +218,7 @@ namespace Editor
 
             BigSpace();
         }
+
 
         static void BigSpace()
         {

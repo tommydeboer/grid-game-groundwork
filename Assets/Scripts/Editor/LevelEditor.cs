@@ -9,7 +9,6 @@ using UnityEngine;
 namespace Editor
 {
     //TODO add play mode persistence: https://stackoverflow.com/questions/56594340/store-editor-values-between-editor-sessions
-    //TODO configure prefabs via ScriptableObject instead of a text file
     public class LevelEditor : EditorWindow
     {
         int selectedPrefabId;
@@ -30,6 +29,11 @@ namespace Editor
         Vector3 drawPos;
         static bool playModeActive;
         Event e;
+
+        bool showConfiguration;
+        bool showPlacement;
+        bool showLevelSelection;
+        const float indentSize = 15f;
 
         int sceneLevelIndex;
         bool isLoading;
@@ -157,68 +161,87 @@ namespace Editor
 
         void OnGUI()
         {
-            GUILayout.Label("DRAWING", EditorStyles.centeredGreyMiniLabel);
+            showLevelSelection = EditorGUILayout.Foldout(showLevelSelection, "Level");
+            if (showLevelSelection) DrawLevelSelectionUI();
+
+            showPlacement = EditorGUILayout.Foldout(showPlacement, "Placement");
+            if (showPlacement) DrawPlacementUI();
+
+            showConfiguration = EditorGUILayout.Foldout(showConfiguration, "Configuration");
+            if (showConfiguration) DrawConfigurationUI();
+        }
+
+        void DrawConfigurationUI()
+        {
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Space(indentSize);
+
+                using (new GUILayout.VerticalScope())
+                {
+                    gizmoColor = EditorGUILayout.ColorField("Gizmo Color:", gizmoColor);
+
+                    SerializedObject serialObj = new SerializedObject(editorPrefabs);
+                    SerializedProperty serialProp = serialObj.FindProperty("prefabs");
+                    EditorGUILayout.PropertyField(serialProp, true);
+                    serialObj.ApplyModifiedProperties();
+                }
+            }
 
             BigSpace();
-
-            if (!DrawLevelSelection()) return;
-
-            BigSpace();
-
-            DrawPlacementUI();
-
-            BigSpace();
-
-            gizmoColor = EditorGUILayout.ColorField("Gizmo Color:", gizmoColor);
-
-            ///////////////// SPAWN //////////////////
-
-            spawnHeight = EditorGUILayout.IntSlider("Spawn at height:", spawnHeight, 0, 20);
-
-            BigSpace();
-
-            SerializedObject serialObj = new SerializedObject(editorPrefabs);
-            SerializedProperty serialProp = serialObj.FindProperty("prefabs");
-            EditorGUILayout.PropertyField(serialProp, true);
-            serialObj.ApplyModifiedProperties();
         }
 
         void DrawPlacementUI()
         {
-            var labels = new List<string> {"None", "Erase"};
-            labels.AddRange(from prefab in Prefabs select prefab.transform.name);
-
-            GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
-            selectedPrefabId = GUILayout.SelectionGrid(selectedPrefabId, labels.ToArray(), 1);
-
-            BigSpace();
-
-            GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
-            rotateInt = GUILayout.SelectionGrid(rotateInt, rotateStrings, 4);
-        }
-
-        bool DrawLevelSelection()
-        {
-            GUILayout.Label("Currently Editing: ", EditorStyles.boldLabel);
-
-            sceneLevelIndex = 0;
-            for (int i = 0; i < sceneLevels.Count; i++)
+            using (new GUILayout.HorizontalScope())
             {
-                if (sceneLevels[i] == currentLevel)
+                GUILayout.Space(indentSize);
+
+                using (new GUILayout.VerticalScope())
                 {
-                    sceneLevelIndex = i;
+                    var labels = new List<string> {"None", "Erase"};
+                    labels.AddRange(from prefab in Prefabs select prefab.transform.name);
+
+                    GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
+                    selectedPrefabId = GUILayout.SelectionGrid(selectedPrefabId, labels.ToArray(), 1);
+
+                    BigSpace();
+
+                    GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
+                    rotateInt = GUILayout.SelectionGrid(rotateInt, rotateStrings, 4);
+
+                    spawnHeight = EditorGUILayout.IntSlider("Spawn at height:", spawnHeight, 0, 20);
                 }
             }
 
-            sceneLevelIndex = EditorGUILayout.Popup(sceneLevelIndex, sceneLevels.ToArray());
-            currentLevel = sceneLevels[sceneLevelIndex];
+            BigSpace();
+        }
 
-            if (currentLevel == null)
+        void DrawLevelSelectionUI()
+        {
+            using (new GUILayout.HorizontalScope())
             {
-                return false;
+                GUILayout.Space(indentSize);
+
+                using (new GUILayout.VerticalScope())
+                {
+                    GUILayout.Label("Currently Editing: ", EditorStyles.boldLabel);
+
+                    sceneLevelIndex = 0;
+                    for (int i = 0; i < sceneLevels.Count; i++)
+                    {
+                        if (sceneLevels[i] == currentLevel)
+                        {
+                            sceneLevelIndex = i;
+                        }
+                    }
+
+                    sceneLevelIndex = EditorGUILayout.Popup(sceneLevelIndex, sceneLevels.ToArray());
+                    currentLevel = sceneLevels[sceneLevelIndex];
+                }
             }
 
-            return true;
+            BigSpace();
         }
 
 

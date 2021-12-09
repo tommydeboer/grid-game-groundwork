@@ -32,7 +32,6 @@ namespace Editor
         Event e;
 
         int sceneLevelIndex;
-        bool snapToGrid = true;
         bool isLoading;
         Vector3 prevPosition;
         Vector2 scrollPos;
@@ -176,8 +175,6 @@ namespace Editor
 
             spawnHeight = EditorGUILayout.IntSlider("Spawn at height:", spawnHeight, 0, 20);
 
-            snapToGrid = EditorGUILayout.Toggle("Snap to grid:", snapToGrid);
-
             BigSpace();
 
             SerializedObject serialObj = new SerializedObject(editorPrefabs);
@@ -230,30 +227,6 @@ namespace Editor
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             EditorGUILayout.Space();
-        }
-
-        void Update()
-        {
-            if (!EditorApplication.isPlaying && Selection.transforms.Length > 0 &&
-                Selection.transforms[0].position != prevPosition)
-            {
-                foreach (Transform t in Selection.transforms)
-                {
-                    if (t.CompareTag("Level"))
-                    {
-                        currentLevel = t.name;
-                    }
-
-                    if (snapToGrid)
-                    {
-                        if (t.CompareTag("Level") || (t.parent != null && t.parent.CompareTag("Level")))
-                        {
-                            Utils.RoundPosition(t);
-                            prevPosition = t.position;
-                        }
-                    }
-                }
-            }
         }
 
         void SceneGUI(SceneView sceneView)

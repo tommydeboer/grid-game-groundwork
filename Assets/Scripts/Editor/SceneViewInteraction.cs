@@ -7,6 +7,7 @@ namespace Editor
     public class SceneViewInteraction
     {
         readonly LevelEditor levelEditor;
+        readonly LevelFactory levelFactory;
         bool isHoldingAlt;
         bool mouseButtonDown;
         Vector3 drawPos;
@@ -20,11 +21,13 @@ namespace Editor
             set => levelEditor.SpawnHeight = value;
         }
 
+        string CurrentLevel => levelEditor.CurrentLevel;
         Color GizmoColor => levelEditor.GizmoColor;
 
         public SceneViewInteraction(LevelEditor levelEditor)
         {
             this.levelEditor = levelEditor;
+            levelFactory = new LevelFactory();
         }
 
         public void OnSceneGUI(SceneView view)
@@ -87,7 +90,7 @@ namespace Editor
                         e.Use();
                         levelEditor.Refresh();
                         drawPos = currentPos;
-                        levelEditor.Level.CreateAt(GetSelectedPrefab(), Utils.Vec3ToInt(drawPos));
+                        levelFactory.GetLevel(CurrentLevel).CreateAt(GetSelectedPrefab(), Utils.Vec3ToInt(drawPos));
                         levelEditor.Refresh();
                         mouseButtonDown = true;
                         mousePosOnClick = e.mousePosition;
@@ -116,7 +119,7 @@ namespace Editor
                         if (!Utils.VectorRoughly2D(drawPos, currentPos, 0.75f))
                         {
                             drawPos = Utils.Vec3ToInt(currentPos);
-                            levelEditor.Level.CreateAt(GetSelectedPrefab(), drawPos);
+                            levelFactory.GetLevel(CurrentLevel).CreateAt(GetSelectedPrefab(), drawPos);
                             levelEditor.Refresh();
                             mousePosOnClick = e.mousePosition;
                         }

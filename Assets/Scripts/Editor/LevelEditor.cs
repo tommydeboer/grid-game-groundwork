@@ -13,7 +13,8 @@ namespace Editor
     {
         public int SelectedPrefabId { get; set; }
         public int SpawnHeight { get; set; }
-        public Color GizmoColor { get; set; } = Color.white;
+        public Color GizmoColor { get; private set; } = Color.white;
+        public string CurrentLevel { get; private set; }
 
         int rotateInt;
 
@@ -21,8 +22,6 @@ namespace Editor
         {
             "0", "90", "180", "270"
         };
-
-        string currentLevel;
 
         bool showConfiguration;
         bool showPlacement = true;
@@ -34,34 +33,6 @@ namespace Editor
 
         static EditorPrefabs editorPrefabs;
         public static List<GameObject> Prefabs => editorPrefabs.Prefabs;
-
-        public Level Level
-        {
-            get
-            {
-                GameObject l = FindOrCreate(currentLevel, FindOrCreate("Levels").transform);
-                l.tag = "Level";
-                return new Level(l.transform);
-            }
-        }
-
-        static GameObject FindOrCreate(string s, Transform parentObj = null)
-        {
-            GameObject go = GameObject.Find(s);
-            if (go == null)
-            {
-                go = new GameObject();
-                go.transform.name = s;
-                if (parentObj != null)
-                {
-                    go.transform.SetParent(parentObj);
-                }
-
-                Undo.RegisterCreatedObjectUndo(go, "Create object");
-            }
-
-            return go;
-        }
 
         readonly List<string> sceneLevels = new();
 
@@ -93,12 +64,12 @@ namespace Editor
 
             margin = new GUIStyle {margin = new RectOffset(15, 15, 10, 15)};
 
-            if (string.IsNullOrEmpty(currentLevel))
+            if (string.IsNullOrEmpty(CurrentLevel))
             {
                 GameObject level = GameObject.FindGameObjectWithTag("Level");
                 if (level != null)
                 {
-                    currentLevel = level.name;
+                    CurrentLevel = level.name;
                 }
             }
         }
@@ -219,6 +190,7 @@ namespace Editor
 
         void DrawLevelSelectionUI()
         {
+            // TODO fix: new levels not added to dropdown
             using (new GUILayout.VerticalScope(margin))
             {
                 GUILayout.Label("Currently Editing: ", EditorStyles.boldLabel);
@@ -226,14 +198,14 @@ namespace Editor
                 sceneLevelIndex = 0;
                 for (int i = 0; i < sceneLevels.Count; i++)
                 {
-                    if (sceneLevels[i] == currentLevel)
+                    if (sceneLevels[i] == CurrentLevel)
                     {
                         sceneLevelIndex = i;
                     }
                 }
 
                 sceneLevelIndex = EditorGUILayout.Popup(sceneLevelIndex, sceneLevels.ToArray());
-                currentLevel = sceneLevels[sceneLevelIndex];
+                CurrentLevel = sceneLevels[sceneLevelIndex];
             }
         }
 

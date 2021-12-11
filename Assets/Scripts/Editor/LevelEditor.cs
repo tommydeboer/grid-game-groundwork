@@ -27,7 +27,7 @@ namespace Editor
         bool showConfiguration;
         bool showPlacement = true;
         bool showLevelSelection;
-        const float indentSize = 15f;
+        GUIStyle margin;
         SceneViewInteraction sceneViewInteraction;
 
         int sceneLevelIndex;
@@ -91,6 +91,8 @@ namespace Editor
             sceneViewInteraction = new SceneViewInteraction(this);
             SceneView.duringSceneGui += sceneViewInteraction.OnSceneGUI;
 
+            margin = new GUIStyle {margin = new RectOffset(15, 15, 10, 15)};
+
             if (string.IsNullOrEmpty(currentLevel))
             {
                 GameObject level = GameObject.FindGameObjectWithTag("Level");
@@ -151,94 +153,93 @@ namespace Editor
 
         void OnGUI()
         {
-            showLevelSelection = EditorGUILayout.Foldout(showLevelSelection, "Level");
-            if (showLevelSelection) DrawLevelSelectionUI();
+            using (new GUILayout.HorizontalScope(EditorStyles.helpBox))
+            {
+                using (new GUILayout.VerticalScope())
+                {
+                    showLevelSelection = EditorGUILayout.Foldout(showLevelSelection, "Level");
+                    if (showLevelSelection) DrawLevelSelectionUI();
+                }
+            }
 
-            showPlacement = EditorGUILayout.Foldout(showPlacement, "Placement");
-            if (showPlacement) DrawPlacementUI();
+            using (new GUILayout.HorizontalScope(EditorStyles.helpBox))
+            {
+                using (new GUILayout.VerticalScope())
+                {
+                    showPlacement = EditorGUILayout.Foldout(showPlacement, "Placement");
+                    if (showPlacement) DrawPlacementUI();
+                }
+            }
 
-            showConfiguration = EditorGUILayout.Foldout(showConfiguration, "Configuration");
-            if (showConfiguration) DrawConfigurationUI();
+            using (new GUILayout.HorizontalScope(EditorStyles.helpBox))
+            {
+                using (new GUILayout.VerticalScope())
+                {
+                    showConfiguration = EditorGUILayout.Foldout(showConfiguration, "Configuration");
+                    if (showConfiguration) DrawConfigurationUI();
+                }
+            }
         }
 
         void DrawConfigurationUI()
         {
-            using (new GUILayout.HorizontalScope())
+            using (new GUILayout.VerticalScope(margin))
             {
-                GUILayout.Space(indentSize);
+                GizmoColor = EditorGUILayout.ColorField("Gizmo Color:", GizmoColor);
 
-                using (new GUILayout.VerticalScope())
-                {
-                    GizmoColor = EditorGUILayout.ColorField("Gizmo Color:", GizmoColor);
+                BigSpace();
 
-                    SerializedObject serialObj = new SerializedObject(editorPrefabs);
-                    SerializedProperty serialProp = serialObj.FindProperty("prefabs");
-                    EditorGUILayout.PropertyField(serialProp, true);
-                    serialObj.ApplyModifiedProperties();
-                }
+                SerializedObject serialObj = new SerializedObject(editorPrefabs);
+                SerializedProperty serialProp = serialObj.FindProperty("prefabs");
+                EditorGUILayout.PropertyField(serialProp, true);
+                serialObj.ApplyModifiedProperties();
             }
-
-            BigSpace();
         }
 
         void DrawPlacementUI()
         {
-            using (new GUILayout.HorizontalScope())
+            using (new GUILayout.VerticalScope(margin))
             {
-                GUILayout.Space(indentSize);
+                var labels = new List<string> {"None", "Erase"};
+                labels.AddRange(from prefab in Prefabs select prefab.transform.name);
 
-                using (new GUILayout.VerticalScope())
-                {
-                    var labels = new List<string> {"None", "Erase"};
-                    labels.AddRange(from prefab in Prefabs select prefab.transform.name);
+                GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
+                SelectedPrefabId = GUILayout.SelectionGrid(SelectedPrefabId, labels.ToArray(), 1);
 
-                    GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
-                    SelectedPrefabId = GUILayout.SelectionGrid(SelectedPrefabId, labels.ToArray(), 1);
+                BigSpace();
 
-                    BigSpace();
+                GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
+                rotateInt = GUILayout.SelectionGrid(rotateInt, rotateStrings, 4);
 
-                    GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
-                    rotateInt = GUILayout.SelectionGrid(rotateInt, rotateStrings, 4);
+                BigSpace();
 
-                    SpawnHeight = EditorGUILayout.IntSlider("Spawn at height:", SpawnHeight, 0, 20);
-                }
+                SpawnHeight = EditorGUILayout.IntSlider("Spawn at height:", SpawnHeight, 0, 20);
             }
-
-            BigSpace();
         }
 
         void DrawLevelSelectionUI()
         {
-            using (new GUILayout.HorizontalScope())
+            using (new GUILayout.VerticalScope(margin))
             {
-                GUILayout.Space(indentSize);
+                GUILayout.Label("Currently Editing: ", EditorStyles.boldLabel);
 
-                using (new GUILayout.VerticalScope())
+                sceneLevelIndex = 0;
+                for (int i = 0; i < sceneLevels.Count; i++)
                 {
-                    GUILayout.Label("Currently Editing: ", EditorStyles.boldLabel);
-
-                    sceneLevelIndex = 0;
-                    for (int i = 0; i < sceneLevels.Count; i++)
+                    if (sceneLevels[i] == currentLevel)
                     {
-                        if (sceneLevels[i] == currentLevel)
-                        {
-                            sceneLevelIndex = i;
-                        }
+                        sceneLevelIndex = i;
                     }
-
-                    sceneLevelIndex = EditorGUILayout.Popup(sceneLevelIndex, sceneLevels.ToArray());
-                    currentLevel = sceneLevels[sceneLevelIndex];
                 }
-            }
 
-            BigSpace();
+                sceneLevelIndex = EditorGUILayout.Popup(sceneLevelIndex, sceneLevels.ToArray());
+                currentLevel = sceneLevels[sceneLevelIndex];
+            }
         }
 
         static void BigSpace()
         {
-            EditorGUILayout.Space();
-            EditorGUILayout.Space();
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(15);
         }
     }
 }

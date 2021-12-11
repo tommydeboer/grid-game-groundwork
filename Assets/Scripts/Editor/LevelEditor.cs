@@ -11,11 +11,6 @@ namespace Editor
     //TODO add play mode persistence: https://stackoverflow.com/questions/56594340/store-editor-values-between-editor-sessions
     public class LevelEditor : EditorWindow
     {
-        public int SelectedPrefabId { get; set; }
-        public int SpawnHeight { get; set; }
-        public Color GizmoColor { get; private set; } = Color.white;
-        public string CurrentLevel { get; private set; }
-
         int rotateInt;
 
         readonly string[] rotateStrings =
@@ -30,11 +25,10 @@ namespace Editor
         SceneViewInteraction sceneViewInteraction;
 
         int sceneLevelIndex;
-
-        static EditorPrefabs editorPrefabs;
-        public static List<GameObject> Prefabs => editorPrefabs.Prefabs;
-
         readonly List<string> sceneLevels = new();
+
+        static LevelEditorValues values;
+        static EditorPrefabs editorPrefabs;
 
         [InitializeOnLoadMethod]
         static void OnLoad()
@@ -42,10 +36,25 @@ namespace Editor
             if (!editorPrefabs)
             {
                 editorPrefabs = AssetDatabase.LoadAssetAtPath<EditorPrefabs>("Assets/Resources/EditorPrefabs.asset");
-                if (editorPrefabs) return;
-                editorPrefabs = CreateInstance<EditorPrefabs>();
-                AssetDatabase.CreateAsset(editorPrefabs, "Assets/CustomMenuData.asset");
-                AssetDatabase.Refresh();
+                if (!editorPrefabs)
+                {
+                    editorPrefabs = CreateInstance<EditorPrefabs>();
+                    AssetDatabase.CreateAsset(editorPrefabs, "Assets/Resources/EditorPrefabs.asset");
+                    AssetDatabase.Refresh();
+                }
+            }
+
+            if (!values)
+            {
+                values =
+                    AssetDatabase.LoadAssetAtPath<LevelEditorValues>("Assets/Resources/LevelEditorValues.asset");
+                if (!values)
+                {
+                    values = CreateInstance<LevelEditorValues>();
+                    values.EditorPrefabs = editorPrefabs;
+                    AssetDatabase.CreateAsset(values, "Assets/Resources/LevelEditorValues.asset");
+                    AssetDatabase.Refresh();
+                }
             }
         }
 
@@ -59,17 +68,17 @@ namespace Editor
 
         void OnEnable()
         {
-            sceneViewInteraction = new SceneViewInteraction(this);
+            sceneViewInteraction = new SceneViewInteraction(this, values);
             SceneView.duringSceneGui += sceneViewInteraction.OnSceneGUI;
 
             margin = new GUIStyle {margin = new RectOffset(15, 15, 10, 15)};
 
-            if (string.IsNullOrEmpty(CurrentLevel))
+            if (string.IsNullOrEmpty(values.CurrentLevel))
             {
                 GameObject level = GameObject.FindGameObjectWithTag("Level");
                 if (level != null)
                 {
-                    CurrentLevel = level.name;
+                    values.CurrentLevel = level.name;
                 }
             }
         }
@@ -156,7 +165,7 @@ namespace Editor
         {
             using (new GUILayout.VerticalScope(margin))
             {
-                GizmoColor = EditorGUILayout.ColorField("Gizmo Color:", GizmoColor);
+                values.GizmoColor = EditorGUILayout.ColorField("Gizmo Color:", values.GizmoColor);
 
                 BigSpace();
 
@@ -172,10 +181,10 @@ namespace Editor
             using (new GUILayout.VerticalScope(margin))
             {
                 var labels = new List<string> {"None", "Erase"};
-                labels.AddRange(from prefab in Prefabs select prefab.transform.name);
+                labels.AddRange(from prefab in values.Prefabs select prefab.transform.name);
 
                 GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
-                SelectedPrefabId = GUILayout.SelectionGrid(SelectedPrefabId, labels.ToArray(), 1);
+                values.SelectedPrefabId = GUILayout.SelectionGrid(values.SelectedPrefabId, labels.ToArray(), 1);
 
                 BigSpace();
 
@@ -184,7 +193,7 @@ namespace Editor
 
                 BigSpace();
 
-                SpawnHeight = EditorGUILayout.IntSlider("Spawn at height:", SpawnHeight, 0, 20);
+                values.SpawnHeight = EditorGUILayout.IntSlider("Spawn at height:", values.SpawnHeight, 0, 20);
             }
         }
 
@@ -198,14 +207,14 @@ namespace Editor
                 sceneLevelIndex = 0;
                 for (int i = 0; i < sceneLevels.Count; i++)
                 {
-                    if (sceneLevels[i] == CurrentLevel)
+                    if (sceneLevels[i] == values.CurrentLevel)
                     {
                         sceneLevelIndex = i;
                     }
                 }
 
                 sceneLevelIndex = EditorGUILayout.Popup(sceneLevelIndex, sceneLevels.ToArray());
-                CurrentLevel = sceneLevels[sceneLevelIndex];
+                values.CurrentLevel = sceneLevels[sceneLevelIndex];
             }
         }
 

@@ -7,26 +7,18 @@ namespace Editor
     public class SceneViewInteraction
     {
         readonly LevelEditor levelEditor;
+        readonly LevelEditorValues values;
         readonly LevelFactory levelFactory;
+
         bool isHoldingAlt;
         bool mouseButtonDown;
         Vector3 drawPos;
         Vector2 mousePosOnClick;
 
-        int SelectedPrefabId => levelEditor.SelectedPrefabId;
-
-        int SpawnHeight
-        {
-            get => levelEditor.SpawnHeight;
-            set => levelEditor.SpawnHeight = value;
-        }
-
-        string CurrentLevel => levelEditor.CurrentLevel;
-        Color GizmoColor => levelEditor.GizmoColor;
-
-        public SceneViewInteraction(LevelEditor levelEditor)
+        public SceneViewInteraction(LevelEditor levelEditor, LevelEditorValues values)
         {
             this.levelEditor = levelEditor;
+            this.values = values;
             levelFactory = new LevelFactory();
         }
 
@@ -45,9 +37,9 @@ namespace Editor
             }
 
             Vector3 currentPos = GetPosition(e.mousePosition);
-            if (SelectedPrefabId != 1)
+            if (values.SelectedPrefabId != 1)
             {
-                currentPos += (Vector3.back * SpawnHeight);
+                currentPos += (Vector3.back * values.SpawnHeight);
                 currentPos = Utils.AvoidIntersect(currentPos);
             }
 
@@ -71,7 +63,7 @@ namespace Editor
                 if (eventType == EventType.ScrollWheel)
                 {
                     int deltaY = (e.delta.y < 0) ? -1 : 1;
-                    SpawnHeight += deltaY;
+                    values.SpawnHeight += deltaY;
                     currentPos += (Vector3.back * deltaY);
                     e.Use();
                 }
@@ -85,28 +77,29 @@ namespace Editor
 
                 if (eventType == EventType.MouseDown)
                 {
-                    if (e.button == 0 && SelectedPrefabId != 0)
+                    if (e.button == 0 && values.SelectedPrefabId != 0)
                     {
                         e.Use();
                         levelEditor.Refresh();
                         drawPos = currentPos;
-                        levelFactory.GetLevel(CurrentLevel).CreateAt(GetSelectedPrefab(), Utils.Vec3ToInt(drawPos));
+                        levelFactory.GetLevel(values.CurrentLevel)
+                            .CreateAt(GetSelectedPrefab(), Utils.Vec3ToInt(drawPos));
                         levelEditor.Refresh();
                         mouseButtonDown = true;
                         mousePosOnClick = e.mousePosition;
                     }
                     else if (e.button == 1)
                     {
-                        levelEditor.SelectedPrefabId = 0;
+                        values.SelectedPrefabId = 0;
                         Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
 
                         if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
                         {
-                            for (int i = 0; i < LevelEditor.Prefabs.Count; i++)
+                            for (int i = 0; i < values.Prefabs.Count; i++)
                             {
-                                if (LevelEditor.Prefabs[i].transform.name == hit.transform.parent.name)
+                                if (values.Prefabs[i].transform.name == hit.transform.parent.name)
                                 {
-                                    levelEditor.SelectedPrefabId = i + 2;
+                                    values.SelectedPrefabId = i + 2;
                                 }
                             }
                         }
@@ -119,7 +112,7 @@ namespace Editor
                         if (!Utils.VectorRoughly2D(drawPos, currentPos, 0.75f))
                         {
                             drawPos = Utils.Vec3ToInt(currentPos);
-                            levelFactory.GetLevel(CurrentLevel).CreateAt(GetSelectedPrefab(), drawPos);
+                            levelFactory.GetLevel(values.CurrentLevel).CreateAt(GetSelectedPrefab(), drawPos);
                             levelEditor.Refresh();
                             mousePosOnClick = e.mousePosition;
                         }
@@ -127,8 +120,8 @@ namespace Editor
                 }
             }
 
-            LevelGizmo.UpdateGizmo(currentPos, GizmoColor);
-            LevelGizmo.Enable(SelectedPrefabId != 0);
+            LevelGizmo.UpdateGizmo(currentPos, values.GizmoColor);
+            LevelGizmo.Enable(values.SelectedPrefabId != 0);
             view.Repaint();
             levelEditor.Repaint();
         }
@@ -140,7 +133,7 @@ namespace Editor
             if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
             {
                 Vector3 pos = hit.point + (hit.normal * 0.5f);
-                if (SelectedPrefabId == 1)
+                if (values.SelectedPrefabId == 1)
                 {
                     pos = hit.transform.position;
                 }
@@ -159,12 +152,12 @@ namespace Editor
 
         GameObject GetSelectedPrefab()
         {
-            if (SelectedPrefabId == 1)
+            if (values.SelectedPrefabId == 1)
             {
                 return null;
             }
 
-            return LevelEditor.Prefabs[SelectedPrefabId - 2];
+            return values.Prefabs[values.SelectedPrefabId - 2];
         }
     }
 }

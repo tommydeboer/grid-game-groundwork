@@ -7,6 +7,7 @@ namespace Editor
     {
         public int SelectedPrefabId { get; set; }
         public int SpawnHeight { get; set; }
+        public Vector3 SpawnRotation { get; set; }
         public Color GizmoColor { get; set; } = Color.white;
         public string CurrentLevel { get; set; }
         public EditorPrefabs EditorPrefabs { get; set; }

@@ -83,7 +83,7 @@ namespace Editor
                         levelEditor.Refresh();
                         drawPos = currentPos;
                         levelFactory.GetLevel(values.CurrentLevel)
-                            .CreateAt(GetSelectedPrefab(), Utils.Vec3ToInt(drawPos));
+                            .CreateAt(GetSelectedPrefab(), Utils.Vec3ToInt(drawPos), values.SpawnRotation);
                         levelEditor.Refresh();
                         mouseButtonDown = true;
                         mousePosOnClick = e.mousePosition;
@@ -112,7 +112,8 @@ namespace Editor
                         if (!Utils.VectorRoughly2D(drawPos, currentPos, 0.75f))
                         {
                             drawPos = Utils.Vec3ToInt(currentPos);
-                            levelFactory.GetLevel(values.CurrentLevel).CreateAt(GetSelectedPrefab(), drawPos);
+                            levelFactory.GetLevel(values.CurrentLevel)
+                                .CreateAt(GetSelectedPrefab(), drawPos, values.SpawnRotation);
                             levelEditor.Refresh();
                             mousePosOnClick = e.mousePosition;
                         }

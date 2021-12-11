@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Editor
 {
-    [CreateAssetMenu]
     public class EditorPrefabs : ScriptableObject
     {
         [SerializeField]

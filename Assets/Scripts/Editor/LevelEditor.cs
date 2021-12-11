@@ -190,6 +190,7 @@ namespace Editor
 
                 GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
                 rotateInt = GUILayout.SelectionGrid(rotateInt, rotateStrings, 4);
+                values.SpawnRotation = new Vector3(0, rotateInt * 90, 0);
 
                 BigSpace();
 

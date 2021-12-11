@@ -50,7 +50,6 @@ namespace Editor
             if (EditorWindow.mouseOverWindow != view)
             {
                 mouseButtonDown = false;
-                levelEditor.Reset();
             }
 
             if (e.isKey && e.keyCode == KeyCode.P)

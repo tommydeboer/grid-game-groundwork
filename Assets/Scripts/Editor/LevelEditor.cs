@@ -11,24 +11,45 @@ namespace Editor
     //TODO add play mode persistence: https://stackoverflow.com/questions/56594340/store-editor-values-between-editor-sessions
     public class LevelEditor : EditorWindow
     {
-        int rotateInt;
+        #region CONFIG VARIABLES
+
+        bool showConfiguration;
+        bool showPlacement = true;
+        bool showLevelSelection;
+        GUIStyle margin;
 
         readonly string[] rotateStrings =
         {
             "0", "90", "180", "270"
         };
 
-        bool showConfiguration;
-        bool showPlacement = true;
-        bool showLevelSelection;
-        GUIStyle margin;
-        SceneViewInteraction sceneViewInteraction;
+        #endregion
 
+        #region GUI STATE
+
+        int rotateInt;
         int sceneLevelIndex;
         readonly List<string> sceneLevels = new();
 
+        #endregion
+
+        #region EDITOR CLASSES
+
         static LevelEditorValues values;
         static EditorPrefabs editorPrefabs;
+        SceneViewInteraction sceneViewInteraction;
+
+        #endregion
+
+        #region INITIALISATION
+
+        [MenuItem("Window/Level Editor")]
+        public static void ShowWindow()
+        {
+            EditorWindow editorWindow = GetWindow(typeof(LevelEditor));
+            var texture = Resources.Load<Texture2D>("ggg");
+            editorWindow.titleContent = new GUIContent("Level Editor", texture);
+        }
 
         [InitializeOnLoadMethod]
         static void OnLoad()
@@ -58,20 +79,15 @@ namespace Editor
             }
         }
 
-        [MenuItem("Window/Level Editor")]
-        public static void ShowWindow()
-        {
-            EditorWindow editorWindow = GetWindow(typeof(LevelEditor));
-            var texture = Resources.Load<Texture2D>("ggg");
-            editorWindow.titleContent = new GUIContent("Level Editor", texture);
-        }
-
         void OnEnable()
         {
             sceneViewInteraction = new SceneViewInteraction(this, values);
             SceneView.duringSceneGui += sceneViewInteraction.OnSceneGUI;
 
             margin = new GUIStyle {margin = new RectOffset(15, 15, 10, 15)};
+
+            CreateGizmoObject();
+            EnsureTagsExist();
 
             if (string.IsNullOrEmpty(values.CurrentLevel))
             {
@@ -83,27 +99,10 @@ namespace Editor
             }
         }
 
-        void OnValidate()
+        static void EnsureTagsExist()
         {
-            EnsureTagsExist();
-            Reset();
-            Refresh();
-        }
-
-        public void Reset()
-        {
-            CreateGizmoObject();
-        }
-
-        public void Refresh()
-        {
-            Game game = FindObjectOfType<Game>();
-            if (game != null)
-            {
-                game.EditorRefresh();
-            }
-
-            RefreshSceneLevels();
+            TagHelper.AddTag("Level");
+            TagHelper.AddTag("Tile");
         }
 
         static void CreateGizmoObject()
@@ -115,21 +114,9 @@ namespace Editor
             }
         }
 
-        void RefreshSceneLevels()
-        {
-            sceneLevels.Clear();
-            GameObject[] levels = GameObject.FindGameObjectsWithTag("Level");
-            foreach (GameObject l in levels)
-            {
-                sceneLevels.Add(l.name);
-            }
-        }
+        #endregion
 
-        static void EnsureTagsExist()
-        {
-            TagHelper.AddTag("Level");
-            TagHelper.AddTag("Tile");
-        }
+        #region UI
 
         void OnGUI()
         {
@@ -222,6 +209,29 @@ namespace Editor
         static void BigSpace()
         {
             EditorGUILayout.Space(15);
+        }
+
+        #endregion
+
+        public void Refresh()
+        {
+            Game game = FindObjectOfType<Game>();
+            if (game != null)
+            {
+                game.EditorRefresh();
+            }
+
+            RefreshSceneLevels();
+        }
+
+        void RefreshSceneLevels()
+        {
+            sceneLevels.Clear();
+            GameObject[] levels = GameObject.FindGameObjectsWithTag("Level");
+            foreach (GameObject l in levels)
+            {
+                sceneLevels.Add(l.name);
+            }
         }
     }
 }

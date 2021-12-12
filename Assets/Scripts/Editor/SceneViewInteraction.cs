@@ -72,9 +72,7 @@ namespace Editor
             {
                 if (eventType == EventType.ScrollWheel)
                 {
-                    int deltaY = (e.delta.y < 0) ? -1 : 1;
-                    state.SpawnHeight += deltaY;
-                    currentPos += (Vector3.back * deltaY);
+                    currentPos = SetSpawnHeight(e, currentPos);
                     e.Use();
                 }
             }
@@ -89,74 +87,18 @@ namespace Editor
                 {
                     if (e.button == 0 && state.PlacementMode != PlacementMode.None)
                     {
-                        // placing and erasing
-                        e.Use();
-                        levelEditor.Refresh();
-                        drawPos = currentPos;
-
-                        Level level = levelFactory.GetLevel(state.CurrentLevel);
-                        switch (state.PlacementMode)
-                        {
-                            case PlacementMode.Create:
-                                level
-                                    .CreateAt(state.SelectedPrefab, Utils.Vec3ToInt(drawPos), state.SpawnRotation);
-                                break;
-                            case PlacementMode.Erase:
-                                level.ClearAt(Utils.Vec3ToInt(drawPos));
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-
-                        levelEditor.Refresh();
-                        mouseButtonDown = true;
-                        mousePosOnClick = e.mousePosition;
+                        HandleLeftClick(e, currentPos);
                     }
                     else if (e.button == 1)
                     {
-                        // copy prefab type?
-                        // values.SelectedPrefabId = 0;
-                        // Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
-                        //
-                        // if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
-                        // {
-                        //     for (int i = 0; i < values.Prefabs.Count; i++)
-                        //     {
-                        //         if (values.Prefabs[i].transform.name == hit.transform.parent.name)
-                        //         {
-                        //             values.SelectedPrefabId = i + 2;
-                        //         }
-                        //     }
-                        // }
+                        HandleRightClick(e);
+
+                        e.Use();
                     }
                 }
                 else if (mouseButtonDown)
                 {
-                    // clicking and dragging?
-                    if (Vector2.Distance(mousePosOnClick, e.mousePosition) > 10f)
-                    {
-                        if (!Utils.VectorRoughly2D(drawPos, currentPos, 0.75f))
-                        {
-                            drawPos = Utils.Vec3ToInt(currentPos);
-                            Level level = levelFactory.GetLevel(state.CurrentLevel);
-                            switch (state.PlacementMode)
-                            {
-                                case PlacementMode.Create:
-                                    level
-                                        .CreateAt(state.SelectedPrefab, Utils.Vec3ToInt(drawPos),
-                                            state.SpawnRotation);
-                                    break;
-                                case PlacementMode.Erase:
-                                    level.ClearAt(Utils.Vec3ToInt(drawPos));
-                                    break;
-                                default:
-                                    throw new ArgumentOutOfRangeException();
-                            }
-
-                            levelEditor.Refresh();
-                            mousePosOnClick = e.mousePosition;
-                        }
-                    }
+                    HandleDrag(e, currentPos);
                 }
             }
 
@@ -164,6 +106,80 @@ namespace Editor
             LevelGizmo.Enable(state.PlacementMode != PlacementMode.None);
             view.Repaint();
             levelEditor.Repaint();
+        }
+
+        void HandleRightClick(Event e)
+        {
+            Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
+            {
+                for (int i = 0; i < state.Prefabs.Count; i++)
+                {
+                    if (state.Prefabs[i].transform.name == hit.transform.parent.name)
+                    {
+                        state.SelectedPrefabId = i;
+                    }
+                }
+            }
+        }
+
+        void HandleLeftClick(Event e, Vector3 currentPos)
+        {
+            // placing and erasing
+            e.Use();
+            levelEditor.Refresh();
+            drawPos = currentPos;
+
+            Level level = levelFactory.GetLevel(state.CurrentLevel);
+            CreateOrErase(level);
+
+            levelEditor.Refresh();
+            mouseButtonDown = true;
+            mousePosOnClick = e.mousePosition;
+        }
+
+        void HandleDrag(Event e, Vector3 currentPos)
+        {
+            if (Vector2.Distance(mousePosOnClick, e.mousePosition) > 10f)
+            {
+                if (!Utils.VectorRoughly2D(drawPos, currentPos, 0.75f))
+                {
+                    drawPos = Utils.Vec3ToInt(currentPos);
+                    Level level = levelFactory.GetLevel(state.CurrentLevel);
+                    CreateOrErase(level);
+
+                    levelEditor.Refresh();
+                    mousePosOnClick = e.mousePosition;
+                }
+            }
+        }
+
+        void CreateOrErase(Level level)
+        {
+            switch (state.PlacementMode)
+            {
+                case PlacementMode.Create:
+                    level
+                        .CreateAt(state.SelectedPrefab, Utils.Vec3ToInt(drawPos),
+                            state.SpawnRotation);
+                    break;
+                case PlacementMode.Erase:
+                    level.ClearAt(Utils.Vec3ToInt(drawPos));
+                    break;
+                case PlacementMode.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        Vector3 SetSpawnHeight(Event e, Vector3 currentPos)
+        {
+            int deltaY = (e.delta.y < 0) ? -1 : 1;
+            state.SpawnHeight += deltaY;
+            currentPos += (Vector3.back * deltaY);
+            return currentPos;
         }
 
         Vector3 GetPosition(Vector3 mousePos)

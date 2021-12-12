@@ -175,6 +175,7 @@ namespace Editor
             {
                 modeInt = GUILayout.Toolbar(modeInt, modeLabels);
                 SetMode();
+                GUI.enabled = state.PlacementMode == PlacementMode.Create;
 
                 BigSpace();
 
@@ -193,6 +194,8 @@ namespace Editor
                 BigSpace();
 
                 state.SpawnHeight = EditorGUILayout.IntSlider("Spawn at height:", state.SpawnHeight, 0, 20);
+
+                GUI.enabled = true;
             }
         }
 

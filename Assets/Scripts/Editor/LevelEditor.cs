@@ -31,7 +31,6 @@ namespace Editor
         #region GUI STATE
 
         int rotateInt;
-        int selectionInt;
         int modeInt;
         int sceneLevelIndex;
         readonly List<string> sceneLevels = new();
@@ -173,17 +172,15 @@ namespace Editor
         {
             using (new GUILayout.VerticalScope(margin))
             {
-                modeInt = GUILayout.Toolbar(modeInt, modeLabels);
-                SetMode();
+                state.PlacementMode = (PlacementMode) GUILayout.Toolbar((int) state.PlacementMode, modeLabels);
                 GUI.enabled = state.PlacementMode == PlacementMode.Create;
 
                 BigSpace();
 
                 GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
-                var labels = new List<string>();
-                labels.AddRange(from prefab in state.Prefabs select prefab.transform.name);
-                selectionInt = GUILayout.SelectionGrid(selectionInt, labels.ToArray(), 1);
-                SetSelection();
+                IEnumerable<string> labels = state.Prefabs.Select(
+                    (prefab, i) => prefab.transform.name + $" ({i + 1})");
+                state.SelectedPrefabId = GUILayout.SelectionGrid(state.SelectedPrefabId, labels.ToArray(), 1);
 
                 BigSpace();
 
@@ -197,16 +194,6 @@ namespace Editor
 
                 GUI.enabled = true;
             }
-        }
-
-        void SetMode()
-        {
-            state.PlacementMode = (PlacementMode) modeInt;
-        }
-
-        void SetSelection()
-        {
-            state.SetPrefab(selectionInt);
         }
 
         void SetRotation()

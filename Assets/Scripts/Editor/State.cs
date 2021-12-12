@@ -12,11 +12,7 @@ namespace Editor
         public PlacementMode PlacementMode { get; set; }
         public EditorPrefabs EditorPrefabs { get; set; }
         public List<GameObject> Prefabs => EditorPrefabs.Prefabs;
-        public GameObject SelectedPrefab { get; private set; }
-
-        public void SetPrefab(int index)
-        {
-            SelectedPrefab = Prefabs[index];
-        }
+        public int SelectedPrefabId { get; set; }
+        public GameObject SelectedPrefab => Prefabs[SelectedPrefabId];
     }
 }

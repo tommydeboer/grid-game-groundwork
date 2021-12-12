@@ -27,6 +27,16 @@ namespace Editor
         {
             Event e = Event.current;
 
+            if (e.isKey)
+            {
+                if (e.keyCode >= (KeyCode) 49 && e.keyCode <= (KeyCode) 57)
+                {
+                    state.SelectedPrefabId = (int) e.keyCode - 49;
+                    state.PlacementMode = PlacementMode.Create;
+                    e.Use();
+                }
+            }
+
             if (e.modifiers == EventModifiers.Alt)
             {
                 isHoldingAlt = true;

@@ -8,7 +8,7 @@ namespace Editor
     public class SceneViewInteraction
     {
         readonly LevelEditor levelEditor;
-        readonly LevelEditorValues values;
+        readonly State state;
         readonly LevelFactory levelFactory;
 
         bool isHoldingAlt;
@@ -16,10 +16,10 @@ namespace Editor
         Vector3 drawPos;
         Vector2 mousePosOnClick;
 
-        public SceneViewInteraction(LevelEditor levelEditor, LevelEditorValues values)
+        public SceneViewInteraction(LevelEditor levelEditor, State state)
         {
             this.levelEditor = levelEditor;
-            this.values = values;
+            this.state = state;
             levelFactory = new LevelFactory();
         }
 
@@ -38,9 +38,9 @@ namespace Editor
             }
 
             Vector3 currentPos = GetPosition(e.mousePosition);
-            if (values.PlacementMode != PlacementMode.Erase)
+            if (state.PlacementMode != PlacementMode.Erase)
             {
-                currentPos += (Vector3.back * values.SpawnHeight);
+                currentPos += (Vector3.back * state.SpawnHeight);
                 currentPos = Utils.AvoidIntersect(currentPos);
             }
 
@@ -63,7 +63,7 @@ namespace Editor
                 if (eventType == EventType.ScrollWheel)
                 {
                     int deltaY = (e.delta.y < 0) ? -1 : 1;
-                    values.SpawnHeight += deltaY;
+                    state.SpawnHeight += deltaY;
                     currentPos += (Vector3.back * deltaY);
                     e.Use();
                 }
@@ -77,19 +77,19 @@ namespace Editor
 
                 if (eventType == EventType.MouseDown)
                 {
-                    if (e.button == 0 && values.PlacementMode != PlacementMode.None)
+                    if (e.button == 0 && state.PlacementMode != PlacementMode.None)
                     {
                         // placing and erasing
                         e.Use();
                         levelEditor.Refresh();
                         drawPos = currentPos;
 
-                        Level level = levelFactory.GetLevel(values.CurrentLevel);
-                        switch (values.PlacementMode)
+                        Level level = levelFactory.GetLevel(state.CurrentLevel);
+                        switch (state.PlacementMode)
                         {
                             case PlacementMode.Create:
                                 level
-                                    .CreateAt(values.SelectedPrefab, Utils.Vec3ToInt(drawPos), values.SpawnRotation);
+                                    .CreateAt(state.SelectedPrefab, Utils.Vec3ToInt(drawPos), state.SpawnRotation);
                                 break;
                             case PlacementMode.Erase:
                                 level.ClearAt(Utils.Vec3ToInt(drawPos));
@@ -128,13 +128,13 @@ namespace Editor
                         if (!Utils.VectorRoughly2D(drawPos, currentPos, 0.75f))
                         {
                             drawPos = Utils.Vec3ToInt(currentPos);
-                            Level level = levelFactory.GetLevel(values.CurrentLevel);
-                            switch (values.PlacementMode)
+                            Level level = levelFactory.GetLevel(state.CurrentLevel);
+                            switch (state.PlacementMode)
                             {
                                 case PlacementMode.Create:
                                     level
-                                        .CreateAt(values.SelectedPrefab, Utils.Vec3ToInt(drawPos),
-                                            values.SpawnRotation);
+                                        .CreateAt(state.SelectedPrefab, Utils.Vec3ToInt(drawPos),
+                                            state.SpawnRotation);
                                     break;
                                 case PlacementMode.Erase:
                                     level.ClearAt(Utils.Vec3ToInt(drawPos));
@@ -150,8 +150,8 @@ namespace Editor
                 }
             }
 
-            LevelGizmo.UpdateGizmo(currentPos, values.GizmoColor);
-            LevelGizmo.Enable(values.PlacementMode != PlacementMode.None);
+            LevelGizmo.UpdateGizmo(currentPos, state.GizmoColor);
+            LevelGizmo.Enable(state.PlacementMode != PlacementMode.None);
             view.Repaint();
             levelEditor.Repaint();
         }
@@ -163,7 +163,7 @@ namespace Editor
             if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
             {
                 Vector3 pos = hit.point + (hit.normal * 0.5f);
-                if (values.PlacementMode == PlacementMode.Erase)
+                if (state.PlacementMode == PlacementMode.Erase)
                 {
                     pos = hit.transform.position;
                 }

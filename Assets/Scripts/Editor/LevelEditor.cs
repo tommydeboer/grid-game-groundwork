@@ -18,11 +18,13 @@ namespace Editor
         bool showPlacement = true;
         bool showLevelSelection;
         GUIStyle margin;
+
         readonly string[] rotateLabels =
         {
             "0", "90", "180", "270"
         };
-        readonly string[] modeLabels = System.Enum.GetNames(typeof(PlacementMode));
+
+        readonly string[] modeLabels = Enum.GetNames(typeof(PlacementMode));
 
         #endregion
 
@@ -38,7 +40,7 @@ namespace Editor
 
         #region EDITOR CLASSES
 
-        static LevelEditorValues values;
+        static State state;
         static EditorPrefabs editorPrefabs;
         SceneViewInteraction sceneViewInteraction;
 
@@ -68,24 +70,24 @@ namespace Editor
                 }
             }
 
-            if (!values)
+            if (!state)
             {
-                values =
-                    AssetDatabase.LoadAssetAtPath<LevelEditorValues>("Assets/Resources/LevelEditorValues.asset");
-                if (!values)
+                state =
+                    AssetDatabase.LoadAssetAtPath<State>("Assets/Resources/LevelEditorValues.asset");
+                if (!state)
                 {
-                    values = CreateInstance<LevelEditorValues>();
-                    AssetDatabase.CreateAsset(values, "Assets/Resources/LevelEditorValues.asset");
+                    state = CreateInstance<State>();
+                    AssetDatabase.CreateAsset(state, "Assets/Resources/LevelEditorValues.asset");
                     AssetDatabase.Refresh();
                 }
             }
 
-            values.EditorPrefabs = editorPrefabs;
+            state.EditorPrefabs = editorPrefabs;
         }
 
         void OnEnable()
         {
-            sceneViewInteraction = new SceneViewInteraction(this, values);
+            sceneViewInteraction = new SceneViewInteraction(this, state);
             SceneView.duringSceneGui += sceneViewInteraction.OnSceneGUI;
 
             margin = new GUIStyle {margin = new RectOffset(15, 15, 10, 15)};
@@ -93,12 +95,12 @@ namespace Editor
             CreateGizmoObject();
             EnsureTagsExist();
 
-            if (string.IsNullOrEmpty(values.CurrentLevel))
+            if (string.IsNullOrEmpty(state.CurrentLevel))
             {
                 GameObject level = GameObject.FindGameObjectWithTag("Level");
                 if (level != null)
                 {
-                    values.CurrentLevel = level.name;
+                    state.CurrentLevel = level.name;
                 }
             }
         }
@@ -156,7 +158,7 @@ namespace Editor
         {
             using (new GUILayout.VerticalScope(margin))
             {
-                values.GizmoColor = EditorGUILayout.ColorField("Gizmo Color:", values.GizmoColor);
+                state.GizmoColor = EditorGUILayout.ColorField("Gizmo Color:", state.GizmoColor);
 
                 BigSpace();
 
@@ -178,7 +180,7 @@ namespace Editor
 
                 GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
                 var labels = new List<string>();
-                labels.AddRange(from prefab in values.Prefabs select prefab.transform.name);
+                labels.AddRange(from prefab in state.Prefabs select prefab.transform.name);
                 selectionInt = GUILayout.SelectionGrid(selectionInt, labels.ToArray(), 1);
                 SetSelection();
 
@@ -190,23 +192,23 @@ namespace Editor
 
                 BigSpace();
 
-                values.SpawnHeight = EditorGUILayout.IntSlider("Spawn at height:", values.SpawnHeight, 0, 20);
+                state.SpawnHeight = EditorGUILayout.IntSlider("Spawn at height:", state.SpawnHeight, 0, 20);
             }
         }
 
         void SetMode()
         {
-            values.PlacementMode = (PlacementMode) modeInt;
+            state.PlacementMode = (PlacementMode) modeInt;
         }
 
         void SetSelection()
         {
-            values.SetPrefab(selectionInt);
+            state.SetPrefab(selectionInt);
         }
 
         void SetRotation()
         {
-            values.SpawnRotation = new Vector3(0, rotateInt * 90, 0);
+            state.SpawnRotation = new Vector3(0, rotateInt * 90, 0);
         }
 
         void DrawLevelSelectionUI()
@@ -219,14 +221,14 @@ namespace Editor
                 sceneLevelIndex = 0;
                 for (int i = 0; i < sceneLevels.Count; i++)
                 {
-                    if (sceneLevels[i] == values.CurrentLevel)
+                    if (sceneLevels[i] == state.CurrentLevel)
                     {
                         sceneLevelIndex = i;
                     }
                 }
 
                 sceneLevelIndex = EditorGUILayout.Popup(sceneLevelIndex, sceneLevels.ToArray());
-                values.CurrentLevel = sceneLevels[sceneLevelIndex];
+                state.CurrentLevel = sceneLevels[sceneLevelIndex];
             }
         }
 

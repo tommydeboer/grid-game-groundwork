@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Editor
 {
-    public class LevelEditorValues : ScriptableObject
+    public class State : ScriptableObject
     {
         public int SpawnHeight { get; set; }
         public Vector3 SpawnRotation { get; set; }

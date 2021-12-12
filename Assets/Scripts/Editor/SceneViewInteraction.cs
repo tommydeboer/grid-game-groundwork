@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,7 +27,7 @@ namespace Editor
         {
             Event e = Event.current;
 
-            if (e.modifiers != EventModifiers.None)
+            if (e.modifiers == EventModifiers.Alt)
             {
                 isHoldingAlt = true;
                 mouseButtonDown = false;
@@ -37,7 +38,7 @@ namespace Editor
             }
 
             Vector3 currentPos = GetPosition(e.mousePosition);
-            if (values.SelectedPrefabId != 1)
+            if (values.PlacementMode != PlacementMode.ERASE)
             {
                 currentPos += (Vector3.back * values.SpawnHeight);
                 currentPos = Utils.AvoidIntersect(currentPos);
@@ -76,43 +77,72 @@ namespace Editor
 
                 if (eventType == EventType.MouseDown)
                 {
-                    if (e.button == 0 && values.SelectedPrefabId != 0)
+                    if (e.button == 0 && values.PlacementMode != PlacementMode.NONE)
                     {
+                        // placing and erasing
                         e.Use();
                         levelEditor.Refresh();
                         drawPos = currentPos;
-                        levelFactory.GetLevel(values.CurrentLevel)
-                            .CreateAt(GetSelectedPrefab(), Utils.Vec3ToInt(drawPos), values.SpawnRotation);
+
+                        Level level = levelFactory.GetLevel(values.CurrentLevel);
+                        switch (values.PlacementMode)
+                        {
+                            case PlacementMode.CREATE:
+                                level
+                                    .CreateAt(values.SelectedPrefab, Utils.Vec3ToInt(drawPos), values.SpawnRotation);
+                                break;
+                            case PlacementMode.ERASE:
+                                level.ClearAt(Utils.Vec3ToInt(drawPos));
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+
                         levelEditor.Refresh();
                         mouseButtonDown = true;
                         mousePosOnClick = e.mousePosition;
                     }
                     else if (e.button == 1)
                     {
-                        values.SelectedPrefabId = 0;
-                        Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
-
-                        if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
-                        {
-                            for (int i = 0; i < values.Prefabs.Count; i++)
-                            {
-                                if (values.Prefabs[i].transform.name == hit.transform.parent.name)
-                                {
-                                    values.SelectedPrefabId = i + 2;
-                                }
-                            }
-                        }
+                        // copy prefab type?
+                        // values.SelectedPrefabId = 0;
+                        // Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+                        //
+                        // if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
+                        // {
+                        //     for (int i = 0; i < values.Prefabs.Count; i++)
+                        //     {
+                        //         if (values.Prefabs[i].transform.name == hit.transform.parent.name)
+                        //         {
+                        //             values.SelectedPrefabId = i + 2;
+                        //         }
+                        //     }
+                        // }
                     }
                 }
                 else if (mouseButtonDown)
                 {
+                    // clicking and dragging?
                     if (Vector2.Distance(mousePosOnClick, e.mousePosition) > 10f)
                     {
                         if (!Utils.VectorRoughly2D(drawPos, currentPos, 0.75f))
                         {
                             drawPos = Utils.Vec3ToInt(currentPos);
-                            levelFactory.GetLevel(values.CurrentLevel)
-                                .CreateAt(GetSelectedPrefab(), drawPos, values.SpawnRotation);
+                            Level level = levelFactory.GetLevel(values.CurrentLevel);
+                            switch (values.PlacementMode)
+                            {
+                                case PlacementMode.CREATE:
+                                    level
+                                        .CreateAt(values.SelectedPrefab, Utils.Vec3ToInt(drawPos),
+                                            values.SpawnRotation);
+                                    break;
+                                case PlacementMode.ERASE:
+                                    level.ClearAt(Utils.Vec3ToInt(drawPos));
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+
                             levelEditor.Refresh();
                             mousePosOnClick = e.mousePosition;
                         }
@@ -121,7 +151,7 @@ namespace Editor
             }
 
             LevelGizmo.UpdateGizmo(currentPos, values.GizmoColor);
-            LevelGizmo.Enable(values.SelectedPrefabId != 0);
+            LevelGizmo.Enable(values.PlacementMode != PlacementMode.NONE);
             view.Repaint();
             levelEditor.Repaint();
         }
@@ -133,7 +163,7 @@ namespace Editor
             if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
             {
                 Vector3 pos = hit.point + (hit.normal * 0.5f);
-                if (values.SelectedPrefabId == 1)
+                if (values.PlacementMode == PlacementMode.ERASE)
                 {
                     pos = hit.transform.position;
                 }
@@ -148,16 +178,6 @@ namespace Editor
             }
 
             return Vector3.zero;
-        }
-
-        GameObject GetSelectedPrefab()
-        {
-            if (values.SelectedPrefabId == 1)
-            {
-                return null;
-            }
-
-            return values.Prefabs[values.SelectedPrefabId - 2];
         }
     }
 }

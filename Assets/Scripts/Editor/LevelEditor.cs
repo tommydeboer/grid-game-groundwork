@@ -28,6 +28,7 @@ namespace Editor
         #region GUI STATE
 
         int rotateInt;
+        int selectionInt;
         int sceneLevelIndex;
         readonly List<string> sceneLevels = new();
 
@@ -72,11 +73,12 @@ namespace Editor
                 if (!values)
                 {
                     values = CreateInstance<LevelEditorValues>();
-                    values.EditorPrefabs = editorPrefabs;
                     AssetDatabase.CreateAsset(values, "Assets/Resources/LevelEditorValues.asset");
                     AssetDatabase.Refresh();
                 }
             }
+
+            values.EditorPrefabs = editorPrefabs;
         }
 
         void OnEnable()
@@ -171,18 +173,33 @@ namespace Editor
                 labels.AddRange(from prefab in values.Prefabs select prefab.transform.name);
 
                 GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
-                values.SelectedPrefabId = GUILayout.SelectionGrid(values.SelectedPrefabId, labels.ToArray(), 1);
+                selectionInt = GUILayout.SelectionGrid(selectionInt, labels.ToArray(), 1);
+                SetSelection();
 
                 BigSpace();
 
                 GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
                 rotateInt = GUILayout.SelectionGrid(rotateInt, rotateStrings, 4);
-                values.SpawnRotation = new Vector3(0, rotateInt * 90, 0);
+                SetRotation();
 
                 BigSpace();
 
                 values.SpawnHeight = EditorGUILayout.IntSlider("Spawn at height:", values.SpawnHeight, 0, 20);
             }
+        }
+
+        void SetSelection()
+        {
+            values.PlacementMode = selectionInt > 2 ? PlacementMode.CREATE : (PlacementMode) selectionInt;
+            if (selectionInt > 1)
+            {
+                values.SetPrefab(selectionInt - 2);
+            }
+        }
+
+        void SetRotation()
+        {
+            values.SpawnRotation = new Vector3(0, rotateInt * 90, 0);
         }
 
         void DrawLevelSelectionUI()

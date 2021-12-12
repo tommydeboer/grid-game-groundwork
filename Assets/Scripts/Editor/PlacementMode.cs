@@ -2,8 +2,8 @@ namespace Editor
 {
     public enum PlacementMode
     {
-        NONE,
-        ERASE,
-        CREATE
+        None,
+        Erase,
+        Create
     }
 }

@@ -1,5 +1,6 @@
 ﻿#if UNITY_EDITOR
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace Editor
 {
-    //TODO add play mode persistence: https://stackoverflow.com/questions/56594340/store-editor-values-between-editor-sessions
+    //TODO add play mode persistence
     public class LevelEditor : EditorWindow
     {
         #region CONFIG VARIABLES
@@ -17,11 +18,11 @@ namespace Editor
         bool showPlacement = true;
         bool showLevelSelection;
         GUIStyle margin;
-
-        readonly string[] rotateStrings =
+        readonly string[] rotateLabels =
         {
             "0", "90", "180", "270"
         };
+        readonly string[] modeLabels = System.Enum.GetNames(typeof(PlacementMode));
 
         #endregion
 
@@ -29,6 +30,7 @@ namespace Editor
 
         int rotateInt;
         int selectionInt;
+        int modeInt;
         int sceneLevelIndex;
         readonly List<string> sceneLevels = new();
 
@@ -169,17 +171,21 @@ namespace Editor
         {
             using (new GUILayout.VerticalScope(margin))
             {
-                var labels = new List<string> {"None", "Erase"};
-                labels.AddRange(from prefab in values.Prefabs select prefab.transform.name);
+                modeInt = GUILayout.Toolbar(modeInt, modeLabels);
+                SetMode();
+
+                BigSpace();
 
                 GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
+                var labels = new List<string>();
+                labels.AddRange(from prefab in values.Prefabs select prefab.transform.name);
                 selectionInt = GUILayout.SelectionGrid(selectionInt, labels.ToArray(), 1);
                 SetSelection();
 
                 BigSpace();
 
                 GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
-                rotateInt = GUILayout.SelectionGrid(rotateInt, rotateStrings, 4);
+                rotateInt = GUILayout.SelectionGrid(rotateInt, rotateLabels, 4);
                 SetRotation();
 
                 BigSpace();
@@ -188,13 +194,14 @@ namespace Editor
             }
         }
 
+        void SetMode()
+        {
+            values.PlacementMode = (PlacementMode) modeInt;
+        }
+
         void SetSelection()
         {
-            values.PlacementMode = selectionInt > 2 ? PlacementMode.CREATE : (PlacementMode) selectionInt;
-            if (selectionInt > 1)
-            {
-                values.SetPrefab(selectionInt - 2);
-            }
+            values.SetPrefab(selectionInt);
         }
 
         void SetRotation()

@@ -11,7 +11,6 @@ namespace Editor
         readonly State state;
         readonly LevelFactory levelFactory;
 
-        bool isHoldingAlt;
         bool mouseButtonDown;
         Vector3 drawPos;
         Vector2 mousePosOnClick;
@@ -37,16 +36,6 @@ namespace Editor
                 }
             }
 
-            if (e.modifiers == EventModifiers.Alt)
-            {
-                isHoldingAlt = true;
-                mouseButtonDown = false;
-            }
-            else
-            {
-                isHoldingAlt = false;
-            }
-
             Vector3 currentPos = GetPosition(e.mousePosition);
             if (state.PlacementMode != PlacementMode.Erase)
             {
@@ -68,38 +57,33 @@ namespace Editor
                 EditorApplication.ExecuteMenuItem("Edit/Play");
             }
 
-            if (isHoldingAlt)
+            if (e.modifiers == EventModifiers.Alt && eventType == EventType.ScrollWheel)
             {
-                if (eventType == EventType.ScrollWheel)
+                currentPos = SetSpawnHeight(e, currentPos);
+                e.Use();
+            }
+
+            if (eventType == EventType.MouseUp)
+            {
+                mouseButtonDown = false;
+            }
+
+            if (eventType == EventType.MouseDown)
+            {
+                if (e.button == 0 && state.PlacementMode != PlacementMode.None)
                 {
-                    currentPos = SetSpawnHeight(e, currentPos);
+                    HandleLeftClick(e, currentPos);
+                }
+                else if (e.button == 1)
+                {
+                    HandleRightClick(e);
+
                     e.Use();
                 }
             }
-            else
+            else if (mouseButtonDown)
             {
-                if (eventType == EventType.MouseUp)
-                {
-                    mouseButtonDown = false;
-                }
-
-                if (eventType == EventType.MouseDown)
-                {
-                    if (e.button == 0 && state.PlacementMode != PlacementMode.None)
-                    {
-                        HandleLeftClick(e, currentPos);
-                    }
-                    else if (e.button == 1)
-                    {
-                        HandleRightClick(e);
-
-                        e.Use();
-                    }
-                }
-                else if (mouseButtonDown)
-                {
-                    HandleDrag(e, currentPos);
-                }
+                HandleDrag(e, currentPos);
             }
 
             LevelGizmo.UpdateGizmo(currentPos, state.GizmoColor);

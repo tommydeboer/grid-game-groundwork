@@ -91,7 +91,6 @@ namespace Editor
 
             margin = new GUIStyle {margin = new RectOffset(15, 15, 10, 15)};
 
-            CreateGizmoObject();
             EnsureTagsExist();
 
             if (string.IsNullOrEmpty(state.CurrentLevel))
@@ -108,15 +107,6 @@ namespace Editor
         {
             TagHelper.AddTag("Level");
             TagHelper.AddTag("Tile");
-        }
-
-        static void CreateGizmoObject()
-        {
-            LevelGizmo levelGizmo = FindObjectOfType<LevelGizmo>();
-            if (levelGizmo == null)
-            {
-                new GameObject("LevelGizmo").AddComponent<LevelGizmo>();
-            }
         }
 
         #endregion

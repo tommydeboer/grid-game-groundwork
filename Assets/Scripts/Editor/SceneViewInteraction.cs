@@ -86,10 +86,21 @@ namespace Editor
                 HandleDrag(e, currentPos);
             }
 
-            LevelGizmo.UpdateGizmo(currentPos, state.GizmoColor);
-            LevelGizmo.Enable(state.PlacementMode != PlacementMode.None);
-            view.Repaint();
+            if (state.PlacementMode != PlacementMode.None)
+            {
+                DrawGizmo(currentPos);
+                view.Repaint();
+            }
+
             levelEditor.Repaint();
+        }
+
+        void DrawGizmo(Vector3 currentPos)
+        {
+            Handles.color = state.GizmoColor;
+            Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
+            Handles.DrawWireCube(currentPos, Vector3.one);
+            Handles.DrawWireCube(currentPos, Vector3.one * 1.01f);
         }
 
         void HandleRightClick(Event e)

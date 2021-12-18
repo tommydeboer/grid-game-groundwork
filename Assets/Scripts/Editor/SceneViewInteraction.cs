@@ -32,6 +32,16 @@ namespace Editor
                 return;
             }
 
+            if (view)
+            {
+                HandleMouse(view, e);
+            }
+
+            levelEditor.Repaint();
+        }
+
+        void HandleMouse(EditorWindow view, Event e)
+        {
             Vector3 currentPos = GetPosition(e.mousePosition);
             if (state.PlacementMode != PlacementMode.Erase)
             {
@@ -46,11 +56,6 @@ namespace Editor
             if (EditorWindow.mouseOverWindow != view)
             {
                 mouseButtonDown = false;
-            }
-
-            if (e.isKey && e.keyCode == KeyCode.P)
-            {
-                EditorApplication.ExecuteMenuItem("Edit/Play");
             }
 
             if (e.modifiers == EventModifiers.Alt && eventType == EventType.ScrollWheel)
@@ -87,8 +92,6 @@ namespace Editor
                 DrawGizmo(currentPos);
                 view.Repaint();
             }
-
-            levelEditor.Repaint();
         }
 
         void HandleShortcuts(Event e)
@@ -102,6 +105,10 @@ namespace Editor
                     break;
                 case KeyCode.Minus:
                     state.PlacementMode = PlacementMode.Erase;
+                    e.Use();
+                    break;
+                case KeyCode.P:
+                    EditorApplication.ExecuteMenuItem("Edit/Play");
                     e.Use();
                     break;
             }

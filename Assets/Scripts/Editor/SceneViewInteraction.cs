@@ -28,12 +28,8 @@ namespace Editor
 
             if (e.isKey)
             {
-                if (e.keyCode >= (KeyCode) 49 && e.keyCode <= (KeyCode) 57)
-                {
-                    state.SelectedPrefabId = (int) e.keyCode - 49;
-                    state.PlacementMode = PlacementMode.Create;
-                    e.Use();
-                }
+                HandleShortcuts(e);
+                return;
             }
 
             Vector3 currentPos = GetPosition(e.mousePosition);
@@ -95,12 +91,37 @@ namespace Editor
             levelEditor.Repaint();
         }
 
+        void HandleShortcuts(Event e)
+        {
+            switch (e.keyCode)
+            {
+                case >= (KeyCode) 49 and <= (KeyCode) 57:
+                    state.SelectedPrefabId = (int) e.keyCode - 49;
+                    state.PlacementMode = PlacementMode.Create;
+                    e.Use();
+                    break;
+                case KeyCode.Minus:
+                    state.PlacementMode = PlacementMode.Erase;
+                    e.Use();
+                    break;
+            }
+        }
+
         void DrawGizmo(Vector3 currentPos)
         {
-            Handles.color = state.GizmoColor;
+            if (state.PlacementMode == PlacementMode.Erase)
+            {
+                Handles.color = Color.red;
+            }
+            else
+            {
+                Handles.color = state.GizmoColor;
+            }
+
             Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
             Handles.DrawWireCube(currentPos, Vector3.one);
             Handles.DrawWireCube(currentPos, Vector3.one * 1.01f);
+            Handles.DrawWireCube(currentPos, Vector3.one * 0.99f);
         }
 
         void HandleRightClick(Event e)

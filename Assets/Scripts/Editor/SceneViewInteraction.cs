@@ -2,6 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Editor
 {
@@ -14,6 +15,8 @@ namespace Editor
         bool mouseButtonDown;
         Vector3 drawPos;
         Vector2 mousePosOnClick;
+
+        Plane groundPlane = new(Vector3.up, Vector3.zero);
 
         public SceneViewInteraction(LevelEditor levelEditor, State state)
         {
@@ -29,10 +32,8 @@ namespace Editor
             if (e.isKey)
             {
                 HandleShortcuts(e);
-                return;
             }
-
-            if (view)
+            else
             {
                 HandleMouse(view, e);
             }
@@ -42,55 +43,50 @@ namespace Editor
 
         void HandleMouse(EditorWindow view, Event e)
         {
-            Vector3 currentPos = GetPosition(e.mousePosition);
-            if (state.PlacementMode != PlacementMode.Erase)
-            {
-                currentPos += (Vector3.back * state.SpawnHeight);
-                currentPos = Utils.AvoidIntersect(currentPos);
-            }
-
-            HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
-            int controlID = GUIUtility.GetControlID(FocusType.Passive);
-            var eventType = e.GetTypeForControl(controlID);
-
-            if (EditorWindow.mouseOverWindow != view)
-            {
-                mouseButtonDown = false;
-            }
+            Vector3 pos = GetGizmoPosition(e.mousePosition);
+            EventType eventType = GetEventType(e);
+            SetLeftMouseButtonState(view, e, eventType);
 
             if (e.modifiers == EventModifiers.Alt && eventType == EventType.ScrollWheel)
             {
-                currentPos = SetSpawnHeight(e, currentPos);
+                pos = SetSpawnHeight(e, pos);
                 e.Use();
-            }
-
-            if (eventType == EventType.MouseUp)
-            {
-                mouseButtonDown = false;
-            }
-
-            if (eventType == EventType.MouseDown)
-            {
-                if (e.button == 0 && state.PlacementMode != PlacementMode.None)
-                {
-                    HandleLeftClick(e, currentPos);
-                }
-                else if (e.button == 1)
-                {
-                    HandleRightClick(e);
-
-                    e.Use();
-                }
-            }
-            else if (mouseButtonDown)
-            {
-                HandleDrag(e, currentPos);
             }
 
             if (state.PlacementMode != PlacementMode.None)
             {
-                DrawGizmo(currentPos);
+                if (eventType == EventType.MouseDown)
+                {
+                    switch (e.button)
+                    {
+                        case 0:
+                            HandleLeftClick(e, pos);
+                            break;
+                        case 2:
+                            HandleMiddleClick(e);
+                            break;
+                    }
+                }
+                else if (mouseButtonDown && eventType == EventType.MouseDrag)
+                {
+                    HandleDrag(e, pos);
+                }
+
+                e.Use();
+                DrawGizmo(pos);
                 view.Repaint();
+            }
+        }
+
+        void SetLeftMouseButtonState(Object view, Event e, EventType eventType)
+        {
+            if (EditorWindow.mouseOverWindow != view)
+            {
+                mouseButtonDown = false;
+            }
+            else if (eventType == EventType.MouseUp && e.button == 0)
+            {
+                mouseButtonDown = false;
             }
         }
 
@@ -102,15 +98,19 @@ namespace Editor
                     state.SelectedPrefabId = (int) e.keyCode - 49;
                     state.PlacementMode = PlacementMode.Create;
                     e.Use();
-                    break;
+                    return;
                 case KeyCode.Minus:
                     state.PlacementMode = PlacementMode.Erase;
                     e.Use();
-                    break;
+                    return;
+                case KeyCode.Escape:
+                    state.PlacementMode = PlacementMode.None;
+                    e.Use();
+                    return;
                 case KeyCode.P:
                     EditorApplication.ExecuteMenuItem("Edit/Play");
                     e.Use();
-                    break;
+                    return;
             }
         }
 
@@ -131,7 +131,7 @@ namespace Editor
             Handles.DrawWireCube(currentPos, Vector3.one * 0.99f);
         }
 
-        void HandleRightClick(Event e)
+        void HandleMiddleClick(Event e)
         {
             Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
 
@@ -205,7 +205,7 @@ namespace Editor
             return currentPos;
         }
 
-        Vector3 GetPosition(Vector3 mousePos)
+        Vector3 GetGizmoPosition(Vector3 mousePos)
         {
             Ray ray = HandleUtility.GUIPointToWorldRay(mousePos);
 
@@ -216,17 +216,24 @@ namespace Editor
                 {
                     pos = hit.transform.position;
                 }
+                else
+                {
+                    pos += (Vector3.back * state.SpawnHeight);
+                    pos = Utils.AvoidIntersect(pos);
+                }
 
                 return Utils.Vec3ToInt(pos);
             }
 
-            Plane hPlane = new Plane(Vector3.forward, Vector3.zero);
-            if (hPlane.Raycast(ray, out float distance))
-            {
-                return Utils.Vec3ToInt(ray.GetPoint(distance));
-            }
-
             return Vector3.zero;
+        }
+
+        static EventType GetEventType(Event e)
+        {
+            HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
+            int controlID = GUIUtility.GetControlID(FocusType.Passive);
+            var eventType = e.GetTypeForControl(controlID);
+            return eventType;
         }
     }
 }

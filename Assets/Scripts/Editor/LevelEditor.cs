@@ -24,7 +24,7 @@ namespace Editor
             "0", "90", "180", "270"
         };
 
-        readonly string[] modeLabels = Enum.GetNames(typeof(PlacementMode));
+        readonly string[] modeLabels = Enum.GetNames(typeof(Mode));
 
         #endregion
 
@@ -162,8 +162,8 @@ namespace Editor
         {
             using (new GUILayout.VerticalScope(margin))
             {
-                state.PlacementMode = (PlacementMode) GUILayout.Toolbar((int) state.PlacementMode, modeLabels);
-                GUI.enabled = state.PlacementMode == PlacementMode.Create;
+                state.Mode = (Mode) GUILayout.Toolbar((int) state.Mode, modeLabels);
+                GUI.enabled = state.Mode == Mode.Create;
 
                 BigSpace();
 

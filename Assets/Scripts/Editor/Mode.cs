@@ -1,6 +1,6 @@
 namespace Editor
 {
-    public enum PlacementMode
+    public enum Mode
     {
         None,
         Erase,

@@ -16,8 +16,6 @@ namespace Editor
         Vector3 drawPos;
         Vector2 mousePosOnClick;
 
-        Plane groundPlane = new(Vector3.up, Vector3.zero);
-
         public SceneViewInteraction(LevelEditor levelEditor, State state)
         {
             this.levelEditor = levelEditor;
@@ -53,7 +51,7 @@ namespace Editor
                 e.Use();
             }
 
-            if (state.PlacementMode != PlacementMode.None)
+            if (state.Mode != Mode.None)
             {
                 if (eventType == EventType.MouseDown)
                 {
@@ -96,15 +94,15 @@ namespace Editor
             {
                 case >= (KeyCode) 49 and <= (KeyCode) 57:
                     state.SelectedPrefabId = (int) e.keyCode - 49;
-                    state.PlacementMode = PlacementMode.Create;
+                    state.Mode = Mode.Create;
                     e.Use();
                     return;
                 case KeyCode.Minus:
-                    state.PlacementMode = PlacementMode.Erase;
+                    state.Mode = Mode.Erase;
                     e.Use();
                     return;
                 case KeyCode.Escape:
-                    state.PlacementMode = PlacementMode.None;
+                    state.Mode = Mode.None;
                     e.Use();
                     return;
                 case KeyCode.P:
@@ -116,7 +114,7 @@ namespace Editor
 
         void DrawGizmo(Vector3 currentPos)
         {
-            if (state.PlacementMode == PlacementMode.Erase)
+            if (state.Mode == Mode.Erase)
             {
                 Handles.color = Color.red;
             }
@@ -180,17 +178,17 @@ namespace Editor
 
         void CreateOrErase(Level level)
         {
-            switch (state.PlacementMode)
+            switch (state.Mode)
             {
-                case PlacementMode.Create:
+                case Mode.Create:
                     level
                         .CreateAt(state.SelectedPrefab, Utils.Vec3ToInt(drawPos),
                             state.SpawnRotation);
                     break;
-                case PlacementMode.Erase:
+                case Mode.Erase:
                     level.ClearAt(Utils.Vec3ToInt(drawPos));
                     break;
-                case PlacementMode.None:
+                case Mode.None:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -212,7 +210,7 @@ namespace Editor
             if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
             {
                 Vector3 pos = hit.point + (hit.normal * 0.5f);
-                if (state.PlacementMode == PlacementMode.Erase)
+                if (state.Mode == Mode.Erase)
                 {
                     pos = hit.transform.position;
                 }

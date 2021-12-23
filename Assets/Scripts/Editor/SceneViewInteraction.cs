@@ -25,18 +25,18 @@ namespace Editor
 
         public void OnSceneGUI(SceneView view)
         {
-            Event e = Event.current;
-
-            if (e.isKey)
-            {
-                HandleShortcuts(e);
-            }
-            else
-            {
-                HandleMouse(view, e);
-            }
-
-            levelEditor.Repaint();
+            // Event e = Event.current;
+            //
+            // if (e.isKey)
+            // {
+            //     HandleShortcuts(e);
+            // }
+            // else
+            // {
+            //     HandleMouse(view, e);
+            // }
+            //
+            // levelEditor.Repaint();
         }
 
         void HandleMouse(EditorWindow view, Event e)

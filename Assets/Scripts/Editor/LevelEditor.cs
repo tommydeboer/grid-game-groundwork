@@ -39,7 +39,7 @@ namespace Editor
 
         #region EDITOR CLASSES
 
-        static State state;
+        public static State state;
         static EditorPrefabs editorPrefabs;
         SceneViewInteraction sceneViewInteraction;
 

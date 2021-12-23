@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Editor
 {
-    class GridSelection
+    internal class GridSelection
     {
         public Vector3Int StartPos { get; }
         public Plane Plane { get; }
@@ -28,6 +28,7 @@ namespace Editor
         LevelEditor window;
         State state;
         GridSelection selection;
+        Vector3Int mousePos;
 
         void OnEnable()
         {
@@ -54,15 +55,48 @@ namespace Editor
 
             Event e = Event.current;
             EventType eventType = GetEventType(e);
-            Vector3Int pos = GetMousePosition(e);
+
+            if (selection != null)
+            {
+                HandleSelectionInput(e, eventType);
+            }
+            else
+            {
+                HandleCursorInput(e, eventType);
+            }
+
+            if (selection != null)
+            {
+                DrawSelection(mousePos);
+            }
+            else
+            {
+                DrawCursor(mousePos);
+            }
+
+            window.Repaint();
+        }
+
+        void HandleCursorInput(Event e, EventType eventType)
+        {
+            mousePos = GetMouseCursorPosition(e.mousePosition);
 
             if (eventType == EventType.MouseDown)
             {
                 if (e.button == 0)
                 {
-                    selection = new GridSelection(pos);
+                    selection = new GridSelection(mousePos);
                 }
-                else if (e.button == 1 && selection != null)
+            }
+        }
+
+        void HandleSelectionInput(Event e, EventType eventType)
+        {
+            mousePos = GetMouseSelectionPosition(e.mousePosition);
+
+            if (eventType == EventType.MouseDown)
+            {
+                if (e.button == 1)
                 {
                     selection = null;
                 }
@@ -74,24 +108,6 @@ namespace Editor
                     selection = null;
                 }
             }
-
-            if (selection != null)
-            {
-                DrawSelection(pos);
-            }
-            else
-            {
-                DrawCursor(pos);
-            }
-
-            window.Repaint();
-        }
-
-        Vector3Int GetMousePosition(Event e)
-        {
-            return selection == null
-                ? GetMouseCursorPosition(e.mousePosition)
-                : GetMouseSelectionPosition(e.mousePosition);
         }
 
         void DrawSelection(Vector3Int currentPos)

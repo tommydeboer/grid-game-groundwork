@@ -9,27 +9,25 @@ namespace Editor
     class GridSelection
     {
         public Vector3Int StartPos { get; }
-        Vector3Int currentPos;
-        Plane selectionPlane;
+        public Plane Plane { get; }
 
         public GridSelection(Vector3Int startPos)
         {
             StartPos = startPos;
+            Plane = new Plane(Vector3.up, startPos);
         }
     }
 
     [EditorTool(TITLE)]
     public class RectCreateTool : EditorTool
     {
+        const string TITLE = "Rectangle Tool";
+        public override GUIContent toolbarIcon => iconContent;
         GUIContent iconContent;
 
-        const string TITLE = "Rectangle Tool";
         LevelEditor window;
         State state;
-
-        public override GUIContent toolbarIcon => iconContent;
-
-        GridSelection selection = null;
+        GridSelection selection;
 
         void OnEnable()
         {
@@ -51,7 +49,7 @@ namespace Editor
 
             Event e = Event.current;
             EventType eventType = GetEventType(e);
-            Vector3Int pos = GetMousePosition(e.mousePosition);
+            Vector3Int pos = GetMousePosition(e);
 
             if (eventType == EventType.MouseDown)
             {
@@ -72,7 +70,6 @@ namespace Editor
                 }
             }
 
-
             if (selection != null)
             {
                 DrawSelection(pos);
@@ -83,6 +80,13 @@ namespace Editor
             }
 
             window.Repaint();
+        }
+
+        Vector3Int GetMousePosition(Event e)
+        {
+            return selection == null
+                ? GetMouseCursorPosition(e.mousePosition)
+                : GetMouseSelectionPosition(e.mousePosition);
         }
 
         void DrawSelection(Vector3Int currentPos)
@@ -121,13 +125,14 @@ namespace Editor
             Handles.DrawWireCube(currentPos, Vector3.one * 0.99f);
         }
 
-        Vector3Int GetMousePosition(Vector3 mousePos)
+        Vector3Int GetMouseCursorPosition(Vector3 mousePos)
         {
             Ray ray = HandleUtility.GUIPointToWorldRay(mousePos);
 
             if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
             {
                 Vector3 pos = hit.point + (hit.normal * 0.5f);
+
                 if (state.Mode == Mode.Erase)
                 {
                     pos = hit.transform.position;
@@ -139,6 +144,21 @@ namespace Editor
                 }
 
                 return Vector3Int.RoundToInt(pos);
+            }
+
+            return Vector3Int.zero;
+        }
+
+        Vector3Int GetMouseSelectionPosition(Vector3 mousePos)
+        {
+            Ray ray = HandleUtility.GUIPointToWorldRay(mousePos);
+
+            if (selection != null)
+            {
+                if (selection.Plane.Raycast(ray, out float enter))
+                {
+                    return Vector3Int.RoundToInt(ray.GetPoint(enter));
+                }
             }
 
             return Vector3Int.zero;

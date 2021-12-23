@@ -40,6 +40,11 @@ namespace Editor
             state = LevelEditor.state;
         }
 
+        public override void OnActivated()
+        {
+            Selection.activeGameObject = null;
+        }
+
         public override void OnToolGUI(EditorWindow window)
         {
             if (!(window is SceneView))

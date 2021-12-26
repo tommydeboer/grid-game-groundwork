@@ -144,12 +144,10 @@ namespace Editor
             int maxX = Math.Max(from.x, to.x);
             int minZ = Math.Min(from.z, to.z);
             int maxZ = Math.Max(from.z, to.z);
-            int minY = Math.Min(from.y, selection.Height);
+            int minY = Math.Min(from.y, from.y + selection.Height);
+            int maxY = Math.Max(from.y, from.y + selection.Height);
 
-            int maxY = Math.Max(from.y, selection.Height);
-            for (int y = minY;
-                y <= maxY;
-                y++)
+            for (int y = minY; y <= maxY; y++)
             {
                 for (int x = minX; x <= maxX; x++)
                 {

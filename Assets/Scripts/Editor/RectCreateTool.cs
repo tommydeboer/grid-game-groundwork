@@ -58,6 +58,12 @@ namespace Editor
             Event e = Event.current;
             EventType eventType = GetEventType(e);
 
+            Input(e, eventType);
+            Paint(window, eventType);
+        }
+
+        void Input(Event e, EventType eventType)
+        {
             if (selection != null)
             {
                 HandleSelectionInput(e, eventType);
@@ -66,17 +72,23 @@ namespace Editor
             {
                 HandleCursorInput(e, eventType);
             }
+        }
 
-            if (selection != null)
+        void Paint(EditorWindow window, EventType eventType)
+        {
+            if (eventType == EventType.Repaint)
             {
-                DrawSelection(mousePos);
-            }
-            else
-            {
-                DrawCursor(mousePos);
-            }
+                if (selection != null)
+                {
+                    DrawSelection(mousePos);
+                }
+                else
+                {
+                    DrawCursorElement(mousePos);
+                }
 
-            window.Repaint();
+                window.Repaint();
+            }
         }
 
         void HandleCursorInput(Event e, EventType eventType)
@@ -153,28 +165,53 @@ namespace Editor
                 {
                     for (int z = minZ; z <= maxZ; z++)
                     {
-                        DrawCursor(new Vector3Int(x, y, z));
+                        var pos = new Vector3Int(x, y, z);
+                        DrawCursorElement(pos);
                     }
                 }
             }
         }
 
-
-        void DrawCursor(Vector3Int currentPos)
+        void DrawCursorElement(Vector3Int pos)
         {
-            if (state.Mode == Mode.Erase)
+            switch (state.Mode)
             {
-                Handles.color = Color.red;
+                case Mode.Create:
+                    DrawPrefabPreview(pos, state.SelectedPrefab);
+                    break;
+                case Mode.Erase:
+                    DrawWireCube(pos, Color.red);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            else
-            {
-                Handles.color = state.GizmoColor;
-            }
+        }
 
+        void DrawPrefabPreview(Vector3Int pos, GameObject prefab)
+        {
+            Matrix4x4 poseToWorld = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one);
+            MeshFilter[] filters = prefab.GetComponentsInChildren<MeshFilter>();
+            foreach (MeshFilter filter in filters)
+            {
+                Material mat = filter.GetComponent<MeshRenderer>().sharedMaterial;
+                if (mat != null)
+                {
+                    Matrix4x4 childToPose = filter.transform.localToWorldMatrix;
+                    Matrix4x4 childToWorld = poseToWorld * childToPose;
+                    Mesh mesh = filter.sharedMesh;
+                    mat.SetPass(0);
+                    Graphics.DrawMeshNow(mesh, childToWorld, 0);
+                }
+            }
+        }
+
+        static void DrawWireCube(Vector3Int pos, Color color)
+        {
+            Handles.color = color;
             Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
-            Handles.DrawWireCube(currentPos, Vector3.one);
-            Handles.DrawWireCube(currentPos, Vector3.one * 1.01f);
-            Handles.DrawWireCube(currentPos, Vector3.one * 0.99f);
+            Handles.DrawWireCube(pos, Vector3.one);
+            Handles.DrawWireCube(pos, Vector3.one * 1.01f);
+            Handles.DrawWireCube(pos, Vector3.one * 0.99f);
         }
 
         Vector3Int GetMouseCursorPosition(Vector3 mousePos)

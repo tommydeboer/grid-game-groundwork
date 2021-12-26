@@ -10,11 +10,13 @@ namespace Editor
     {
         public Vector3Int StartPos { get; }
         public Plane Plane { get; }
+        public int Height { get; set; }
 
         public GridSelection(Vector3Int startPos)
         {
             StartPos = startPos;
             Plane = new Plane(Vector3.up, startPos);
+            Height = 0;
         }
     }
 
@@ -25,8 +27,8 @@ namespace Editor
         public override GUIContent toolbarIcon => iconContent;
         GUIContent iconContent;
 
-        LevelEditor window;
         State state;
+
         GridSelection selection;
         Vector3Int mousePos;
 
@@ -93,20 +95,41 @@ namespace Editor
         void HandleSelectionInput(Event e, EventType eventType)
         {
             mousePos = GetMouseSelectionPosition(e.mousePosition);
+            if (e.isKey)
+            {
+                if (eventType == EventType.KeyDown)
+                {
+                    if (e.keyCode == KeyCode.Escape)
+                    {
+                        selection = null;
+                    }
+                }
 
-            if (eventType == EventType.MouseDown)
-            {
-                if (e.button == 1)
-                {
-                    selection = null;
-                }
+                e.Use();
             }
-            else if (eventType == EventType.MouseUp)
+            else if (e.isMouse)
             {
-                if (e.button == 0)
+                if (eventType == EventType.MouseDown)
                 {
-                    selection = null;
+                    if (e.button == 1)
+                    {
+                        selection = null;
+                    }
                 }
+                else if (eventType == EventType.MouseUp)
+                {
+                    if (e.button == 0)
+                    {
+                        selection = null;
+                    }
+                }
+
+                e.Use();
+            }
+            else if (e.isScrollWheel)
+            {
+                selection.Height += (e.delta.y < 0) ? 1 : -1;
+                e.Use();
             }
         }
 
@@ -118,12 +141,17 @@ namespace Editor
             int maxX = Math.Max(from.x, to.x);
             int minZ = Math.Min(from.z, to.z);
             int maxZ = Math.Max(from.z, to.z);
+            int minY = Math.Min(from.y, selection.Height);
+            int maxY = Math.Max(from.y, selection.Height);
 
-            for (int x = minX; x <= maxX; x++)
+            for (int y = minY; y <= maxY; y++)
             {
-                for (int z = minZ; z <= maxZ; z++)
+                for (int x = minX; x <= maxX; x++)
                 {
-                    DrawCursor(new Vector3Int(x, from.y, z));
+                    for (int z = minZ; z <= maxZ; z++)
+                    {
+                        DrawCursor(new Vector3Int(x, y, z));
+                    }
                 }
             }
         }

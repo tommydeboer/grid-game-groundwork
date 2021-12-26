@@ -82,8 +82,15 @@ namespace Editor
         void HandleCursorInput(Event e, EventType eventType)
         {
             mousePos = GetMouseCursorPosition(e.mousePosition);
-
-            if (eventType == EventType.MouseDown)
+            if (eventType == EventType.KeyDown)
+            {
+                if (e.keyCode == KeyCode.Tab)
+                {
+                    state.SetNextMode();
+                    e.Use();
+                }
+            }
+            else if (eventType == EventType.MouseDown)
             {
                 if (e.button == 0)
                 {
@@ -95,33 +102,29 @@ namespace Editor
         void HandleSelectionInput(Event e, EventType eventType)
         {
             mousePos = GetMouseSelectionPosition(e.mousePosition);
-            if (e.isKey)
+            if (eventType == EventType.KeyDown)
             {
-                if (eventType == EventType.KeyDown)
+                if (e.keyCode == KeyCode.Escape)
                 {
-                    if (e.keyCode == KeyCode.Escape)
-                    {
-                        selection = null;
-                    }
+                    selection = null;
                 }
 
                 e.Use();
             }
-            else if (e.isMouse)
+            else if (eventType == EventType.MouseDown)
             {
-                if (eventType == EventType.MouseDown)
+                if (e.button == 1)
                 {
-                    if (e.button == 1)
-                    {
-                        selection = null;
-                    }
+                    selection = null;
                 }
-                else if (eventType == EventType.MouseUp)
+
+                e.Use();
+            }
+            else if (eventType == EventType.MouseUp)
+            {
+                if (e.button == 0)
                 {
-                    if (e.button == 0)
-                    {
-                        selection = null;
-                    }
+                    selection = null;
                 }
 
                 e.Use();
@@ -142,9 +145,11 @@ namespace Editor
             int minZ = Math.Min(from.z, to.z);
             int maxZ = Math.Max(from.z, to.z);
             int minY = Math.Min(from.y, selection.Height);
-            int maxY = Math.Max(from.y, selection.Height);
 
-            for (int y = minY; y <= maxY; y++)
+            int maxY = Math.Max(from.y, selection.Height);
+            for (int y = minY;
+                y <= maxY;
+                y++)
             {
                 for (int x = minX; x <= maxX; x++)
                 {
@@ -221,10 +226,11 @@ namespace Editor
             return eventType;
         }
 
-        [Shortcut(TITLE, null, KeyCode.N)]
-        static void ToolShortcut()
+        [Shortcut(TITLE, null, KeyCode.C)]
+        static void CreateShortcut()
         {
             ToolManager.SetActiveTool<RectCreateTool>();
+            LevelEditor.state.Mode = Mode.Create;
         }
     }
 }

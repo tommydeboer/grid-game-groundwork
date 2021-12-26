@@ -41,39 +41,39 @@ namespace Editor
 
         void HandleMouse(EditorWindow view, Event e)
         {
-            Vector3 pos = GetGizmoPosition(e.mousePosition);
-            EventType eventType = GetEventType(e);
-            SetLeftMouseButtonState(view, e, eventType);
-
-            if (e.modifiers == EventModifiers.Alt && eventType == EventType.ScrollWheel)
-            {
-                pos = SetSpawnHeight(e, pos);
-                e.Use();
-            }
-
-            if (state.Mode != Mode.None)
-            {
-                if (eventType == EventType.MouseDown)
-                {
-                    switch (e.button)
-                    {
-                        case 0:
-                            HandleLeftClick(e, pos);
-                            break;
-                        case 2:
-                            HandleMiddleClick(e);
-                            break;
-                    }
-                }
-                else if (mouseButtonDown && eventType == EventType.MouseDrag)
-                {
-                    HandleDrag(e, pos);
-                }
-
-                e.Use();
-                DrawGizmo(pos);
-                view.Repaint();
-            }
+            // Vector3 pos = GetGizmoPosition(e.mousePosition);
+            // EventType eventType = GetEventType(e);
+            // SetLeftMouseButtonState(view, e, eventType);
+            //
+            // if (e.modifiers == EventModifiers.Alt && eventType == EventType.ScrollWheel)
+            // {
+            //     pos = SetSpawnHeight(e, pos);
+            //     e.Use();
+            // }
+            //
+            // if (state.Mode != Mode.None)
+            // {
+            //     if (eventType == EventType.MouseDown)
+            //     {
+            //         switch (e.button)
+            //         {
+            //             case 0:
+            //                 HandleLeftClick(e, pos);
+            //                 break;
+            //             case 2:
+            //                 HandleMiddleClick(e);
+            //                 break;
+            //         }
+            //     }
+            //     else if (mouseButtonDown && eventType == EventType.MouseDrag)
+            //     {
+            //         HandleDrag(e, pos);
+            //     }
+            //
+            //     e.Use();
+            //     DrawGizmo(pos);
+            //     view.Repaint();
+            // }
         }
 
         void SetLeftMouseButtonState(Object view, Event e, EventType eventType)
@@ -99,10 +99,6 @@ namespace Editor
                     return;
                 case KeyCode.Minus:
                     state.Mode = Mode.Erase;
-                    e.Use();
-                    return;
-                case KeyCode.Escape:
-                    state.Mode = Mode.None;
                     e.Use();
                     return;
                 case KeyCode.P:
@@ -187,8 +183,6 @@ namespace Editor
                     break;
                 case Mode.Erase:
                     level.ClearAt(Utils.Vec3ToInt(drawPos));
-                    break;
-                case Mode.None:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

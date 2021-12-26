@@ -14,5 +14,17 @@ namespace Editor
         public List<GameObject> Prefabs => EditorPrefabs.Prefabs;
         public int SelectedPrefabId { get; set; }
         public GameObject SelectedPrefab => Prefabs[SelectedPrefabId];
+
+        public void SetNextMode()
+        {
+            if (Mode == Mode.Create)
+            {
+                Mode = Mode.Erase;
+            }
+            else
+            {
+                Mode = Mode.Create;
+            }
+        }
     }
 }

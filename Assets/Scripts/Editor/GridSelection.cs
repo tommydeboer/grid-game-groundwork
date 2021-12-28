@@ -5,7 +5,7 @@ namespace Editor
 {
     internal class GridSelection
     {
-        public Vector3Int StartPos { get; }
+        Vector3Int StartPos { get; }
         public Vector3Int CurrentPos { get; set; }
         public Plane Plane { get; }
         public int Height { get; set; }
@@ -14,7 +14,6 @@ namespace Editor
         {
             get
             {
-                // TODO cache when CurrentPos is set
                 int minX = Math.Min(StartPos.x, CurrentPos.x);
                 int minZ = Math.Min(StartPos.z, CurrentPos.z);
                 int minY = Math.Min(StartPos.y, StartPos.y + Height);
@@ -27,7 +26,6 @@ namespace Editor
         {
             get
             {
-                // TODO cache when CurrentPos is set
                 int maxX = Math.Max(StartPos.x, CurrentPos.x);
                 int maxZ = Math.Max(StartPos.z, CurrentPos.z);
                 int maxY = Math.Max(StartPos.y, StartPos.y + Height);

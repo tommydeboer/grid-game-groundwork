@@ -57,6 +57,13 @@ namespace Editor
 
         void Input(Event e, EventType eventType)
         {
+            if (e.alt)
+            {
+                // Is rotating camera
+                selection = null;
+                return;
+            }
+
             if (selection != null)
             {
                 HandleSelectionInput(e, eventType);

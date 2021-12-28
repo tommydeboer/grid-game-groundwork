@@ -99,9 +99,6 @@ namespace Editor
 
         void HandleSelectionInput(Event e, EventType eventType)
         {
-            mousePos = GetMouseSelectionPosition(e.mousePosition);
-            selection.CurrentPos = mousePos;
-
             if (eventType == EventType.KeyDown)
             {
                 if (e.keyCode == KeyCode.Escape)
@@ -128,6 +125,11 @@ namespace Editor
                 }
 
                 e.Use();
+            }
+            else if (eventType == EventType.MouseDrag)
+            {
+                mousePos = GetMouseSelectionPosition(e.mousePosition);
+                selection.CurrentPos = mousePos;
             }
             else if (e.isScrollWheel)
             {

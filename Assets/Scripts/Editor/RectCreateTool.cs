@@ -64,6 +64,8 @@ namespace Editor
                 return;
             }
 
+            HandleShortcuts(e, eventType);
+
             if (selection != null)
             {
                 HandleSelectionInput(e, eventType);
@@ -91,21 +93,30 @@ namespace Editor
             }
         }
 
+        void HandleShortcuts(Event e, EventType eventType)
+        {
+            if (eventType == EventType.KeyDown)
+            {
+                switch (e.keyCode)
+                {
+                    case >= (KeyCode) 49 and <= (KeyCode) 57:
+                        state.SelectedPrefabId = (int) e.keyCode - 49;
+                        state.Mode = Mode.Create;
+                        e.Use();
+                        return;
+                    case KeyCode.Tab:
+                        state.SetNextMode();
+                        e.Use();
+                        return;
+                }
+            }
+        }
+
         void HandleCursorInput(Event e, EventType eventType)
         {
             mousePos = Mouse.GetPosition(e.mousePosition, state.Mode == Mode.Create);
             switch (eventType)
             {
-                case EventType.KeyDown:
-                {
-                    if (e.keyCode == KeyCode.Tab)
-                    {
-                        state.SetNextMode();
-                        e.Use();
-                    }
-
-                    break;
-                }
                 case EventType.MouseDown:
                 {
                     if (e.button == 0)

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.ShortcutManagement;
@@ -6,6 +7,7 @@ using UnityEngine;
 
 namespace Editor
 {
+    [SuppressMessage("ReSharper", "SwitchStatementMissingSomeEnumCasesNoDefault")]
     [EditorTool(TITLE)]
     public class RectCreateTool : EditorTool
     {
@@ -80,61 +82,72 @@ namespace Editor
         void HandleCursorInput(Event e, EventType eventType)
         {
             mousePos = GetMouseCursorPosition(e.mousePosition);
-            if (eventType == EventType.KeyDown)
+            switch (eventType)
             {
-                if (e.keyCode == KeyCode.Tab)
+                case EventType.KeyDown:
                 {
-                    state.SetNextMode();
-                    e.Use();
+                    if (e.keyCode == KeyCode.Tab)
+                    {
+                        state.SetNextMode();
+                        e.Use();
+                    }
+
+                    break;
                 }
-            }
-            else if (eventType == EventType.MouseDown)
-            {
-                if (e.button == 0)
+                case EventType.MouseDown:
                 {
-                    selection = new GridSelection(mousePos);
+                    if (e.button == 0)
+                    {
+                        selection = new GridSelection(mousePos);
+                    }
+
+                    break;
                 }
             }
         }
 
         void HandleSelectionInput(Event e, EventType eventType)
         {
-            if (eventType == EventType.KeyDown)
+            switch (eventType)
             {
-                if (e.keyCode == KeyCode.Escape)
+                case EventType.KeyDown:
                 {
-                    selection = null;
-                }
+                    if (e.keyCode == KeyCode.Escape)
+                    {
+                        selection = null;
+                    }
 
-                e.Use();
-            }
-            else if (eventType == EventType.MouseDown)
-            {
-                if (e.button == 1)
+                    e.Use();
+                    break;
+                }
+                case EventType.MouseDown:
                 {
-                    selection = null;
-                }
+                    if (e.button == 1)
+                    {
+                        selection = null;
+                    }
 
-                e.Use();
-            }
-            else if (eventType == EventType.MouseUp)
-            {
-                if (e.button == 0)
+                    e.Use();
+                    break;
+                }
+                case EventType.MouseUp:
                 {
-                    selection = null;
-                }
+                    if (e.button == 0)
+                    {
+                        selection = null;
+                    }
 
-                e.Use();
-            }
-            else if (eventType == EventType.MouseDrag)
-            {
-                mousePos = GetMouseSelectionPosition(e.mousePosition);
-                selection.CurrentPos = mousePos;
-            }
-            else if (e.isScrollWheel)
-            {
-                selection.Height += (e.delta.y < 0) ? 1 : -1;
-                e.Use();
+                    e.Use();
+                    break;
+                }
+                case EventType.MouseDrag:
+                    mousePos = GetMouseSelectionPosition(e.mousePosition);
+                    selection.CurrentPos = mousePos;
+                    break;
+                case EventType.ScrollWheel:
+                    selection.Height += (e.delta.y < 0) ? 1 : -1;
+                    e.Use();
+                    break;
             }
         }
 

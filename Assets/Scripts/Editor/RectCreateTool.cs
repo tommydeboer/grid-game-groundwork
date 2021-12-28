@@ -81,7 +81,7 @@ namespace Editor
 
         void HandleCursorInput(Event e, EventType eventType)
         {
-            mousePos = GetMouseCursorPosition(e.mousePosition);
+            mousePos = Mouse.GetPosition(e.mousePosition, state.Mode == Mode.Create);
             switch (eventType)
             {
                 case EventType.KeyDown:
@@ -141,7 +141,7 @@ namespace Editor
                     break;
                 }
                 case EventType.MouseDrag:
-                    mousePos = GetMouseSelectionPosition(e.mousePosition);
+                    mousePos = Mouse.GetPositionOnPlane(e.mousePosition, selection.Plane);
                     selection.CurrentPos = mousePos;
                     break;
                 case EventType.ScrollWheel:
@@ -179,45 +179,6 @@ namespace Editor
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        Vector3Int GetMouseCursorPosition(Vector3 mousePos)
-        {
-            Ray ray = HandleUtility.GUIPointToWorldRay(mousePos);
-
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
-            {
-                Vector3 pos = hit.point + (hit.normal * 0.5f);
-
-                if (state.Mode == Mode.Erase)
-                {
-                    pos = hit.transform.position;
-                }
-                else
-                {
-                    pos += (Vector3.back * state.SpawnHeight);
-                    pos = Utils.AvoidIntersect(pos);
-                }
-
-                return Vector3Int.RoundToInt(pos);
-            }
-
-            return Vector3Int.zero;
-        }
-
-        Vector3Int GetMouseSelectionPosition(Vector3 mousePos)
-        {
-            Ray ray = HandleUtility.GUIPointToWorldRay(mousePos);
-
-            if (selection != null)
-            {
-                if (selection.Plane.Raycast(ray, out float enter))
-                {
-                    return Vector3Int.RoundToInt(ray.GetPoint(enter));
-                }
-            }
-
-            return Vector3Int.zero;
         }
 
         static EventType GetEventType(Event e)

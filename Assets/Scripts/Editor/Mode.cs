@@ -3,6 +3,7 @@ namespace Editor
     public enum Mode
     {
         Erase,
-        Create
+        Create,
+        Pick
     }
 }

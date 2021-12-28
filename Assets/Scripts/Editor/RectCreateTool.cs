@@ -17,10 +17,11 @@ namespace Editor
 
         State state;
         LevelFactory levelFactory;
+        LevelEditor levelEditor;
+        ModeModifier pickModifier;
 
         GridSelection selection;
         Vector3Int mousePos;
-        LevelEditor levelEditor;
 
 
         void OnEnable()
@@ -33,6 +34,7 @@ namespace Editor
             };
             state = LevelEditor.state;
             levelFactory = new LevelFactory();
+            pickModifier = new ModeModifier(state, Mode.Pick);
         }
 
         public override void OnActivated()
@@ -57,12 +59,7 @@ namespace Editor
 
         void Input(Event e, EventType eventType)
         {
-            if (e.alt)
-            {
-                // Is rotating camera
-                selection = null;
-                return;
-            }
+            HandleModifiers(e);
 
             HandleShortcuts(e, eventType);
 
@@ -90,7 +87,19 @@ namespace Editor
                 }
 
                 window.Repaint();
+                levelEditor.Repaint();
             }
+        }
+
+        void HandleModifiers(Event e)
+        {
+            if (e.alt)
+            {
+                // Is rotating camera, stop selection
+                selection = null;
+            }
+
+            pickModifier.Check(e.control);
         }
 
         void HandleShortcuts(Event e, EventType eventType)
@@ -119,9 +128,17 @@ namespace Editor
             {
                 case EventType.MouseDown:
                 {
-                    if (e.button == 0)
+                    switch (e.button)
                     {
-                        selection = new GridSelection(mousePos);
+                        case 0 when state.Mode == Mode.Pick:
+                            PickPrefab(e.mousePosition);
+                            pickModifier.Reset();
+                            state.Mode = Mode.Create;
+                            e.Use();
+                            break;
+                        case 0:
+                            selection = new GridSelection(mousePos);
+                            break;
                     }
 
                     break;
@@ -204,7 +221,7 @@ namespace Editor
             switch (state.Mode)
             {
                 case Mode.Create:
-                    selection.ForEach(DrawCursor);
+                    selection.ForEach(pos => Draw.DrawPrefabPreview(pos, state.SelectedPrefab));
                     break;
                 case Mode.Erase:
                     Draw.DrawWireBox(selection.MinCorner, selection.MaxCorner, Color.red);
@@ -224,8 +241,27 @@ namespace Editor
                 case Mode.Erase:
                     Draw.DrawWireCube(pos, Color.red);
                     break;
+                case Mode.Pick:
+                    Draw.DrawWireCube(pos, Color.yellow);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        void PickPrefab(Vector3 mousePos)
+        {
+            Ray ray = HandleUtility.GUIPointToWorldRay(mousePos);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
+            {
+                for (int i = 0; i < state.Prefabs.Count; i++)
+                {
+                    if (state.Prefabs[i].transform.name == hit.transform.parent.name)
+                    {
+                        state.SelectedPrefabId = i;
+                    }
+                }
             }
         }
 

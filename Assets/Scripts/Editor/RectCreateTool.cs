@@ -66,11 +66,11 @@ namespace Editor
             {
                 if (selection != null)
                 {
-                    selection.ForEach(DrawCursorElement);
+                    DrawSelection();
                 }
                 else
                 {
-                    DrawCursorElement(mousePos);
+                    DrawCursor(mousePos);
                 }
 
                 window.Repaint();
@@ -136,46 +136,34 @@ namespace Editor
             }
         }
 
-        void DrawCursorElement(Vector3Int pos)
+        void DrawSelection()
         {
             switch (state.Mode)
             {
                 case Mode.Create:
-                    DrawPrefabPreview(pos, state.SelectedPrefab);
+                    selection.ForEach(DrawCursor);
                     break;
                 case Mode.Erase:
-                    DrawWireCube(pos, Color.red);
+                    Draw.DrawWireBox(selection.MinCorner, selection.MaxCorner, Color.red);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        void DrawPrefabPreview(Vector3Int pos, GameObject prefab)
+        void DrawCursor(Vector3Int pos)
         {
-            Matrix4x4 poseToWorld = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one);
-            MeshFilter[] filters = prefab.GetComponentsInChildren<MeshFilter>();
-            foreach (MeshFilter filter in filters)
+            switch (state.Mode)
             {
-                Material mat = filter.GetComponent<MeshRenderer>().sharedMaterial;
-                if (mat != null)
-                {
-                    Matrix4x4 childToPose = filter.transform.localToWorldMatrix;
-                    Matrix4x4 childToWorld = poseToWorld * childToPose;
-                    Mesh mesh = filter.sharedMesh;
-                    mat.SetPass(0);
-                    Graphics.DrawMeshNow(mesh, childToWorld, 0);
-                }
+                case Mode.Create:
+                    Draw.DrawPrefabPreview(pos, state.SelectedPrefab);
+                    break;
+                case Mode.Erase:
+                    Draw.DrawWireCube(pos, Color.red);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-        }
-
-        static void DrawWireCube(Vector3Int pos, Color color)
-        {
-            Handles.color = color;
-            Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
-            Handles.DrawWireCube(pos, Vector3.one);
-            Handles.DrawWireCube(pos, Vector3.one * 1.01f);
-            Handles.DrawWireCube(pos, Vector3.one * 0.99f);
         }
 
         Vector3Int GetMouseCursorPosition(Vector3 mousePos)

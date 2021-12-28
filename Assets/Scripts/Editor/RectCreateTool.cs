@@ -16,9 +16,12 @@ namespace Editor
         GUIContent iconContent;
 
         State state;
+        LevelFactory levelFactory;
 
         GridSelection selection;
         Vector3Int mousePos;
+        LevelEditor levelEditor;
+
 
         void OnEnable()
         {
@@ -29,11 +32,13 @@ namespace Editor
                 tooltip = TITLE
             };
             state = LevelEditor.state;
+            levelFactory = new LevelFactory();
         }
 
         public override void OnActivated()
         {
             Selection.activeGameObject = null;
+            levelEditor = EditorWindow.GetWindow<LevelEditor>();
         }
 
         public override void OnToolGUI(EditorWindow window)
@@ -134,15 +139,14 @@ namespace Editor
                 {
                     if (e.button == 0)
                     {
-                        selection = null;
+                        ApplySelection();
                     }
 
                     e.Use();
                     break;
                 }
                 case EventType.MouseDrag:
-                    mousePos = Mouse.GetPositionOnPlane(e.mousePosition, selection.Plane);
-                    selection.CurrentPos = mousePos;
+                    selection.CurrentPos = Mouse.GetPositionOnPlane(e.mousePosition, selection.Plane);
                     break;
                 case EventType.ScrollWheel:
                     selection.Height += (e.delta.y < 0) ? 1 : -1;
@@ -150,6 +154,32 @@ namespace Editor
                     break;
             }
         }
+
+        void ApplySelection()
+        {
+            levelEditor.Refresh();
+            Level level = levelFactory.GetLevel(state.CurrentLevel);
+
+            switch (state.Mode)
+            {
+                case Mode.Create:
+                {
+                    selection.ForEach(pos => level.CreateAt(state.SelectedPrefab, pos, Vector3.zero));
+                    break;
+                }
+                case Mode.Erase:
+                {
+                    selection.ForEach(pos => level.ClearAt(pos));
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            selection = null;
+            levelEditor.Refresh();
+        }
+
 
         void DrawSelection()
         {

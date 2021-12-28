@@ -30,6 +30,9 @@ namespace Editor
 
         #region GUI STATE
 
+        Mode mode;
+        int selectedPrefabId;
+        int spawnHeight;
         int rotateInt;
         int modeInt;
         int sceneLevelIndex;
@@ -41,7 +44,6 @@ namespace Editor
 
         public static State state;
         static EditorPrefabs editorPrefabs;
-        SceneViewInteraction sceneViewInteraction;
 
         #endregion
 
@@ -86,9 +88,6 @@ namespace Editor
 
         void OnEnable()
         {
-            sceneViewInteraction = new SceneViewInteraction(this, state);
-            SceneView.duringSceneGui += sceneViewInteraction.OnSceneGUI;
-
             margin = new GUIStyle {margin = new RectOffset(15, 15, 10, 15)};
 
             EnsureTagsExist();
@@ -162,38 +161,65 @@ namespace Editor
         {
             using (new GUILayout.VerticalScope(margin))
             {
-                state.Mode = (Mode) GUILayout.Toolbar((int) state.Mode, modeLabels);
+                using (var check = new EditorGUI.ChangeCheckScope())
+                {
+                    mode = (Mode) GUILayout.Toolbar((int) state.Mode, modeLabels);
+                    if (check.changed)
+                    {
+                        state.Mode = mode;
+                    }
+                }
+
                 GUI.enabled = state.Mode == Mode.Create;
 
                 BigSpace();
 
-                GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
-                IEnumerable<string> labels = state.Prefabs.Select(
-                    (prefab, i) => prefab.transform.name + $" ({i + 1})");
-                state.SelectedPrefabId = GUILayout.SelectionGrid(state.SelectedPrefabId, labels.ToArray(), 1);
+                using (var check = new EditorGUI.ChangeCheckScope())
+                {
+                    GUILayout.Label("Selected GameObject:", EditorStyles.boldLabel);
+                    IEnumerable<string> labels = state.Prefabs.Select(
+                        (prefab, i) => prefab.transform.name + $" ({i + 1})");
+                    selectedPrefabId = GUILayout.SelectionGrid(state.SelectedPrefabId, labels.ToArray(), 1);
+
+                    if (check.changed)
+                    {
+                        state.SelectedPrefabId = selectedPrefabId;
+                    }
+                }
 
                 BigSpace();
 
-                GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
-                rotateInt = GUILayout.SelectionGrid(rotateInt, rotateLabels, 4);
-                SetRotation();
+                using (var check = new EditorGUI.ChangeCheckScope())
+                {
+                    GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
+                    rotateInt = GUILayout.SelectionGrid(rotateInt, rotateLabels, 4);
+
+                    if (check.changed)
+                    {
+                        state.SpawnRotation = new Vector3(0, rotateInt * 90, 0);
+                    }
+                }
 
                 BigSpace();
 
-                state.SpawnHeight = EditorGUILayout.IntSlider("Spawn at height:", state.SpawnHeight, 0, 20);
+                using (var check = new EditorGUI.ChangeCheckScope())
+                {
+                    spawnHeight = EditorGUILayout.IntSlider("Spawn at height:", state.SpawnHeight, 0, 20);
+
+                    if (check.changed)
+                    {
+                        state.SpawnHeight = spawnHeight;
+                    }
+                }
 
                 GUI.enabled = true;
             }
         }
 
-        void SetRotation()
-        {
-            state.SpawnRotation = new Vector3(0, rotateInt * 90, 0);
-        }
-
         void DrawLevelSelectionUI()
         {
             // TODO fix: new levels not added to dropdown
+            // TODO use ChangeCheckScope
             using (new GUILayout.VerticalScope(margin))
             {
                 GUILayout.Label("Currently Editing: ", EditorStyles.boldLabel);

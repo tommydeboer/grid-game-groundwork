@@ -5,6 +5,8 @@ namespace Editor
 {
     internal class GridSelection
     {
+        // TODO implement IEnumerable?
+
         Vector3Int StartPos { get; }
         public Vector3Int CurrentPos { get; set; }
         public Plane Plane { get; }
@@ -31,6 +33,24 @@ namespace Editor
                 int maxY = Math.Max(StartPos.y, StartPos.y + Height);
 
                 return new Vector3Int(maxX, maxY, maxZ);
+            }
+        }
+
+        public bool Intersects
+        {
+            get
+            {
+                // TODO improve performance by doing one big overlap test 
+
+                bool intersects = false;
+                ForEach(pos =>
+                {
+                    if (!Utils.TileIsEmpty(pos))
+                    {
+                        intersects = true;
+                    }
+                });
+                return intersects;
             }
         }
 

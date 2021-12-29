@@ -214,6 +214,12 @@ namespace Editor
 
         void ApplySelection()
         {
+            if (selection.Intersects)
+            {
+                selection = null;
+                return;
+            }
+
             levelEditor.Refresh();
             Level level = levelFactory.GetLevel(state.CurrentLevel);
 
@@ -230,7 +236,7 @@ namespace Editor
                     break;
                 }
                 case Mode.Pick:
-                    throw new ArgumentOutOfRangeException();
+                    throw new InvalidOperationException();
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -246,12 +252,18 @@ namespace Editor
             {
                 case Mode.Create:
                     selection.ForEach(pos => Draw.DrawPrefabPreview(pos, state.SelectedPrefab));
+
+                    if (selection.Intersects)
+                    {
+                        selection.ForEach(Draw.DrawIllegalSelectionOverlay);
+                    }
+
                     break;
                 case Mode.Erase:
                     Draw.DrawWireBox(selection.MinCorner, selection.MaxCorner, Color.red);
                     break;
                 case Mode.Pick:
-                    throw new ArgumentOutOfRangeException();
+                    throw new InvalidOperationException();
                 default:
                     throw new ArgumentOutOfRangeException();
             }

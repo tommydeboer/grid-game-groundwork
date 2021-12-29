@@ -42,6 +42,14 @@ namespace Editor
             Height = 0;
         }
 
+        public GridSelection(Vector3Int startPos, int verticalOffset)
+        {
+            StartPos = startPos;
+            CurrentPos = startPos;
+            Plane = new Plane(Vector3.up, startPos - (Vector3Int.up * verticalOffset));
+            Height = 0;
+        }
+
         public void ForEach(Action<Vector3Int> fun)
         {
             var minCorner = MinCorner;

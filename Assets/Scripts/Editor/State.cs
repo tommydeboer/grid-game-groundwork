@@ -5,7 +5,22 @@ namespace Editor
 {
     public class State : ScriptableObject
     {
-        public int SpawnHeight { get; set; }
+        public const int MAX_SPAWN_HEIGHT = 20;
+
+        int spawnHeight;
+
+        public int SpawnHeight
+        {
+            get => spawnHeight;
+            set
+            {
+                if (0 <= value && value <= MAX_SPAWN_HEIGHT)
+                {
+                    spawnHeight = value;
+                }
+            }
+        }
+
         public Vector3 SpawnRotation { get; set; }
         public Color GizmoColor { get; set; } = Color.white;
         public string CurrentLevel { get; set; }

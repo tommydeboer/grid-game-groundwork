@@ -204,7 +204,8 @@ namespace Editor
 
                 using (var check = new EditorGUI.ChangeCheckScope())
                 {
-                    spawnHeight = EditorGUILayout.IntSlider("Spawn at height:", state.SpawnHeight, 0, 20);
+                    spawnHeight = EditorGUILayout.IntSlider("Spawn at height:", state.SpawnHeight, 0,
+                        State.MAX_SPAWN_HEIGHT);
 
                     if (check.changed)
                     {

@@ -116,6 +116,14 @@ namespace Editor
                         state.Mode = Mode.Create;
                         e.Use();
                         return;
+                    case KeyCode.PageUp:
+                        state.SpawnHeight++;
+                        e.Use();
+                        return;
+                    case KeyCode.PageDown:
+                        state.SpawnHeight--;
+                        e.Use();
+                        return;
                     case KeyCode.Tab:
                         state.SetNextMode();
                         e.Use();
@@ -127,6 +135,8 @@ namespace Editor
         void HandleCursorInput(Event e, EventType eventType)
         {
             mousePos = Mouse.GetPosition(e.mousePosition, state.Mode == Mode.Create);
+            ApplyMouseVerticalOffset();
+
             switch (eventType)
             {
                 case EventType.MouseDown:
@@ -135,9 +145,10 @@ namespace Editor
                     {
                         case 0 when state.Mode == Mode.Pick:
                             PickPrefab(e.mousePosition);
-                            pickModifier.Reset();
-                            state.Mode = Mode.Create;
                             e.Use();
+                            break;
+                        case 0 when state.Mode == Mode.Create:
+                            selection = new GridSelection(mousePos, state.SpawnHeight);
                             break;
                         case 0:
                             selection = new GridSelection(mousePos);
@@ -146,6 +157,14 @@ namespace Editor
 
                     break;
                 }
+            }
+        }
+
+        void ApplyMouseVerticalOffset()
+        {
+            if (state.Mode == Mode.Create && state.SpawnHeight > 0)
+            {
+                mousePos += (Vector3Int.up * state.SpawnHeight);
             }
         }
 
@@ -210,6 +229,8 @@ namespace Editor
                     selection.ForEach(pos => level.ClearAt(pos));
                     break;
                 }
+                case Mode.Pick:
+                    throw new ArgumentOutOfRangeException();
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -229,6 +250,8 @@ namespace Editor
                 case Mode.Erase:
                     Draw.DrawWireBox(selection.MinCorner, selection.MaxCorner, Color.red);
                     break;
+                case Mode.Pick:
+                    throw new ArgumentOutOfRangeException();
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -239,6 +262,7 @@ namespace Editor
             switch (state.Mode)
             {
                 case Mode.Create:
+                    Draw.DrawHeightIndicator(pos, state.SpawnHeight);
                     Draw.DrawPrefabPreview(pos, state.SelectedPrefab);
                     break;
                 case Mode.Erase:
@@ -266,6 +290,9 @@ namespace Editor
                     }
                 }
             }
+
+            pickModifier.Reset();
+            state.Mode = Mode.Create;
         }
 
         static EventType GetEventType(Event e)

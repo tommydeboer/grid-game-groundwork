@@ -60,5 +60,16 @@ namespace Editor
             Handles.DrawAAPolyLine(width, c5, c6);
             Handles.DrawAAPolyLine(width, c3, c2);
         }
+
+        public static void DrawHeightIndicator(Vector3Int pos, int height)
+        {
+            if (height == 0) return;
+
+            var bottom = new Vector3(pos.x, pos.y - height - 0.5f, pos.z);
+            var top = new Vector3(pos.x, pos.y + 0.5f, pos.z);
+
+            Handles.DrawDottedLine(top, bottom, 5f);
+            Handles.DrawWireDisc(bottom, Vector3.up, 0.2f);
+        }
     }
 }

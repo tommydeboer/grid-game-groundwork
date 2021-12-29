@@ -214,7 +214,7 @@ namespace Editor
 
         void ApplySelection()
         {
-            if (selection.Intersects)
+            if (state.Mode == Mode.Create && selection.Intersects)
             {
                 selection = null;
                 return;
@@ -255,7 +255,7 @@ namespace Editor
 
                     if (selection.Intersects)
                     {
-                        selection.ForEach(Draw.DrawIllegalSelectionOverlay);
+                        Draw.DrawIllegalSelectionOverlay(selection.MinCorner, selection.MaxCorner);
                     }
 
                     break;

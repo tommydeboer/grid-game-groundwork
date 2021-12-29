@@ -22,7 +22,6 @@ namespace Editor
         }
 
         public Vector3 SpawnRotation { get; set; }
-        public Color GizmoColor { get; set; } = Color.white;
         public string CurrentLevel { get; set; }
         public EditorPrefabs EditorPrefabs { get; set; }
         public List<GameObject> Prefabs => EditorPrefabs.Prefabs;

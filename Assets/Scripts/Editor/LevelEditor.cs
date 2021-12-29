@@ -146,10 +146,6 @@ namespace Editor
         {
             using (new GUILayout.VerticalScope(margin))
             {
-                state.GizmoColor = EditorGUILayout.ColorField("Gizmo Color:", state.GizmoColor);
-
-                BigSpace();
-
                 SerializedObject serialObj = new SerializedObject(editorPrefabs);
                 SerializedProperty serialProp = serialObj.FindProperty("prefabs");
                 EditorGUILayout.PropertyField(serialProp, true);

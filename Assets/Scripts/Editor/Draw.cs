@@ -65,11 +65,10 @@ namespace Editor
         {
             if (height == 0) return;
 
-            var bottom = new Vector3(pos.x, pos.y - height - 0.5f, pos.z);
-            var top = new Vector3(pos.x, pos.y + 0.5f, pos.z);
-
-            Handles.DrawDottedLine(top, bottom, 5f);
-            Handles.DrawWireDisc(bottom, Vector3.up, 0.2f);
+            for (int y = 1; y <= height; y++)
+            {
+                Handles.DrawWireCube(pos - (Vector3.up * y), Vector3.one);
+            }
         }
     }
 }

@@ -1,21 +1,26 @@
+using UnityEngine;
+
 namespace Editor
 {
     internal class ModeModifier
     {
         readonly State state;
         readonly Mode mode;
+        readonly EventModifiers eventMods;
         bool keyWasPressed;
         bool active;
 
-        public ModeModifier(State state, Mode mode)
+        public ModeModifier(State state, EventModifiers eventMods, Mode mode)
         {
             this.state = state;
             this.mode = mode;
+            this.eventMods = eventMods;
             keyWasPressed = false;
         }
 
-        public void Check(bool keyIsPressed)
+        public void Evaluate(EventModifiers eventMods)
         {
+            bool keyIsPressed = this.eventMods == eventMods;
             switch (keyIsPressed)
             {
                 case true when !keyWasPressed && !active:

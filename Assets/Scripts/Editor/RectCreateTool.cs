@@ -19,6 +19,7 @@ namespace Editor
         LevelFactory levelFactory;
         LevelEditor levelEditor;
         ModeModifier pickModifier;
+        ModeModifier eraseModifier;
 
         GridSelection selection;
         Vector3Int mousePos;
@@ -34,7 +35,8 @@ namespace Editor
             };
             state = LevelEditor.state;
             levelFactory = new LevelFactory();
-            pickModifier = new ModeModifier(state, Mode.Pick);
+            pickModifier = new ModeModifier(state, EventModifiers.Shift, Mode.Pick);
+            eraseModifier = new ModeModifier(state, EventModifiers.Control, Mode.Erase);
         }
 
         public override void OnActivated()
@@ -99,7 +101,8 @@ namespace Editor
                 selection = null;
             }
 
-            pickModifier.Check(e.control);
+            pickModifier.Evaluate(e.modifiers);
+            eraseModifier.Evaluate(e.modifiers);
         }
 
         void HandleShortcuts(Event e, EventType eventType)

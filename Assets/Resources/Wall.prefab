@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1099415796666649822}
   - component: {fileID: 4954479792080201763}
   m_Layer: 0
-  m_Name: Tile (1)
+  m_Name: Tile
   m_TagString: Tile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5973261170498615863}
   m_RootOrder: 1
@@ -71,6 +72,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5064289018449637335}
   - {fileID: 1099415796666649822}
@@ -89,7 +91,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1452f68fd32741e4bb8a0456d52aa658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isStatic: 1
   tiles:
   - {fileID: 1099415796666649822}
 --- !u!1 &7788323482963293624
@@ -119,7 +120,8 @@ Transform:
   m_GameObject: {fileID: 7788323482963293624}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.98, y: 0.98, z: 0.98}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5973261170498615863}
   m_RootOrder: 0
@@ -143,10 +145,12 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -171,3 +175,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}

@@ -301,7 +301,9 @@ namespace Editor
 
             if (selection.Intersections.Length > 0)
             {
-                Draw.DrawRedOverlayBox(selection.Bounds);
+                var bounds = selection.Bounds;
+                bounds.Expand(Vector3.one * 0.05f);
+                Draw.DrawRedOverlayBox(bounds);
             }
         }
 

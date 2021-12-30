@@ -33,7 +33,7 @@ namespace Editor
                 text = TITLE,
                 tooltip = TITLE
             };
-            state = LevelEditor.state;
+            state = EditorAssets.State;
             levelFactory = new LevelFactory();
             pickModifier = new ModeModifier(state, EventModifiers.Shift, Mode.Pick);
             eraseModifier = new ModeModifier(state, EventModifiers.Control, Mode.Erase);
@@ -319,7 +319,7 @@ namespace Editor
         static void CreateShortcut()
         {
             ToolManager.SetActiveTool<RectCreateTool>();
-            LevelEditor.state.Mode = Mode.Create;
+            EditorAssets.State.Mode = Mode.Create;
         }
     }
 }

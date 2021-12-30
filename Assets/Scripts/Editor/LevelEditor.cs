@@ -42,8 +42,8 @@ namespace Editor
 
         #region EDITOR CLASSES
 
-        public static State state;
-        static EditorPrefabs editorPrefabs;
+        State state;
+        EditorPrefabs editorPrefabs;
 
         #endregion
 
@@ -53,41 +53,16 @@ namespace Editor
         public static void ShowWindow()
         {
             EditorWindow editorWindow = GetWindow(typeof(LevelEditor));
+            //TODO icon not loading + use same icon as tool
             var texture = Resources.Load<Texture2D>("ggg");
             editorWindow.titleContent = new GUIContent("Level Editor", texture);
         }
 
-        [InitializeOnLoadMethod]
-        static void OnLoad()
-        {
-            if (!editorPrefabs)
-            {
-                editorPrefabs = AssetDatabase.LoadAssetAtPath<EditorPrefabs>("Assets/Resources/EditorPrefabs.asset");
-                if (!editorPrefabs)
-                {
-                    editorPrefabs = CreateInstance<EditorPrefabs>();
-                    AssetDatabase.CreateAsset(editorPrefabs, "Assets/Resources/EditorPrefabs.asset");
-                    AssetDatabase.Refresh();
-                }
-            }
-
-            if (!state)
-            {
-                state =
-                    AssetDatabase.LoadAssetAtPath<State>("Assets/Resources/LevelEditorValues.asset");
-                if (!state)
-                {
-                    state = CreateInstance<State>();
-                    AssetDatabase.CreateAsset(state, "Assets/Resources/LevelEditorValues.asset");
-                    AssetDatabase.Refresh();
-                }
-            }
-
-            state.EditorPrefabs = editorPrefabs;
-        }
-
         void OnEnable()
         {
+            state = EditorAssets.State;
+            editorPrefabs = EditorAssets.EditorPrefabs;
+
             margin = new GUIStyle {margin = new RectOffset(15, 15, 10, 15)};
 
             EnsureTagsExist();

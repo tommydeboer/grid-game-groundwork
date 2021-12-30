@@ -5,23 +5,6 @@ namespace Editor
 {
     public static class Draw
     {
-        static GameObject illegalSelectionOverlay;
-
-        [InitializeOnLoadMethod]
-        static void OnLoad()
-        {
-            if (!illegalSelectionOverlay)
-            {
-                illegalSelectionOverlay =
-                    AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/IllegalSelection.prefab");
-            }
-
-            if (!illegalSelectionOverlay)
-            {
-                Debug.LogWarning("Illegal Selection overlay not assigned");
-            }
-        }
-
         public static void DrawPrefabPreview(Vector3Int pos, GameObject prefab)
         {
             Matrix4x4 poseToWorld = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one);
@@ -45,7 +28,7 @@ namespace Editor
             Vector3 centerPos = (maxCorner + minCorner) / 2f;
             Vector3 scale = maxCorner - minCorner + Vector3Int.one;
             Matrix4x4 poseToWorld = Matrix4x4.TRS(centerPos, Quaternion.identity, scale);
-            MeshFilter filter = illegalSelectionOverlay.GetComponentInChildren<MeshFilter>();
+            MeshFilter filter = EditorAssets.SelectionOverlay.GetComponentInChildren<MeshFilter>();
             Material mat = filter.GetComponent<MeshRenderer>().sharedMaterial;
             if (mat != null)
             {

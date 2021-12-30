@@ -268,12 +268,12 @@ namespace Editor
 
                     if (selection.Intersects)
                     {
-                        Draw.DrawIllegalSelectionOverlay(selection.MinCorner, selection.MaxCorner);
+                        Draw.DrawIllegalSelectionOverlay(selection.Bounds);
                     }
 
                     break;
                 case Mode.Erase:
-                    Draw.DrawWireBox(selection.MinCorner, selection.MaxCorner, Color.red);
+                    Draw.DrawWireBox(selection.Bounds, Color.red);
                     break;
                 case Mode.Pick:
                     throw new InvalidOperationException();

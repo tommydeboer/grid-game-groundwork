@@ -16,34 +16,19 @@ namespace Editor
         {
             get
             {
-                int x = Mathf.Abs(StartPos.x - CurrentPos.x) + 1;
-                int y = Mathf.Abs(StartPos.y - CurrentPos.y + Height) + 1;
-                int z = Mathf.Abs(StartPos.z - CurrentPos.z) + 1;
-                return x * y * z;
+                var size = Bounds.size;
+                return (int) size.x * (int) size.y * (int) size.z;
             }
         }
 
-        public Vector3Int MinCorner
+        public Bounds Bounds
         {
             get
             {
-                int minX = Math.Min(StartPos.x, CurrentPos.x);
-                int minZ = Math.Min(StartPos.z, CurrentPos.z);
-                int minY = Math.Min(StartPos.y, StartPos.y + Height);
-
-                return new Vector3Int(minX, minY, minZ);
-            }
-        }
-
-        public Vector3Int MaxCorner
-        {
-            get
-            {
-                int maxX = Math.Max(StartPos.x, CurrentPos.x);
-                int maxZ = Math.Max(StartPos.z, CurrentPos.z);
-                int maxY = Math.Max(StartPos.y, StartPos.y + Height);
-
-                return new Vector3Int(maxX, maxY, maxZ);
+                var b1 = new Bounds(StartPos, Vector3.one);
+                var b2 = new Bounds(CurrentPos + (Vector3Int.up * Height), Vector3.one);
+                b1.Encapsulate(b2);
+                return b1;
             }
         }
 
@@ -83,10 +68,13 @@ namespace Editor
 
         public void ForEach(Action<Vector3Int> fun)
         {
-            var minCorner = MinCorner;
-            var maxCorner = MaxCorner;
+            var bounds = Bounds;
+            var minCorner = Vector3Int.CeilToInt(bounds.min);
+            var maxCorner = Vector3Int.FloorToInt(bounds.max);
 
-            for (int y = minCorner.y; y <= maxCorner.y; y++)
+            for (int y = minCorner.y;
+                y <= maxCorner.y;
+                y++)
             {
                 for (int x = minCorner.x; x <= maxCorner.x; x++)
                 {

@@ -23,11 +23,9 @@ namespace Editor
             }
         }
 
-        public static void DrawIllegalSelectionOverlay(Vector3 minCorner, Vector3 maxCorner)
+        public static void DrawIllegalSelectionOverlay(Bounds bounds)
         {
-            Vector3 centerPos = (maxCorner + minCorner) / 2f;
-            Vector3 scale = maxCorner - minCorner + Vector3Int.one;
-            Matrix4x4 poseToWorld = Matrix4x4.TRS(centerPos, Quaternion.identity, scale);
+            Matrix4x4 poseToWorld = Matrix4x4.TRS(bounds.center, Quaternion.identity, bounds.size);
             MeshFilter filter = EditorAssets.SelectionOverlay.GetComponentInChildren<MeshFilter>();
             Material mat = filter.GetComponent<MeshRenderer>().sharedMaterial;
             if (mat != null)
@@ -37,7 +35,7 @@ namespace Editor
                 Graphics.DrawMeshNow(mesh, poseToWorld, 0);
             }
 
-            DrawWireBox(minCorner, maxCorner, Color.red);
+            DrawWireBox(bounds, Color.red);
         }
 
         public static void DrawWireCube(Vector3Int pos, Color color)
@@ -49,10 +47,10 @@ namespace Editor
             Handles.DrawWireCube(pos, Vector3.one * 0.99f);
         }
 
-        public static void DrawWireBox(Vector3 minCorner, Vector3 maxCorner, Color color, float width = 6f)
+        public static void DrawWireBox(Bounds bounds, Color color, float width = 6f)
         {
-            var minPos = minCorner - Vector3.one / 2;
-            var maxPos = maxCorner + Vector3.one / 2;
+            var minPos = bounds.min;
+            var maxPos = bounds.max;
 
             var c1 = new Vector3(minPos.x, minPos.y, maxPos.z);
             var c2 = new Vector3(minPos.x, maxPos.y, maxPos.z);

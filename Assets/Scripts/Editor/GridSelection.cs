@@ -7,10 +7,12 @@ namespace Editor
     {
         // TODO implement IEnumerable?
 
+        readonly Collider[] overlapBuffer = new Collider[512];
         Vector3Int StartPos { get; }
         public Vector3Int CurrentPos { get; set; }
         public Plane Plane { get; }
         public int Height { get; set; }
+
 
         public int Count
         {
@@ -32,21 +34,23 @@ namespace Editor
             }
         }
 
-        public bool Intersects
+        public Vector3[] Intersections
         {
             get
             {
-                // TODO improve performance by doing one big overlap test 
+                var bounds = Bounds;
+                bounds.Expand(-Vector3.one * 0.9f);
 
-                bool intersects = false;
-                ForEach(pos =>
+                int size = Physics.OverlapBoxNonAlloc(bounds.center, bounds.extents, overlapBuffer,
+                    Quaternion.identity);
+
+                var points = new Vector3[size];
+                for (int i = 0; i < size; i++)
                 {
-                    if (!Utils.TileIsEmpty(pos))
-                    {
-                        intersects = true;
-                    }
-                });
-                return intersects;
+                    points[i] = overlapBuffer[i].transform.position;
+                }
+
+                return points;
             }
         }
 
@@ -66,7 +70,7 @@ namespace Editor
             Height = 0;
         }
 
-        public void ForEach(Action<Vector3Int> fun)
+        public void ForEach(Action<Vector3Int> action)
         {
             var bounds = Bounds;
             var minCorner = Vector3Int.CeilToInt(bounds.min);
@@ -81,7 +85,7 @@ namespace Editor
                     for (int z = minCorner.z; z <= maxCorner.z; z++)
                     {
                         var pos = new Vector3Int(x, y, z);
-                        fun(pos);
+                        action(pos);
                     }
                 }
             }

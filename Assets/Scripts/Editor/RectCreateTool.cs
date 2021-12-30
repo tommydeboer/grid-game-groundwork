@@ -213,7 +213,7 @@ namespace Editor
 
         void ApplySelection()
         {
-            if (state.Mode == Mode.Create && selection.Intersects)
+            if (state.Mode == Mode.Create && selection.Intersections.Length > 0)
             {
                 selection = null;
                 return;
@@ -226,20 +226,7 @@ namespace Editor
             {
                 case Mode.Create:
                 {
-                    bool proceed = true;
-                    if (selection.Count > 1000)
-                    {
-                        proceed = EditorUtility.DisplayDialog(
-                            "Attention!",
-                            $"About to create {selection.Count} objects. Are you sure?",
-                            "Yes", "Cancel");
-                    }
-
-                    if (proceed)
-                    {
-                        selection.ForEach(pos => level.CreateAt(state.SelectedPrefab, pos, Vector3.zero));
-                    }
-
+                    ApplyCreateSelection(level);
                     break;
                 }
                 case Mode.Erase:
@@ -258,27 +245,63 @@ namespace Editor
             levelEditor.Refresh();
         }
 
+        void ApplyCreateSelection(Level level)
+        {
+            bool proceed = true;
+            if (selection.Count > 1000)
+            {
+                proceed = EditorUtility.DisplayDialog(
+                    "Attention!",
+                    $"About to create {selection.Count} objects. Are you sure?",
+                    "Yes", "Cancel");
+            }
+
+            if (proceed)
+            {
+                selection.ForEach(pos => level.CreateAt(state.SelectedPrefab, pos, Vector3.zero));
+            }
+        }
+
 
         void DrawSelection()
         {
             switch (state.Mode)
             {
                 case Mode.Create:
-                    selection.ForEach(pos => Draw.DrawPrefabPreview(pos, state.SelectedPrefab));
-
-                    if (selection.Intersects)
-                    {
-                        Draw.DrawIllegalSelectionOverlay(selection.Bounds);
-                    }
-
+                    DrawCreateSelection();
                     break;
                 case Mode.Erase:
-                    Draw.DrawWireBox(selection.Bounds, Color.red);
+                    DrawEraseSelection();
+
                     break;
                 case Mode.Pick:
                     throw new InvalidOperationException();
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        void DrawEraseSelection()
+        {
+            Vector3[] intersections = selection.Intersections;
+            if (intersections.Length > 0)
+            {
+                foreach (Vector3 pos in intersections)
+                {
+                    Draw.DrawRedOverlayBox(pos, Vector3.one);
+                }
+            }
+
+            Draw.DrawWireBox(selection.Bounds, Color.red);
+        }
+
+        void DrawCreateSelection()
+        {
+            selection.ForEach(pos => Draw.DrawPrefabPreview(pos, state.SelectedPrefab));
+
+            if (selection.Intersections.Length > 0)
+            {
+                Draw.DrawRedOverlayBox(selection.Bounds);
             }
         }
 

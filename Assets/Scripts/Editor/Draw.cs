@@ -23,9 +23,14 @@ namespace Editor
             }
         }
 
-        public static void DrawIllegalSelectionOverlay(Bounds bounds)
+        public static void DrawRedOverlayBox(Bounds bounds)
         {
-            Matrix4x4 poseToWorld = Matrix4x4.TRS(bounds.center, Quaternion.identity, bounds.size);
+            DrawRedOverlayBox(bounds.center, bounds.size);
+        }
+
+        public static void DrawRedOverlayBox(Vector3 center, Vector3 size)
+        {
+            Matrix4x4 poseToWorld = Matrix4x4.TRS(center, Quaternion.identity, size);
             MeshFilter filter = EditorAssets.SelectionOverlay.GetComponentInChildren<MeshFilter>();
             Material mat = filter.GetComponent<MeshRenderer>().sharedMaterial;
             if (mat != null)
@@ -34,8 +39,6 @@ namespace Editor
                 mat.SetPass(0);
                 Graphics.DrawMeshNow(mesh, poseToWorld, 0);
             }
-
-            DrawWireBox(bounds, Color.red);
         }
 
         public static void DrawWireCube(Vector3Int pos, Color color)

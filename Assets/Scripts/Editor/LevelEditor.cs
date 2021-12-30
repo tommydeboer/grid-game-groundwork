@@ -50,12 +50,12 @@ namespace Editor
         #region INITIALISATION
 
         [MenuItem("Window/Level Editor")]
-        public static void ShowWindow()
+        public static LevelEditor ShowWindow()
         {
-            EditorWindow editorWindow = GetWindow(typeof(LevelEditor));
-            //TODO icon not loading + use same icon as tool
-            var texture = Resources.Load<Texture2D>("ggg");
-            editorWindow.titleContent = new GUIContent("Level Editor", texture);
+            LevelEditor levelEditor = GetWindow<LevelEditor>();
+            var texture = EditorGUIUtility.IconContent("PreMatCube").image;
+            levelEditor.titleContent = new GUIContent("Level Editor", texture);
+            return levelEditor;
         }
 
         void OnEnable()

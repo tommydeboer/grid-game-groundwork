@@ -42,7 +42,7 @@ namespace Editor
         public override void OnActivated()
         {
             Selection.activeGameObject = null;
-            levelEditor = EditorWindow.GetWindow<LevelEditor>();
+            levelEditor = LevelEditor.ShowWindow();
         }
 
         public override void OnToolGUI(EditorWindow window)

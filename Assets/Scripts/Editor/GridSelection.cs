@@ -12,6 +12,17 @@ namespace Editor
         public Plane Plane { get; }
         public int Height { get; set; }
 
+        public int Count
+        {
+            get
+            {
+                int x = Mathf.Abs(StartPos.x - CurrentPos.x) + 1;
+                int y = Mathf.Abs(StartPos.y - CurrentPos.y + Height) + 1;
+                int z = Mathf.Abs(StartPos.z - CurrentPos.z) + 1;
+                return x * y * z;
+            }
+        }
+
         public Vector3Int MinCorner
         {
             get

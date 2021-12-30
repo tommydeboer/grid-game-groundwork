@@ -145,7 +145,6 @@ namespace Editor
                     {
                         case 0 when state.Mode == Mode.Pick:
                             PickPrefab(e.mousePosition);
-                            e.Use();
                             break;
                         case 0 when state.Mode == Mode.Create:
                             selection = new GridSelection(mousePos, state.SpawnHeight);
@@ -227,11 +226,25 @@ namespace Editor
             {
                 case Mode.Create:
                 {
-                    selection.ForEach(pos => level.CreateAt(state.SelectedPrefab, pos, Vector3.zero));
+                    bool proceed = true;
+                    if (selection.Count > 1000)
+                    {
+                        proceed = EditorUtility.DisplayDialog(
+                            "Attention!",
+                            $"About to create {selection.Count} objects. Are you sure?",
+                            "Yes", "Cancel");
+                    }
+
+                    if (proceed)
+                    {
+                        selection.ForEach(pos => level.CreateAt(state.SelectedPrefab, pos, Vector3.zero));
+                    }
+
                     break;
                 }
                 case Mode.Erase:
                 {
+                    // TODO replace with single check in a box
                     selection.ForEach(pos => level.ClearAt(pos));
                     break;
                 }

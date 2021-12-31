@@ -5,9 +5,9 @@ namespace Editor
 {
     public static class Draw
     {
-        public static void DrawPrefabPreview(Vector3Int pos, GameObject prefab)
+        public static void DrawPrefabPreview(Vector3Int pos, Vector3 rot, GameObject prefab)
         {
-            Matrix4x4 poseToWorld = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one);
+            Matrix4x4 poseToWorld = Matrix4x4.TRS(pos, Quaternion.Euler(rot), Vector3.one);
             MeshFilter[] filters = prefab.GetComponentsInChildren<MeshFilter>();
             foreach (MeshFilter filter in filters)
             {

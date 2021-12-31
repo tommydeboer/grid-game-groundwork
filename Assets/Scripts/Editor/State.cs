@@ -22,6 +22,21 @@ namespace Editor
         }
 
         public Vector3 SpawnRotation { get; set; }
+
+        public void IncreaseRotation()
+        {
+            float y = SpawnRotation.y;
+            y = y == 270f ? 0 : y + 90;
+            SpawnRotation = new Vector3(SpawnRotation.x, y, SpawnRotation.y);
+        }
+
+        public void DecreaseRotation()
+        {
+            float y = SpawnRotation.y;
+            y = y == 0 ? 270 : y - 90;
+            SpawnRotation = new Vector3(SpawnRotation.x, y, SpawnRotation.y);
+        }
+
         public string CurrentLevel { get; set; }
         public EditorPrefabs EditorPrefabs { get; set; }
         public List<GameObject> Prefabs => EditorPrefabs.Prefabs;

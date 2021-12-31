@@ -163,7 +163,8 @@ namespace Editor
                 using (var check = new EditorGUI.ChangeCheckScope())
                 {
                     GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
-                    rotateInt = GUILayout.SelectionGrid(rotateInt, rotateLabels, 4);
+
+                    rotateInt = GUILayout.SelectionGrid((int) state.SpawnRotation.y / 90, rotateLabels, 4);
 
                     if (check.changed)
                     {

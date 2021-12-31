@@ -124,6 +124,14 @@ namespace Editor
                         state.SpawnHeight--;
                         e.Use();
                         return;
+                    case KeyCode.KeypadPlus:
+                        state.IncreaseRotation();
+                        e.Use();
+                        return;
+                    case KeyCode.KeypadMinus:
+                        state.DecreaseRotation();
+                        e.Use();
+                        return;
                     case KeyCode.Tab:
                         state.SetNextMode();
                         e.Use();
@@ -258,7 +266,7 @@ namespace Editor
 
             if (proceed)
             {
-                selection.ForEach(pos => level.CreateAt(state.SelectedPrefab, pos, Vector3.zero));
+                selection.ForEach(pos => level.CreateAt(state.SelectedPrefab, pos, state.SpawnRotation));
             }
         }
 
@@ -297,7 +305,7 @@ namespace Editor
 
         void DrawCreateSelection()
         {
-            selection.ForEach(pos => Draw.DrawPrefabPreview(pos, state.SelectedPrefab));
+            selection.ForEach(pos => Draw.DrawPrefabPreview(pos, state.SpawnRotation, state.SelectedPrefab));
 
             if (selection.Intersections.Length > 0)
             {
@@ -313,7 +321,7 @@ namespace Editor
             {
                 case Mode.Create:
                     Draw.DrawHeightIndicator(pos, state.SpawnHeight);
-                    Draw.DrawPrefabPreview(pos, state.SelectedPrefab);
+                    Draw.DrawPrefabPreview(pos, state.SpawnRotation, state.SelectedPrefab);
                     break;
                 case Mode.Erase:
                     Draw.DrawWireCube(pos, Color.red);

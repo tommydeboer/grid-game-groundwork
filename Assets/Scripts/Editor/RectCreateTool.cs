@@ -280,7 +280,6 @@ namespace Editor
                     break;
                 case Mode.Erase:
                     DrawEraseSelection();
-
                     break;
                 case Mode.Pick:
                     throw new InvalidOperationException();
@@ -296,7 +295,7 @@ namespace Editor
             {
                 foreach (Vector3 pos in intersections)
                 {
-                    Draw.DrawRedOverlayBox(pos, Vector3.one);
+                    Draw.DrawRedOverlayBox(pos, Vector3.one * 1.05f);
                 }
             }
 

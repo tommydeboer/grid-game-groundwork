@@ -7,9 +7,17 @@ namespace Editor
     {
         // TODO implement IEnumerable?
 
+        readonly int verticalOffset;
         readonly Collider[] overlapBuffer = new Collider[512];
         Vector3Int StartPos { get; }
-        public Vector3Int CurrentPos { get; set; }
+        Vector3Int currentPos;
+
+        public Vector3Int CurrentPos
+        {
+            get => currentPos;
+            set => currentPos = value + (Vector3Int.up * verticalOffset);
+        }
+
         public Plane Plane { get; }
         public int Height { get; set; }
 
@@ -60,6 +68,7 @@ namespace Editor
             CurrentPos = startPos;
             Plane = new Plane(Vector3.up, startPos);
             Height = 0;
+            verticalOffset = 0;
         }
 
         public GridSelection(Vector3Int startPos, int verticalOffset)
@@ -68,6 +77,7 @@ namespace Editor
             CurrentPos = startPos;
             Plane = new Plane(Vector3.up, startPos - (Vector3Int.up * verticalOffset));
             Height = 0;
+            this.verticalOffset = verticalOffset;
         }
 
         public void ForEach(Action<Vector3Int> action)

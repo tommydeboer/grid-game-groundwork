@@ -27,14 +27,14 @@ namespace Editor
         {
             float y = SpawnRotation.y;
             y = y == 270f ? 0 : y + 90;
-            SpawnRotation = new Vector3(SpawnRotation.x, y, SpawnRotation.y);
+            SpawnRotation = new Vector3(SpawnRotation.x, y, SpawnRotation.z);
         }
 
         public void DecreaseRotation()
         {
             float y = SpawnRotation.y;
             y = y == 0 ? 270 : y - 90;
-            SpawnRotation = new Vector3(SpawnRotation.x, y, SpawnRotation.y);
+            SpawnRotation = new Vector3(SpawnRotation.x, y, SpawnRotation.z);
         }
 
         public string CurrentLevel { get; set; }

@@ -210,7 +210,7 @@ namespace Editor
                     break;
                 }
                 case EventType.MouseDrag:
-                    selection.CurrentPos = Mouse.GetPositionOnPlane(e.mousePosition, selection.Plane);
+                    selection.EndPos = Mouse.GetPositionOnPlane(e.mousePosition, selection.Plane);
                     break;
                 case EventType.ScrollWheel:
                     selection.Height += (e.delta.y < 0) ? 1 : -1;

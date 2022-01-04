@@ -10,12 +10,12 @@ namespace Editor
         readonly int verticalOffset;
         readonly Collider[] overlapBuffer = new Collider[512];
         Vector3Int StartPos { get; }
-        Vector3Int currentPos;
+        Vector3Int endPos;
 
-        public Vector3Int CurrentPos
+        public Vector3Int EndPos
         {
-            get => currentPos;
-            set => currentPos = value + (Vector3Int.up * verticalOffset);
+            get => endPos;
+            set => endPos = value + (Vector3Int.up * verticalOffset);
         }
 
         public Plane Plane { get; }
@@ -36,7 +36,7 @@ namespace Editor
             get
             {
                 var b1 = new Bounds(StartPos, Vector3.one);
-                var b2 = new Bounds(CurrentPos + (Vector3Int.up * Height), Vector3.one);
+                var b2 = new Bounds(EndPos + (Vector3Int.up * Height), Vector3.one);
                 b1.Encapsulate(b2);
                 return b1;
             }
@@ -65,7 +65,7 @@ namespace Editor
         public GridSelection(Vector3Int startPos)
         {
             StartPos = startPos;
-            CurrentPos = startPos;
+            EndPos = startPos;
             Plane = new Plane(Vector3.up, startPos);
             Height = 0;
             verticalOffset = 0;
@@ -74,7 +74,7 @@ namespace Editor
         public GridSelection(Vector3Int startPos, int verticalOffset)
         {
             StartPos = startPos;
-            CurrentPos = startPos;
+            EndPos = startPos;
             Plane = new Plane(Vector3.up, startPos - (Vector3Int.up * verticalOffset));
             Height = 0;
             this.verticalOffset = verticalOffset;

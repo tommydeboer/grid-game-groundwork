@@ -9,8 +9,9 @@ namespace Editor
 
         readonly int verticalOffset;
         readonly Collider[] overlapBuffer = new Collider[512];
-        Vector3Int StartPos { get; }
         Vector3Int endPos;
+
+        Vector3Int StartPos { get; }
 
         public Vector3Int EndPos
         {
@@ -21,15 +22,7 @@ namespace Editor
         public Plane Plane { get; }
         public int Height { get; set; }
 
-
-        public int Count
-        {
-            get
-            {
-                var size = Bounds.size;
-                return (int) size.x * (int) size.y * (int) size.z;
-            }
-        }
+        public int Count => (int) Bounds.GetVolume();
 
         public Bounds Bounds
         {
@@ -86,9 +79,7 @@ namespace Editor
             var minCorner = Vector3Int.CeilToInt(bounds.min);
             var maxCorner = Vector3Int.FloorToInt(bounds.max);
 
-            for (int y = minCorner.y;
-                y <= maxCorner.y;
-                y++)
+            for (int y = minCorner.y; y <= maxCorner.y; y++)
             {
                 for (int x = minCorner.x; x <= maxCorner.x; x++)
                 {

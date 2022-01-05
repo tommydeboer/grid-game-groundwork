@@ -4,7 +4,7 @@ public class Player : Mover
 {
     Vector3 direction = Vector3.zero;
 
-    public override BlockType Type => BlockType.Mover;
+    public override BlockType Type => BlockType.Player;
 
     void Update()
     {

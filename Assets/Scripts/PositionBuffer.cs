@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -67,6 +68,24 @@ public static class PositionBuffer
     public static bool WallIsAtPos(Vector3Int pos)
     {
         return GetWallAtPos(pos) != null;
+    }
+
+    public static bool LadderIsAtPos(Vector3Int pos)
+    {
+        return GetLadderAtPos(pos) != null;
+    }
+
+    public static Ladder GetLadderAtPos(Vector3Int pos)
+    {
+        if (Blocks.ContainsKey(pos))
+        {
+            foreach (Block block in blocks[pos])
+            {
+                if (block is Ladder ladder) return ladder;
+            }
+        }
+
+        return null;
     }
 
     // MOVERS // 

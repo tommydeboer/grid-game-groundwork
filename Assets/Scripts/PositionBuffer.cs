@@ -75,6 +75,11 @@ public static class PositionBuffer
         return GetLadderAtPos(pos) != null;
     }
 
+    public static bool MoverIsAtPos(Vector3Int pos)
+    {
+        return GetMoverAtPos(pos) != null;
+    }
+
     public static Ladder GetLadderAtPos(Vector3Int pos)
     {
         if (Blocks.ContainsKey(pos))

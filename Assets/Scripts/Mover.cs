@@ -19,11 +19,12 @@ public class Mover : Block
         isFalling = false;
     }
 
-    protected bool CanMove(Vector3 dir)
+    protected bool TryMove(Vector3 dir)
     {
         foreach (Tile tile in tiles)
         {
             Vector3Int posToCheck = Vector3Int.RoundToInt(tile.pos + dir);
+
             if (PositionBuffer.WallIsAtPos(posToCheck))
             {
                 return false;
@@ -32,14 +33,14 @@ public class Mover : Block
             Mover m = PositionBuffer.GetMoverAtPos(posToCheck);
             if (m != null && m != this)
             {
-                if (Type != BlockType.Player && !Game.isPolyban)
+                if (!Game.isPolyban)
                 {
                     return false;
                 }
 
-                if (m.CanMove(dir))
+                if (m.TryMove(dir))
                 {
-                    m.MoveIt(dir);
+                    m.ScheduleMove(dir);
                 }
                 else
                 {
@@ -51,7 +52,7 @@ public class Mover : Block
         return true;
     }
 
-    protected void MoveIt(Vector3 dir)
+    protected void ScheduleMove(Vector3 dir)
     {
         if (!Game.moversToMove.Contains(this))
         {
@@ -60,7 +61,7 @@ public class Mover : Block
         }
     }
 
-    bool ShouldFall()
+    protected virtual bool ShouldFall()
     {
         if (GroundBelow())
         {

@@ -3,8 +3,14 @@
 public class Player : Mover
 {
     Vector3 direction = Vector3.zero;
-
+    Tile playerTile;
+    bool onLadder;
     public override BlockType Type => BlockType.Player;
+
+    void Start()
+    {
+        playerTile = tiles[0];
+    }
 
     void Update()
     {
@@ -58,10 +64,38 @@ public class Player : Mover
             direction = Vector3.forward;
         }
 
-        if (CanMove(direction))
+        TryPlayerMove(direction);
+        Game.instance.DoScheduledMoves();
+    }
+
+
+    void TryPlayerMove(Vector3 dir)
+    {
+        Vector3Int posToCheck = Vector3Int.RoundToInt(playerTile.pos + dir);
+
+        if (PositionBuffer.LadderIsAtPos(posToCheck) &&
+            PositionBuffer.IsEmpty(Vector3Int.RoundToInt(playerTile.pos) + Vector3Int.up))
         {
-            MoveIt(direction);
-            Game.instance.MoveStart();
+            ScheduleMove(Vector3Int.up);
+            onLadder = true;
         }
+        else if (PositionBuffer.MoverIsAtPos(posToCheck))
+        {
+            if (TryMove(direction))
+            {
+                ScheduleMove(direction);
+                onLadder = false;
+            }
+        }
+        else if (PositionBuffer.IsEmpty(posToCheck))
+        {
+            ScheduleMove(direction);
+            onLadder = false;
+        }
+    }
+
+    protected override bool ShouldFall()
+    {
+        return !onLadder && base.ShouldFall();
     }
 }

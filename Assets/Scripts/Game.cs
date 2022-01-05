@@ -121,7 +121,7 @@ public class Game : MonoBehaviour
 
     /////////////////////////////////////////////////////////////////// MOVE
 
-    public void MoveStart()
+    public void DoScheduledMoves()
     {
         isMoving = true;
         foreach (Mover m in moversToMove)

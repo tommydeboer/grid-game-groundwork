@@ -7,7 +7,7 @@ public abstract class Block : MonoBehaviour
 
     public readonly List<Tile> tiles = new();
 
-    void Start()
+    void Awake()
     {
         CreateTiles();
     }

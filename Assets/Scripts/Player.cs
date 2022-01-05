@@ -2,7 +2,7 @@
 
 public class Player : Mover
 {
-    Vector3 direction = Vector3.zero;
+    Vector3Int direction = Vector3Int.zero;
     Tile playerTile;
     bool onLadder;
     public override BlockType Type => BlockType.Player;
@@ -49,19 +49,19 @@ public class Player : Mover
 
         if (hor == 1)
         {
-            direction = Vector3.right;
+            direction = Vector3Int.right;
         }
         else if (hor == -1)
         {
-            direction = Vector3.left;
+            direction = Vector3Int.left;
         }
         else if (ver == -1)
         {
-            direction = Vector3.back;
+            direction = Vector3Int.back;
         }
         else if (ver == 1)
         {
-            direction = Vector3.forward;
+            direction = Vector3Int.forward;
         }
 
         TryPlayerMove(direction);
@@ -69,15 +69,29 @@ public class Player : Mover
     }
 
 
-    void TryPlayerMove(Vector3 dir)
+    void TryPlayerMove(Vector3Int dir)
     {
-        Vector3Int posToCheck = Vector3Int.RoundToInt(playerTile.pos + dir);
+        var playerPos = Vector3Int.RoundToInt(playerTile.pos);
+        Vector3Int posToCheck = playerPos + dir;
+        var abovePlayer = playerPos + Vector3Int.up;
 
         if (PositionBuffer.LadderIsAtPos(posToCheck) &&
-            PositionBuffer.IsEmpty(Vector3Int.RoundToInt(playerTile.pos) + Vector3Int.up))
+            PositionBuffer.IsEmpty(abovePlayer))
         {
-            ScheduleMove(Vector3Int.up);
-            onLadder = true;
+            var aboveLadder = posToCheck + Vector3Int.up;
+
+            if (PositionBuffer.LadderIsAtPos(aboveLadder))
+            {
+                // climb ladder
+                ScheduleMove(Vector3Int.up);
+                onLadder = true;
+            }
+            else if (PositionBuffer.IsEmpty(aboveLadder))
+            {
+                // climb over edge
+                ScheduleMove(Vector3Int.up + dir);
+                onLadder = false;
+            }
         }
         else if (PositionBuffer.MoverIsAtPos(posToCheck))
         {

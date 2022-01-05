@@ -123,6 +123,7 @@ public class Game : MonoBehaviour
 
     public void DoScheduledMoves()
     {
+        if (moversToMove.Count == 0) return;
         isMoving = true;
         foreach (Mover m in moversToMove)
         {

@@ -4,56 +4,54 @@ using UnityEngine;
 
 public static class PositionBuffer
 {
-    static Dictionary<Vector3Int, List<GameObject>> gameObjects;
+    static Dictionary<Vector3Int, List<Block>> blocks;
 
-    static Dictionary<Vector3Int, List<GameObject>> GameObjects
+    static Dictionary<Vector3Int, List<Block>> Blocks
     {
         get
         {
-            if (gameObjects == null) Update();
-            return gameObjects;
+            if (blocks == null) Update();
+            return blocks;
         }
-        set => gameObjects = value;
+        set => blocks = value;
     }
 
     public static void Update()
     {
-        GameObjects = new Dictionary<Vector3Int, List<GameObject>>();
+        Blocks = new Dictionary<Vector3Int, List<Block>>();
         var levelTransform = GameObject.Find("Levels").transform.GetChild(0);
+
         foreach (Transform item in levelTransform)
         {
             foreach (var tileItem in item.GetComponentsInChildren<BoxCollider>())
             {
                 var tilePos = Utils.Vec3ToInt(tileItem.transform.position);
 
-                if (!GameObjects.ContainsKey(tilePos))
+                if (!Blocks.ContainsKey(tilePos))
                 {
-                    var list = new List<GameObject>();
-                    GameObjects.Add(tilePos, list);
+                    var list = new List<Block>();
+                    Blocks.Add(tilePos, list);
                 }
 
-                GameObjects[tilePos].Add(item.gameObject);
+                Blocks[tilePos].Add(item.GetComponentInParent<Block>());
             }
         }
     }
 
-    static List<GameObject> Get(Vector3Int pos)
+    static List<Block> Get(Vector3Int pos)
     {
-        if (GameObjects.ContainsKey(pos)) return GameObjects[pos];
+        if (Blocks.ContainsKey(pos)) return Blocks[pos];
         return null;
     }
 
 
     static Wall GetWallAtPos(Vector3Int pos)
     {
-        var colliders = Get(pos);
-        if (colliders == null) return null;
-        for (int i = 0; i < colliders.Count; i++)
+        if (Blocks.ContainsKey(pos))
         {
-            Wall wall = colliders[i].GetComponentInParent<Wall>();
-            if (wall != null)
+            foreach (Block block in blocks[pos])
             {
-                return wall;
+                if (block is Wall wall) return wall;
             }
         }
 
@@ -62,7 +60,7 @@ public static class PositionBuffer
 
     public static bool IsEmpty(Vector3Int pos)
     {
-        return !GameObjects.ContainsKey(pos);
+        return !Blocks.ContainsKey(pos);
     }
 
 
@@ -75,14 +73,11 @@ public static class PositionBuffer
 
     public static Mover GetMoverAtPos(Vector3Int pos)
     {
-        var colliders = Get(pos);
-        if (colliders == null) return null;
-        for (int i = 0; i < colliders.Count; i++)
+        if (Blocks.ContainsKey(pos))
         {
-            Mover m = colliders[i].GetComponentInParent<Mover>();
-            if (m != null)
+            foreach (Block block in blocks[pos])
             {
-                return m;
+                if (block is Mover mover) return mover;
             }
         }
 

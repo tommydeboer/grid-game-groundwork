@@ -220,7 +220,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1784822460526676318}
-  - component: {fileID: 5455159326214231065}
+  - component: {fileID: 8249642277684275099}
   m_Layer: 0
   m_Name: Ladder
   m_TagString: Untagged
@@ -245,7 +245,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5455159326214231065
+--- !u!114 &8249642277684275099
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -254,11 +254,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1666817577578165055}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1452f68fd32741e4bb8a0456d52aa658, type: 3}
+  m_Script: {fileID: 11500000, guid: a417b3ef11e54aa98f347fe34fd796e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tiles:
-  - {fileID: 4999091410660769719}
 --- !u!1 &2752843967236982481
 GameObject:
   m_ObjectHideFlags: 0

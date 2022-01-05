@@ -4,42 +4,22 @@ using System.Linq;
 using UnityEngine;
 using DG.Tweening;
 
-public class Mover : MonoBehaviour
+public class Mover : Block
 {
     [HideInInspector]
     public Vector3 goalPosition;
 
-    public readonly List<Tile> tiles = new();
-
     [HideInInspector]
     public bool isFalling;
 
-    public bool isPlayer => CompareTag("Player");
-
-    void Start()
-    {
-        CreateTiles();
-    }
-
-    void CreateTiles()
-    {
-        tiles.Clear();
-        foreach (Transform child in transform)
-        {
-            if (child.gameObject.CompareTag("Tile"))
-            {
-                Tile tile = new Tile {t = child};
-                tiles.Add(tile);
-            }
-        }
-    }
+    public override BlockType Type => BlockType.Mover;
 
     public void Reset()
     {
         isFalling = false;
     }
 
-    protected virtual bool CanMove(Vector3 dir)
+    protected bool CanMove(Vector3 dir)
     {
         foreach (Tile tile in tiles)
         {
@@ -52,7 +32,7 @@ public class Mover : MonoBehaviour
             Mover m = PositionBuffer.GetMoverAtPos(posToCheck);
             if (m != null && m != this)
             {
-                if (!isPlayer && !Game.isPolyban)
+                if (Type != BlockType.Player && !Game.isPolyban)
                 {
                     return false;
                 }
@@ -150,19 +130,5 @@ public class Mover : MonoBehaviour
         }
 
         return false;
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        if (!Application.isPlaying)
-        {
-            CreateTiles();
-        }
-
-        Gizmos.color = Color.blue;
-        foreach (Tile tile in tiles)
-        {
-            Gizmos.DrawWireCube(tile.pos, Vector3.one);
-        }
     }
 }

@@ -1,38 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Wall : MonoBehaviour
+public class Wall : Block
 {
-    public List<Transform> tiles = new();
-
-    void OnValidate()
-    {
-        CreateTiles();
-    }
-
-    void CreateTiles()
-    {
-        tiles.Clear();
-        foreach (Transform child in transform)
-        {
-            if (child.gameObject.CompareTag("Tile"))
-            {
-                tiles.Add(child);
-            }
-        }
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        if (!Application.isPlaying)
-        {
-            CreateTiles();
-        }
-
-        Gizmos.color = Color.yellow;
-        foreach (Transform tile in tiles)
-        {
-            Gizmos.DrawWireCube(tile.position, tile.localScale);
-        }
-    }
+    public override BlockType Type => BlockType.Wall;
 }

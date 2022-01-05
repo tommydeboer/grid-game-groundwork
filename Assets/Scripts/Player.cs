@@ -4,6 +4,8 @@ public class Player : Mover
 {
     Vector3 direction = Vector3.zero;
 
+    public override BlockType Type => BlockType.Mover;
+
     void Update()
     {
         if (CanInput())

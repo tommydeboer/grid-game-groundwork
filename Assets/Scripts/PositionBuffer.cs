@@ -5,6 +5,7 @@ using UnityEngine;
 public static class PositionBuffer
 {
     static Dictionary<Vector3Int, List<GameObject>> gameObjects;
+
     static Dictionary<Vector3Int, List<GameObject>> GameObjects
     {
         get
@@ -38,11 +39,6 @@ public static class PositionBuffer
 
     static List<GameObject> Get(Vector3Int pos)
     {
-        if (gameObjects == null)
-        {
-            Update();
-        }
-
         if (GameObjects.ContainsKey(pos)) return GameObjects[pos];
         return null;
     }
@@ -64,15 +60,11 @@ public static class PositionBuffer
         return null;
     }
 
-    public static Wall GetWallAtPos(Vector3 pos)
+    public static bool IsEmpty(Vector3Int pos)
     {
-        return GetWallAtPos(Utils.Vec3ToInt(pos));
+        return !GameObjects.ContainsKey(pos);
     }
 
-    public static bool WallIsAtPos(Vector3 pos)
-    {
-        return WallIsAtPos(Utils.Vec3ToInt(pos));
-    }
 
     public static bool WallIsAtPos(Vector3Int pos)
     {
@@ -80,10 +72,6 @@ public static class PositionBuffer
     }
 
     // MOVERS // 
-    public static Mover GetMoverAtPos(Vector3 pos)
-    {
-        return GetMoverAtPos(Utils.Vec3ToInt(pos));
-    }
 
     public static Mover GetMoverAtPos(Vector3Int pos)
     {

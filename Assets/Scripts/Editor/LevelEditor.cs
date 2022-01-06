@@ -121,10 +121,17 @@ namespace Editor
         {
             using (new GUILayout.VerticalScope(margin))
             {
-                SerializedObject serialObj = new SerializedObject(editorPrefabs);
-                SerializedProperty serialProp = serialObj.FindProperty("prefabs");
-                EditorGUILayout.PropertyField(serialProp, true);
-                serialObj.ApplyModifiedProperties();
+                using (var check = new EditorGUI.ChangeCheckScope())
+                {
+                    SerializedObject serialObj = new SerializedObject(editorPrefabs);
+                    SerializedProperty serialProp = serialObj.FindProperty("prefabs");
+                    EditorGUILayout.PropertyField(serialProp, false);
+
+                    if (check.changed)
+                    {
+                        serialObj.ApplyModifiedProperties();
+                    }
+                }
             }
         }
 

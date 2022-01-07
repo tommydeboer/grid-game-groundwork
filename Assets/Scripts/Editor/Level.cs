@@ -5,7 +5,7 @@ namespace Editor
 {
     public class Level
     {
-        public Transform Root { get; }
+        Transform Root { get; }
 
         public Level(Transform root)
         {
@@ -16,32 +16,22 @@ namespace Editor
         {
             if (prefab == null)
             {
-                // TODO this check should be moved to LevelEditor
-                ClearAt(Vector3Int.RoundToInt(pos));
+                Debug.LogWarning("Attempted to create null object");
+                return;
             }
-            else
+
+            GameObject obj = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+            if (obj == null)
             {
-                GameObject obj = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-                if (obj == null)
-                {
-                    return;
-                }
-
-                obj.transform.position = pos;
-                obj.transform.parent = Root;
-                obj.transform.eulerAngles = eulerAngles ?? Vector3.zero;
-
-
-                // TODO let LevelEditor pass a correct V3 to this method
-                // Vector3 p = obj.transform.position;
-                // if (spawnHeight < p.z)
-                // {
-                //     obj.transform.position = new Vector3(p.x, p.y, -Mathf.Abs(spawnHeight));
-                // }
-
-                Utils.AvoidIntersect(obj.transform);
-                Undo.RegisterCreatedObjectUndo(obj, "Create object");
+                return;
             }
+
+            obj.transform.position = pos;
+            obj.transform.parent = Root;
+            obj.transform.eulerAngles = eulerAngles ?? Vector3.zero;
+
+            Utils.AvoidIntersect(obj.transform);
+            Undo.RegisterCreatedObjectUndo(obj, "Create object");
         }
 
         public void ClearAt(Vector3Int pos)

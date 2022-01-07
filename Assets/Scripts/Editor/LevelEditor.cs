@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.EditorTools;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
 namespace Editor
@@ -244,6 +246,15 @@ namespace Editor
             {
                 sceneLevels.Add(l.name);
             }
+        }
+
+        [Shortcut("Enter Play Mode", null, KeyCode.P)]
+        static void PlayShortcut()
+        {
+            EditorApplication.ExecuteMenuItem("Edit/Play");
+
+            // set focus to Game window
+            EditorApplication.ExecuteMenuItem("Window/General/Game");
         }
     }
 }

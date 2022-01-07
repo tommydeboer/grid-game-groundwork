@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 
 public class Player : Mover
 {
@@ -63,6 +64,10 @@ public class Player : Mover
         {
             direction = Vector3Int.forward;
         }
+
+        var q = Quaternion.LookRotation(direction);
+        transform.DORotate(q.eulerAngles, 0.1f);
+
 
         TryPlayerMove(direction);
         Game.instance.DoScheduledMoves();

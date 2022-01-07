@@ -9,7 +9,7 @@ namespace Editor
 {
     [SuppressMessage("ReSharper", "SwitchStatementMissingSomeEnumCasesNoDefault")]
     [EditorTool(TITLE)]
-    public class RectCreateTool : EditorTool
+    public class BlockTool : EditorTool
     {
         const string TITLE = "Rectangle Tool";
         public override GUIContent toolbarIcon => iconContent;
@@ -363,7 +363,7 @@ namespace Editor
         [Shortcut(TITLE, null, KeyCode.C)]
         static void CreateShortcut()
         {
-            ToolManager.SetActiveTool<RectCreateTool>();
+            ToolManager.SetActiveTool<BlockTool>();
             EditorAssets.State.Mode = Mode.Create;
         }
     }

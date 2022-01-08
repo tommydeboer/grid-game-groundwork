@@ -23,7 +23,7 @@ public class Mover : Block
     {
         Vector3Int posToCheck = Vector3Int.RoundToInt(Tile.pos + dir);
 
-        if (Grid.WallIsAtPos(posToCheck))
+        if (Grid.HasWallAtPos(posToCheck))
         {
             return false;
         }
@@ -116,7 +116,7 @@ public class Mover : Block
     bool GroundBelowTile(Tile tile)
     {
         Vector3Int posToCheck = Vector3Int.RoundToInt(tile.pos + Vector3.down);
-        if (Grid.WallIsAtPos(posToCheck))
+        if (Grid.HasWallAtPos(posToCheck))
         {
             return true;
         }

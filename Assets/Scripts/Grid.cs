@@ -5,9 +5,9 @@ using UnityEngine;
 
 public static class Grid
 {
-    static Dictionary<Vector3Int, List<Block>> blocks;
+    static Dictionary<Vector3Int, Block> blocks;
 
-    static Dictionary<Vector3Int, List<Block>> Blocks
+    static Dictionary<Vector3Int, Block> Blocks
     {
         get
         {
@@ -19,7 +19,7 @@ public static class Grid
 
     public static void Update()
     {
-        Blocks = new Dictionary<Vector3Int, List<Block>>();
+        Blocks = new Dictionary<Vector3Int, Block>();
         var levelTransform = GameObject.Find("Levels").transform.GetChild(0);
 
         foreach (Transform item in levelTransform)
@@ -28,18 +28,12 @@ public static class Grid
             {
                 var tilePos = Utils.Vec3ToInt(tileItem.transform.position);
 
-                if (!Blocks.ContainsKey(tilePos))
-                {
-                    var list = new List<Block>();
-                    Blocks.Add(tilePos, list);
-                }
-
-                Blocks[tilePos].Add(item.GetComponentInParent<Block>());
+                Blocks[tilePos] = item.GetComponentInParent<Block>();
             }
         }
     }
 
-    static List<Block> Get(Vector3Int pos)
+    static Block Get(Vector3Int pos)
     {
         if (Blocks.ContainsKey(pos)) return Blocks[pos];
         return null;
@@ -50,10 +44,7 @@ public static class Grid
     {
         if (Blocks.ContainsKey(pos))
         {
-            foreach (Block block in blocks[pos])
-            {
-                if (block is Wall wall) return wall;
-            }
+            if (Blocks[pos] is Wall wall) return wall;
         }
 
         return null;
@@ -65,17 +56,17 @@ public static class Grid
     }
 
 
-    public static bool WallIsAtPos(Vector3Int pos)
+    public static bool HasWallAtPos(Vector3Int pos)
     {
         return GetWallAtPos(pos) != null;
     }
 
-    public static bool LadderIsAtPos(Vector3Int pos)
+    public static bool HasLadderAtPos(Vector3Int pos)
     {
         return GetLadderAtPos(pos) != null;
     }
 
-    public static bool MoverIsAtPos(Vector3Int pos)
+    public static bool HasMoverAtPos(Vector3Int pos)
     {
         return GetMoverAtPos(pos) != null;
     }
@@ -84,25 +75,17 @@ public static class Grid
     {
         if (Blocks.ContainsKey(pos))
         {
-            foreach (Block block in blocks[pos])
-            {
-                if (block is Ladder ladder) return ladder;
-            }
+            if (Blocks[pos] is Ladder ladder) return ladder;
         }
 
         return null;
     }
 
-    // MOVERS // 
-
     public static Mover GetMoverAtPos(Vector3Int pos)
     {
         if (Blocks.ContainsKey(pos))
         {
-            foreach (Block block in blocks[pos])
-            {
-                if (block is Mover mover) return mover;
-            }
+            if (Blocks[pos] is Mover mover) return mover;
         }
 
         return null;

@@ -73,12 +73,12 @@ public class Player : Mover
         Vector3Int posToCheck = Tile.gridPos + dir;
         var abovePlayer = Tile.gridPos + Vector3Int.up;
 
-        if (Grid.LadderIsAtPos(posToCheck) &&
+        if (Grid.HasLadderAtPos(posToCheck) &&
             Grid.IsEmpty(abovePlayer))
         {
             var aboveLadder = posToCheck + Vector3Int.up;
 
-            if (Grid.LadderIsAtPos(aboveLadder))
+            if (Grid.HasLadderAtPos(aboveLadder))
             {
                 // climb ladder
                 ScheduleMove(Vector3Int.up);
@@ -91,7 +91,7 @@ public class Player : Mover
                 onLadder = null;
             }
         }
-        else if (Grid.MoverIsAtPos(posToCheck))
+        else if (Grid.HasMoverAtPos(posToCheck))
         {
             if (TryMove(direction))
             {

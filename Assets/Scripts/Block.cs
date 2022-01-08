@@ -5,23 +5,33 @@ public abstract class Block : MonoBehaviour
 {
     public abstract BlockType Type { get; }
 
-    public readonly List<Tile> tiles = new();
+    public Tile Tile { get; private set; }
 
     void Awake()
     {
-        CreateTiles();
+        CreateTile();
     }
 
-    void CreateTiles()
+    void CreateTile()
     {
-        tiles.Clear();
+        bool found = false;
         foreach (Transform child in transform)
         {
             if (child.gameObject.CompareTag("Tile"))
             {
-                Tile tile = new Tile {t = child};
-                tiles.Add(tile);
+                if (found)
+                {
+                    Debug.LogWarning("Block contains more than one tile", this);
+                }
+
+                Tile = new Tile {t = child};
+                found = true;
             }
+        }
+
+        if (!found)
+        {
+            Debug.LogWarning("Block contains no tile", this);
         }
     }
 }

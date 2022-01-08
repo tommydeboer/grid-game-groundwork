@@ -4,14 +4,8 @@ using UnityEngine;
 public class Player : Mover
 {
     Vector3Int direction = Vector3Int.zero;
-    Tile playerTile;
-    bool onLadder;
+    Ladder onLadder;
     public override BlockType Type => BlockType.Player;
-
-    void Start()
-    {
-        playerTile = tiles[0];
-    }
 
     void Update()
     {
@@ -76,7 +70,7 @@ public class Player : Mover
 
     void TryPlayerMove(Vector3Int dir)
     {
-        var playerPos = Vector3Int.RoundToInt(playerTile.pos);
+        var playerPos = Vector3Int.RoundToInt(Tile.pos);
         Vector3Int posToCheck = playerPos + dir;
         var abovePlayer = playerPos + Vector3Int.up;
 
@@ -89,13 +83,13 @@ public class Player : Mover
             {
                 // climb ladder
                 ScheduleMove(Vector3Int.up);
-                onLadder = true;
+                onLadder = PositionBuffer.GetLadderAtPos(aboveLadder);
             }
             else if (PositionBuffer.IsEmpty(aboveLadder))
             {
                 // climb over edge
                 ScheduleMove(Vector3Int.up + dir);
-                onLadder = false;
+                onLadder = null;
             }
         }
         else if (PositionBuffer.MoverIsAtPos(posToCheck))
@@ -103,13 +97,13 @@ public class Player : Mover
             if (TryMove(direction))
             {
                 ScheduleMove(direction);
-                onLadder = false;
+                onLadder = null;
             }
         }
         else if (PositionBuffer.IsEmpty(posToCheck))
         {
             ScheduleMove(direction);
-            onLadder = false;
+            onLadder = null;
         }
     }
 

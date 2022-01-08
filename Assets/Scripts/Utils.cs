@@ -195,14 +195,11 @@ public class Utils
             movers.Clear();
         }
 
-        foreach (Tile t in m.tiles)
+        Mover m2 = GetMoverAtPos(m.Tile.pos + Vector3.back);
+        if (m2 != null && !movers.Contains(m2))
         {
-            Mover m2 = GetMoverAtPos(t.pos + Vector3.back);
-            if (m2 != null && !movers.Contains(m2))
-            {
-                movers.Add(m2);
-                movers.AddRange(MoversAbove(m2, false));
-            }
+            movers.Add(m2);
+            movers.AddRange(MoversAbove(m2, false));
         }
 
         return movers.Distinct().ToList();

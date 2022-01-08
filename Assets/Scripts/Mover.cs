@@ -21,31 +21,28 @@ public class Mover : Block
 
     protected bool TryMove(Vector3 dir)
     {
-        foreach (Tile tile in tiles)
-        {
-            Vector3Int posToCheck = Vector3Int.RoundToInt(tile.pos + dir);
+        Vector3Int posToCheck = Vector3Int.RoundToInt(Tile.pos + dir);
 
-            if (PositionBuffer.WallIsAtPos(posToCheck))
+        if (PositionBuffer.WallIsAtPos(posToCheck))
+        {
+            return false;
+        }
+
+        Mover m = PositionBuffer.GetMoverAtPos(posToCheck);
+        if (m != null && m != this)
+        {
+            if (!Game.isPolyban)
             {
                 return false;
             }
 
-            Mover m = PositionBuffer.GetMoverAtPos(posToCheck);
-            if (m != null && m != this)
+            if (m.TryMove(dir))
             {
-                if (!Game.isPolyban)
-                {
-                    return false;
-                }
-
-                if (m.TryMove(dir))
-                {
-                    m.ScheduleMove(dir);
-                }
-                else
-                {
-                    return false;
-                }
+                m.ScheduleMove(dir);
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -113,7 +110,7 @@ public class Mover : Block
 
     bool GroundBelow()
     {
-        return tiles.Any(GroundBelowTile);
+        return GroundBelowTile(Tile);
     }
 
     bool GroundBelowTile(Tile tile)

@@ -72,7 +72,7 @@ public static class State
         {
             undoIndex--;
             RemoveFromUndoStack();
-            PositionBuffer.Update();
+            Grid.Update();
             foreach (var item in Game.movers)
             {
                 item.isFalling = false;
@@ -90,7 +90,7 @@ public static class State
         }
 
         OnMoveComplete();
-        PositionBuffer.Update();
+        Grid.Update();
         foreach (var item in Game.movers)
         {
             item.isFalling = false;

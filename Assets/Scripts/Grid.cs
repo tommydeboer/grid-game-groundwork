@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class PositionBuffer
+public static class Grid
 {
     static Dictionary<Vector3Int, List<Block>> blocks;
 

@@ -6,5 +6,7 @@ public class Tile
 
     public Vector3 pos => t.position;
 
+    public Vector3Int gridPos => Vector3Int.RoundToInt(t.position);
+
     public Vector3 rot => t.eulerAngles;
 }

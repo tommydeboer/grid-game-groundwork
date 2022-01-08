@@ -70,9 +70,8 @@ public class Player : Mover
 
     void TryPlayerMove(Vector3Int dir)
     {
-        var playerPos = Vector3Int.RoundToInt(Tile.pos);
-        Vector3Int posToCheck = playerPos + dir;
-        var abovePlayer = playerPos + Vector3Int.up;
+        Vector3Int posToCheck = Tile.gridPos + dir;
+        var abovePlayer = Tile.gridPos + Vector3Int.up;
 
         if (PositionBuffer.LadderIsAtPos(posToCheck) &&
             PositionBuffer.IsEmpty(abovePlayer))

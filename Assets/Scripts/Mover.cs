@@ -23,12 +23,12 @@ public class Mover : Block
     {
         Vector3Int posToCheck = Vector3Int.RoundToInt(Tile.pos + dir);
 
-        if (Grid.HasWallAtPos(posToCheck))
+        if (Grid.Has<Wall>(posToCheck))
         {
             return false;
         }
 
-        Mover m = Grid.GetMoverAtPos(posToCheck);
+        Mover m = Grid.Get<Mover>(posToCheck);
         if (m != null && m != this)
         {
             if (!Game.isPolyban)
@@ -116,12 +116,12 @@ public class Mover : Block
     bool GroundBelowTile(Tile tile)
     {
         Vector3Int posToCheck = Vector3Int.RoundToInt(tile.pos + Vector3.down);
-        if (Grid.HasWallAtPos(posToCheck))
+        if (Grid.Has<Wall>(posToCheck))
         {
             return true;
         }
 
-        Mover m = Grid.GetMoverAtPos(posToCheck);
+        Mover m = Grid.Get<Mover>(posToCheck);
         if (m != null && m != this && !m.isFalling)
         {
             return true;

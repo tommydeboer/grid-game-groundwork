@@ -33,61 +33,23 @@ public static class Grid
         }
     }
 
-    static Block Get(Vector3Int pos)
+    public static T Get<T>(Vector3Int pos) where T : Block
     {
-        if (Blocks.ContainsKey(pos)) return Blocks[pos];
-        return null;
-    }
-
-
-    static Wall GetWallAtPos(Vector3Int pos)
-    {
-        if (Blocks.ContainsKey(pos))
+        if (Blocks.ContainsKey(pos) && Blocks[pos] is T t)
         {
-            if (Blocks[pos] is Wall wall) return wall;
+            return t;
         }
 
         return null;
+    }
+
+    public static bool Has<T>(Vector3Int pos) where T : Block
+    {
+        return Get<T>(pos) != null;
     }
 
     public static bool IsEmpty(Vector3Int pos)
     {
         return !Blocks.ContainsKey(pos);
-    }
-
-
-    public static bool HasWallAtPos(Vector3Int pos)
-    {
-        return GetWallAtPos(pos) != null;
-    }
-
-    public static bool HasLadderAtPos(Vector3Int pos)
-    {
-        return GetLadderAtPos(pos) != null;
-    }
-
-    public static bool HasMoverAtPos(Vector3Int pos)
-    {
-        return GetMoverAtPos(pos) != null;
-    }
-
-    public static Ladder GetLadderAtPos(Vector3Int pos)
-    {
-        if (Blocks.ContainsKey(pos))
-        {
-            if (Blocks[pos] is Ladder ladder) return ladder;
-        }
-
-        return null;
-    }
-
-    public static Mover GetMoverAtPos(Vector3Int pos)
-    {
-        if (Blocks.ContainsKey(pos))
-        {
-            if (Blocks[pos] is Mover mover) return mover;
-        }
-
-        return null;
     }
 }

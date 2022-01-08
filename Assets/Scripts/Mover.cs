@@ -19,9 +19,9 @@ public class Mover : Block
         isFalling = false;
     }
 
-    protected bool TryMove(Vector3 dir)
+    protected bool TryMove(Vector3Int dir)
     {
-        Vector3Int posToCheck = Vector3Int.RoundToInt(Tile.pos + dir);
+        Vector3Int posToCheck = Tile.gridPos + dir;
 
         if (Grid.Has<Wall>(posToCheck))
         {

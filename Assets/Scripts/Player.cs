@@ -77,7 +77,8 @@ public class Player : Mover
         Vector3Int targetPos = playerPos + dir;
         var belowPlayer = playerPos + Vector3Int.down;
 
-        if (Grid.Has<Ladder>(belowPlayer) && Grid.IsEmpty(targetPos) && Grid.IsEmpty(targetPos + Vector3Int.down))
+        if (Grid.HasOriented<Ladder>(belowPlayer, dir) && Grid.IsEmpty(targetPos) &&
+            Grid.IsEmpty(targetPos + Vector3Int.down))
         {
             // mount ladder from above
             ScheduleMove(Vector3Int.down + (Vector3) dir * (1 - LadderOffset));
@@ -88,7 +89,7 @@ public class Player : Mover
         {
             TryClimb(dir, targetPos, playerPos, belowPlayer);
         }
-        else if (Grid.Has<Ladder>(targetPos))
+        else if (Grid.HasOriented<Ladder>(targetPos, -dir))
         {
             // mount ladder
             ScheduleMove((Vector3) dir * LadderOffset);
@@ -127,21 +128,21 @@ public class Player : Mover
             if (Grid.Has<Block>(abovePlayer)) return;
 
             var aboveLadder = targetPos + Vector3Int.up;
-            if (Grid.Has<Ladder>(aboveLadder))
+            if (Grid.HasOriented<Ladder>(aboveLadder, -dir))
             {
-                // climb to next ladder up
+                // climb up to next ladder
                 ScheduleMove(Vector3Int.up);
                 onLadder = Grid.Get<Ladder>(aboveLadder);
                 LookAt(dir);
             }
             else if (Grid.IsEmpty(aboveLadder))
             {
-                // climb over edge
+                // climb up over edge
                 ScheduleMove(Vector3Int.up + ((Vector3) dir * (1 - LadderOffset)));
                 onLadder = null;
             }
         }
-        else if (Grid.Has<Ladder>(ladderPos + dir))
+        else if (Grid.HasOriented<Ladder>(ladderPos + dir, onLadder.Orientation))
         {
             // try to climb to neighbouring ladder, and push movers if it's possible
             if (TryMove(direction))
@@ -155,7 +156,7 @@ public class Player : Mover
             // attempting to climb down the ladder that we are touching
             var belowLadder = ladderPos + Vector3Int.down;
 
-            if (Grid.Has<Ladder>(belowLadder) && Grid.IsEmpty(belowPlayer))
+            if (Grid.HasOriented<Ladder>(belowLadder, onLadder.Orientation) && Grid.IsEmpty(belowPlayer))
             {
                 // climbing down
                 ScheduleMove(Vector3Int.down);

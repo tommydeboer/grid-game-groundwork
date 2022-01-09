@@ -48,6 +48,12 @@ public static class Grid
         return Get<T>(pos) != null;
     }
 
+    public static bool HasOriented<T>(Vector3Int pos, Vector3Int orientation) where T : Block
+    {
+        var block = Get<T>(pos);
+        return block != null && block.Orientation == orientation;
+    }
+
     public static bool IsEmpty(Vector3Int pos)
     {
         return !Blocks.ContainsKey(pos);

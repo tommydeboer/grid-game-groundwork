@@ -77,17 +77,18 @@ public class Player : Mover
         Vector3Int targetPos = playerPos + dir;
         var belowPlayer = playerPos + Vector3Int.down;
 
-        if (Grid.HasOriented<Ladder>(belowPlayer, dir) && Grid.IsEmpty(targetPos) &&
-            Grid.IsEmpty(targetPos + Vector3Int.down))
+
+        if (onLadder)
+        {
+            TryClimb(dir, targetPos, playerPos, belowPlayer);
+        }
+        else if (Grid.HasOriented<Ladder>(belowPlayer, dir) && Grid.IsEmpty(targetPos) &&
+                 Grid.IsEmpty(targetPos + Vector3Int.down))
         {
             // mount ladder from above
             ScheduleMove(Vector3Int.down + (Vector3) dir * (1 - LadderOffset));
             onLadder = Grid.Get<Ladder>(belowPlayer);
             LookAt(-dir);
-        }
-        else if (onLadder)
-        {
-            TryClimb(dir, targetPos, playerPos, belowPlayer);
         }
         else if (Grid.HasOriented<Ladder>(targetPos, -dir))
         {

@@ -161,7 +161,7 @@ public class Player : Mover
                 ScheduleMove(Vector3Int.down);
                 onLadder = Grid.Get<Ladder>(belowLadder);
             }
-            else if (Grid.IsEmpty(belowLadder))
+            else if (Grid.IsEmpty(belowLadder) && Grid.IsEmpty(belowPlayer))
             {
                 // falling down
                 ScheduleMove(Vector3Int.down + ((Vector3) dir * LadderOffset));

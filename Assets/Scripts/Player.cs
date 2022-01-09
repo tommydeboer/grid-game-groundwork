@@ -121,7 +121,6 @@ public class Player : Mover
     {
         var abovePlayer = playerPos + Vector3Int.up;
         var ladderPos = onLadder.Tile.gridPos;
-
         if (targetPos == ladderPos)
         {
             // attempting to climb up ladder that we are touching
@@ -176,13 +175,21 @@ public class Player : Mover
                 onLadder = null;
             }
         }
+        else if (Grid.HasOriented<Ladder>(playerPos + dir, -dir))
+        {
+            // climbing to other ladder in a corner
+            Vector3 directionToLadder = ((Vector3) playerPos - ladderPos).normalized;
+            ScheduleMove((directionToLadder * LadderOffset) + ((Vector3) dir * LadderOffset));
+            onLadder = Grid.Get<Ladder>(playerPos + dir);
+            LookAt(dir);
+        }
         else
         {
             // trying to step off from the ladder sideways
             Vector3 directionToLadder = ((Vector3) playerPos - ladderPos).normalized;
             if (TryMove(dir))
             {
-                ScheduleMove(dir + ((Vector3) directionToLadder * LadderOffset));
+                ScheduleMove(dir + (directionToLadder * LadderOffset));
                 onLadder = null;
             }
         }

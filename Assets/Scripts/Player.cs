@@ -64,7 +64,7 @@ public class Player : Mover
         Game.instance.DoScheduledMoves();
     }
 
-    void LookAt(Vector3Int dir)
+    void LookAt(Vector3 dir)
     {
         var q = Quaternion.LookRotation(dir);
         transform.DORotate(q.eulerAngles, 0.1f);
@@ -75,13 +75,22 @@ public class Player : Mover
     {
         var playerPos = Tile.gridPos;
         Vector3Int targetPos = playerPos + dir;
+        var belowPlayer = playerPos + Vector3Int.down;
 
-        if (onLadder)
+        if (Grid.Has<Ladder>(belowPlayer) && Grid.IsEmpty(targetPos) && Grid.IsEmpty(targetPos + Vector3Int.down))
         {
-            TryClimb(dir, targetPos, playerPos);
+            // mount ladder from above
+            ScheduleMove(Vector3Int.down + (Vector3) dir * (1 - LadderOffset));
+            onLadder = Grid.Get<Ladder>(belowPlayer);
+            LookAt(-dir);
+        }
+        else if (onLadder)
+        {
+            TryClimb(dir, targetPos, playerPos, belowPlayer);
         }
         else if (Grid.Has<Ladder>(targetPos))
         {
+            // mount ladder
             ScheduleMove((Vector3) dir * LadderOffset);
             onLadder = Grid.Get<Ladder>(targetPos);
             LookAt(dir);
@@ -106,10 +115,9 @@ public class Player : Mover
         }
     }
 
-    void TryClimb(Vector3Int dir, Vector3Int targetPos, Vector3Int playerPos)
+    void TryClimb(Vector3Int dir, Vector3Int targetPos, Vector3Int playerPos, Vector3Int belowPlayer)
     {
         var abovePlayer = playerPos + Vector3Int.up;
-        var belowPlayer = playerPos + Vector3Int.down;
         var ladderPos = onLadder.Tile.gridPos;
 
         if (targetPos == ladderPos)

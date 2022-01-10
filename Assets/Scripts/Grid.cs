@@ -24,12 +24,8 @@ public static class Grid
 
         foreach (Transform item in levelTransform)
         {
-            foreach (var tileItem in item.GetComponentsInChildren<BoxCollider>())
-            {
-                var tilePos = Utils.Vec3ToInt(tileItem.transform.position);
-
-                Blocks[tilePos] = item.GetComponentInParent<Block>();
-            }
+            var block = item.GetComponentInParent<Block>();
+            Blocks[block.Tile.gridPos] = block;
         }
     }
 

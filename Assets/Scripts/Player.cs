@@ -1,9 +1,13 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
+using UnityEditor;
 using UnityEngine;
 
 public class Player : Mover
 {
-    Vector3Int direction = Vector3Int.zero;
+    [SerializeField]
+    bool debugLadders;
+
     Ladder onLadder;
     const float LadderOffset = 0.35f;
     public override BlockType Type => BlockType.Player;
@@ -25,6 +29,8 @@ public class Player : Mover
     {
         float hor = Input.GetAxisRaw("Horizontal");
         float ver = Input.GetAxisRaw("Vertical");
+
+        var direction = Vector3Int.zero;
 
         if (hor == 0 && ver == 0)
         {
@@ -80,11 +86,13 @@ public class Player : Mover
 
         if (onLadder)
         {
-            TryClimb(dir, targetPos, playerPos, belowPlayer);
+            TryClimb(dir, playerPos, belowPlayer);
         }
         else if (Grid.HasOriented<Ladder>(belowPlayer, dir) && Grid.IsEmpty(targetPos) &&
                  Grid.IsEmpty(targetPos + Vector3Int.down))
         {
+            LogLadderDebug("Mounting ladder from above");
+
             // mount ladder from above
             ScheduleMove(Vector3Int.down + (Vector3) dir * (1 - LadderOffset));
             onLadder = Grid.Get<Ladder>(belowPlayer);
@@ -92,7 +100,8 @@ public class Player : Mover
         }
         else if (Grid.HasOriented<Ladder>(targetPos, -dir))
         {
-            // mount ladder
+            LogLadderDebug("Mounting ladder");
+
             ScheduleMove((Vector3) dir * LadderOffset);
             onLadder = Grid.Get<Ladder>(targetPos);
             LookAt(dir);
@@ -117,67 +126,75 @@ public class Player : Mover
         }
     }
 
-    void TryClimb(Vector3Int dir, Vector3Int targetPos, Vector3Int playerPos, Vector3Int belowPlayer)
+    void TryClimb(Vector3Int dir, Vector3Int playerPos, Vector3Int belowPlayer)
     {
+        // correct input direction based on ladder's orientation
+        dir = Vector3Int.RoundToInt(Quaternion.Euler(onLadder.Tile.rot) * dir);
+        Vector3Int targetPos = playerPos + dir;
+
         var abovePlayer = playerPos + Vector3Int.up;
         var ladderPos = onLadder.Tile.gridPos;
         if (targetPos == ladderPos)
         {
-            // attempting to climb up ladder that we are touching
-
             if (Grid.Has<Block>(abovePlayer)) return;
 
             var aboveLadder = targetPos + Vector3Int.up;
             if (Grid.HasOriented<Ladder>(aboveLadder, -dir))
             {
-                // climb up to next ladder
+                LogLadderDebug("Climbing up ladder");
+
                 ScheduleMove(Vector3Int.up);
                 onLadder = Grid.Get<Ladder>(aboveLadder);
                 LookAt(dir);
             }
             else if (Grid.IsEmpty(aboveLadder))
             {
-                // climb up over edge
+                LogLadderDebug("Climbing up ladder over edge");
+
                 ScheduleMove(Vector3Int.up + ((Vector3) dir * (1 - LadderOffset)));
                 onLadder = null;
             }
         }
         else if (Grid.HasOriented<Ladder>(ladderPos + dir, onLadder.Orientation))
         {
-            // try to climb to neighbouring ladder, and push movers if it's possible
-            if (TryMove(direction))
+            if (TryMove(dir))
             {
-                ScheduleMove(direction);
+                LogLadderDebug("Climbing to neighbouring ladder");
+
+                ScheduleMove(dir);
                 onLadder = Grid.Get<Ladder>(ladderPos + dir);
             }
         }
         else if (onLadder == Grid.Get<Ladder>(playerPos - dir))
         {
-            // attempting to climb down the ladder that we are touching
             var belowLadder = ladderPos + Vector3Int.down;
 
             if (Grid.HasOriented<Ladder>(belowLadder, onLadder.Orientation) && Grid.IsEmpty(belowPlayer))
             {
-                // climbing down
+                LogLadderDebug("Climbing down ladder");
+
                 ScheduleMove(Vector3Int.down);
                 onLadder = Grid.Get<Ladder>(belowLadder);
             }
             else if (Grid.IsEmpty(belowLadder) && Grid.IsEmpty(belowPlayer))
             {
-                // falling down
+                LogLadderDebug("Falling down ladder");
+
                 ScheduleMove(Vector3Int.down + ((Vector3) dir * LadderOffset));
                 onLadder = null;
             }
             else
             {
-                // stepping off
+                LogLadderDebug("Stepping off ladder");
+
                 ScheduleMove((Vector3) dir * LadderOffset);
                 onLadder = null;
             }
         }
         else if (Grid.HasOriented<Ladder>(playerPos + dir, -dir))
         {
-            // climbing to other ladder in a corner
+            LogLadderDebug("Climbing to other ladder in corner");
+
             Vector3 directionToLadder = ((Vector3) playerPos - ladderPos).normalized;
             ScheduleMove((directionToLadder * LadderOffset) + ((Vector3) dir * LadderOffset));
             onLadder = Grid.Get<Ladder>(playerPos + dir);
@@ -185,10 +202,11 @@ public class Player : Mover
         }
         else
         {
-            // trying to step off from the ladder sideways
             Vector3 directionToLadder = ((Vector3) playerPos - ladderPos).normalized;
             if (TryMove(dir))
             {
+                LogLadderDebug("Stepping off ladder sideways");
+
                 ScheduleMove(dir + (directionToLadder * LadderOffset));
                 onLadder = null;
             }
@@ -199,5 +217,22 @@ public class Player : Mover
     protected override bool ShouldFall()
     {
         return !onLadder && base.ShouldFall();
+    }
+
+    public void OnDrawGizmos()
+    {
+        if (debugLadders && onLadder)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(onLadder.Tile.pos, Vector3.one);
+        }
+    }
+
+    void LogLadderDebug(string log)
+    {
+        if (debugLadders)
+        {
+            Debug.Log(log);
+        }
     }
 }

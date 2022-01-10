@@ -83,7 +83,6 @@ public class Player : Mover
         Vector3Int targetPos = playerPos + dir;
         var belowPlayer = playerPos + Vector3Int.down;
 
-
         if (onLadder)
         {
             TryClimb(dir, playerPos, belowPlayer);
@@ -94,7 +93,7 @@ public class Player : Mover
             LogLadderDebug("Mounting ladder from above");
 
             // mount ladder from above
-            ScheduleMove(Vector3Int.down + (Vector3) dir * (1 - LadderOffset));
+            ScheduleMove(Vector3Int.down + (Vector3)dir * (1 - LadderOffset));
             onLadder = Grid.Get<Ladder>(belowPlayer);
             LookAt(-dir);
         }
@@ -102,7 +101,7 @@ public class Player : Mover
         {
             LogLadderDebug("Mounting ladder");
 
-            ScheduleMove((Vector3) dir * LadderOffset);
+            ScheduleMove((Vector3)dir * LadderOffset);
             onLadder = Grid.Get<Ladder>(targetPos);
             LookAt(dir);
         }
@@ -151,7 +150,7 @@ public class Player : Mover
             {
                 LogLadderDebug("Climbing up ladder over edge");
 
-                ScheduleMove(Vector3Int.up + ((Vector3) dir * (1 - LadderOffset)));
+                ScheduleMove(Vector3Int.up + ((Vector3)dir * (1 - LadderOffset)));
                 onLadder = null;
             }
         }
@@ -180,14 +179,14 @@ public class Player : Mover
             {
                 LogLadderDebug("Falling down ladder");
 
-                ScheduleMove(Vector3Int.down + ((Vector3) dir * LadderOffset));
+                ScheduleMove(Vector3Int.down + ((Vector3)dir * LadderOffset));
                 onLadder = null;
             }
             else
             {
                 LogLadderDebug("Stepping off ladder");
 
-                ScheduleMove((Vector3) dir * LadderOffset);
+                ScheduleMove((Vector3)dir * LadderOffset);
                 onLadder = null;
             }
         }
@@ -195,14 +194,14 @@ public class Player : Mover
         {
             LogLadderDebug("Climbing to other ladder in corner");
 
-            Vector3 directionToLadder = ((Vector3) playerPos - ladderPos).normalized;
-            ScheduleMove((directionToLadder * LadderOffset) + ((Vector3) dir * LadderOffset));
+            Vector3 directionToLadder = ((Vector3)playerPos - ladderPos).normalized;
+            ScheduleMove((directionToLadder * LadderOffset) + ((Vector3)dir * LadderOffset));
             onLadder = Grid.Get<Ladder>(playerPos + dir);
             LookAt(dir);
         }
         else
         {
-            Vector3 directionToLadder = ((Vector3) playerPos - ladderPos).normalized;
+            Vector3 directionToLadder = ((Vector3)playerPos - ladderPos).normalized;
             if (TryMove(dir))
             {
                 LogLadderDebug("Stepping off ladder sideways");

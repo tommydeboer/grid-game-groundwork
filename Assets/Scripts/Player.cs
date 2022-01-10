@@ -86,6 +86,7 @@ public class Player : Mover
         if (onLadder)
         {
             TryClimb(dir, playerPos, belowPlayer);
+            return;
         }
         else if (Grid.HasOriented<Ladder>(belowPlayer, dir) && Grid.IsEmpty(targetPos) &&
                  Grid.IsEmpty(targetPos + Vector3Int.down))
@@ -209,6 +210,11 @@ public class Player : Mover
                 ScheduleMove(dir + (directionToLadder * LadderOffset));
                 onLadder = null;
             }
+        }
+
+        if (!onLadder)
+        {
+            LookAt(dir);
         }
     }
 

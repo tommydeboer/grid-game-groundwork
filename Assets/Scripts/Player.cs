@@ -8,7 +8,7 @@ public class Player : Mover
     [SerializeField]
     bool debugLadders;
 
-    Ladder onLadder;
+    public Ladder OnLadder { get; private set; }
     const float LadderOffset = 0.35f;
     public override BlockType Type => BlockType.Player;
 
@@ -83,7 +83,7 @@ public class Player : Mover
         Vector3Int targetPos = playerPos + dir;
         var belowPlayer = playerPos + Vector3Int.down;
 
-        if (onLadder)
+        if (OnLadder)
         {
             TryClimb(dir, playerPos, belowPlayer);
             return;
@@ -95,7 +95,7 @@ public class Player : Mover
 
             // mount ladder from above
             ScheduleMove(Vector3Int.down + (Vector3)dir * (1 - LadderOffset));
-            onLadder = Grid.Get<Ladder>(belowPlayer);
+            OnLadder = Grid.Get<Ladder>(belowPlayer);
             LookAt(-dir);
         }
         else if (Grid.HasOriented<Ladder>(targetPos, -dir))
@@ -103,7 +103,7 @@ public class Player : Mover
             LogLadderDebug("Mounting ladder");
 
             ScheduleMove((Vector3)dir * LadderOffset);
-            onLadder = Grid.Get<Ladder>(targetPos);
+            OnLadder = Grid.Get<Ladder>(targetPos);
             LookAt(dir);
         }
         else if (Grid.Has<Mover>(targetPos))
@@ -111,16 +111,16 @@ public class Player : Mover
             if (TryMove(dir))
             {
                 ScheduleMove(dir);
-                onLadder = null;
+                OnLadder = null;
             }
         }
         else if (Grid.IsEmpty(targetPos))
         {
             ScheduleMove(dir);
-            onLadder = null;
+            OnLadder = null;
         }
 
-        if (!onLadder)
+        if (!OnLadder)
         {
             LookAt(dir);
         }
@@ -129,11 +129,11 @@ public class Player : Mover
     void TryClimb(Vector3Int dir, Vector3Int playerPos, Vector3Int belowPlayer)
     {
         // correct input direction based on ladder's orientation
-        dir = Vector3Int.RoundToInt(Quaternion.Euler(onLadder.Tile.rot) * dir);
+        dir = Vector3Int.RoundToInt(Quaternion.Euler(OnLadder.Tile.rot) * dir);
         Vector3Int targetPos = playerPos + dir;
 
         var abovePlayer = playerPos + Vector3Int.up;
-        var ladderPos = onLadder.Tile.gridPos;
+        var ladderPos = OnLadder.Tile.gridPos;
         if (targetPos == ladderPos)
         {
             if (Grid.Has<Block>(abovePlayer)) return;
@@ -144,7 +144,7 @@ public class Player : Mover
                 LogLadderDebug("Climbing up ladder");
 
                 ScheduleMove(Vector3Int.up);
-                onLadder = Grid.Get<Ladder>(aboveLadder);
+                OnLadder = Grid.Get<Ladder>(aboveLadder);
                 LookAt(dir);
             }
             else if (Grid.IsEmpty(aboveLadder))
@@ -152,43 +152,43 @@ public class Player : Mover
                 LogLadderDebug("Climbing up ladder over edge");
 
                 ScheduleMove(Vector3Int.up + ((Vector3)dir * (1 - LadderOffset)));
-                onLadder = null;
+                OnLadder = null;
             }
         }
-        else if (Grid.HasOriented<Ladder>(ladderPos + dir, onLadder.Orientation))
+        else if (Grid.HasOriented<Ladder>(ladderPos + dir, OnLadder.Orientation))
         {
             if (TryMove(dir))
             {
                 LogLadderDebug("Climbing to neighbouring ladder");
 
                 ScheduleMove(dir);
-                onLadder = Grid.Get<Ladder>(ladderPos + dir);
+                OnLadder = Grid.Get<Ladder>(ladderPos + dir);
             }
         }
-        else if (onLadder == Grid.Get<Ladder>(playerPos - dir))
+        else if (OnLadder == Grid.Get<Ladder>(playerPos - dir))
         {
             var belowLadder = ladderPos + Vector3Int.down;
 
-            if (Grid.HasOriented<Ladder>(belowLadder, onLadder.Orientation) && Grid.IsEmpty(belowPlayer))
+            if (Grid.HasOriented<Ladder>(belowLadder, OnLadder.Orientation) && Grid.IsEmpty(belowPlayer))
             {
                 LogLadderDebug("Climbing down ladder");
 
                 ScheduleMove(Vector3Int.down);
-                onLadder = Grid.Get<Ladder>(belowLadder);
+                OnLadder = Grid.Get<Ladder>(belowLadder);
             }
             else if (Grid.IsEmpty(belowLadder) && Grid.IsEmpty(belowPlayer))
             {
                 LogLadderDebug("Falling down ladder");
 
                 ScheduleMove(Vector3Int.down + ((Vector3)dir * LadderOffset));
-                onLadder = null;
+                OnLadder = null;
             }
             else
             {
                 LogLadderDebug("Stepping off ladder");
 
                 ScheduleMove((Vector3)dir * LadderOffset);
-                onLadder = null;
+                OnLadder = null;
             }
         }
         else if (Grid.HasOriented<Ladder>(playerPos + dir, -dir))
@@ -197,7 +197,7 @@ public class Player : Mover
 
             Vector3 directionToLadder = ((Vector3)playerPos - ladderPos).normalized;
             ScheduleMove((directionToLadder * LadderOffset) + ((Vector3)dir * LadderOffset));
-            onLadder = Grid.Get<Ladder>(playerPos + dir);
+            OnLadder = Grid.Get<Ladder>(playerPos + dir);
             LookAt(dir);
         }
         else
@@ -208,11 +208,11 @@ public class Player : Mover
                 LogLadderDebug("Stepping off ladder sideways");
 
                 ScheduleMove(dir + (directionToLadder * LadderOffset));
-                onLadder = null;
+                OnLadder = null;
             }
         }
 
-        if (!onLadder)
+        if (!OnLadder)
         {
             LookAt(dir);
         }
@@ -221,15 +221,15 @@ public class Player : Mover
 
     protected override bool ShouldFall()
     {
-        return !onLadder && base.ShouldFall();
+        return !OnLadder && base.ShouldFall();
     }
 
     public void OnDrawGizmos()
     {
-        if (debugLadders && onLadder)
+        if (debugLadders && OnLadder)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(onLadder.Tile.pos, Vector3.one);
+            Gizmos.DrawWireCube(OnLadder.Tile.pos, Vector3.one);
         }
     }
 

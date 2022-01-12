@@ -28,6 +28,28 @@ public class Mover : Block
             return false;
         }
 
+        if (!TryPush(dir, posToCheck)) return false;
+
+        TryMoveStacked(dir);
+
+        return true;
+    }
+
+    void TryMoveStacked(Vector3Int dir)
+    {
+        Vector3Int above = Tile.gridPos + Vector3Int.up;
+        Mover stackedMover = Grid.Get<Mover>(above);
+        if (stackedMover != null)
+        {
+            if (stackedMover.TryMove(dir))
+            {
+                stackedMover.ScheduleMove(dir);
+            }
+        }
+    }
+
+    bool TryPush(Vector3Int dir, Vector3Int posToCheck)
+    {
         Mover m = Grid.Get<Mover>(posToCheck);
         if (m != null && m != this)
         {
@@ -60,7 +82,7 @@ public class Mover : Block
 
     protected virtual bool ShouldFall()
     {
-        if (GroundBelow())
+        if (GroundBelowTile())
         {
             return false;
         }
@@ -108,14 +130,9 @@ public class Mover : Block
         }
     }
 
-    bool GroundBelow()
+    bool GroundBelowTile()
     {
-        return GroundBelowTile(Tile);
-    }
-
-    bool GroundBelowTile(Tile tile)
-    {
-        Vector3Int posToCheck = Vector3Int.RoundToInt(tile.pos + Vector3.down);
+        Vector3Int posToCheck = Tile.gridPos + Vector3Int.down;
         if (Grid.Has<Wall>(posToCheck))
         {
             return true;

@@ -145,7 +145,7 @@ public class Game : MonoBehaviour
     void FallStart()
     {
         isMoving = true;
-        movers = movers.OrderBy(mover => -mover.transform.position.z).ToArray();
+        movers = movers.OrderBy(mover => mover.transform.position.y).ToArray();
 
         foreach (Mover m in movers)
         {
@@ -160,9 +160,9 @@ public class Game : MonoBehaviour
 
     public void FallEnd()
     {
+        Grid.Update();
         if (movingCount == 0)
         {
-            Grid.Update();
             Refresh();
             CompleteMove();
         }

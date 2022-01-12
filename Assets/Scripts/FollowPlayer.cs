@@ -62,6 +62,7 @@ public class FollowPlayer : MonoBehaviour
     {
         cameraTransform = transform;
         playerTransform = player.transform;
+        currentOrbitAngles = OrbitAngles;
     }
 
     void LateUpdate()

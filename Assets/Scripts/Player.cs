@@ -12,6 +12,19 @@ public class Player : Mover
     const float LadderOffset = 0.35f;
     public override BlockType Type => BlockType.Player;
 
+    void Start()
+    {
+        if (Camera.main != null)
+        {
+            var playerCamera = Camera.main.GetComponent<PlayerCamera>();
+            playerCamera.Player = this;
+        }
+        else
+        {
+            Debug.LogWarning("No main camera. Is the persistent scene loaded?");
+        }
+    }
+
     void Update()
     {
         if (CanInput())

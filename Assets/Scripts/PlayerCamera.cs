@@ -1,11 +1,8 @@
 using System;
 using UnityEngine;
 
-public class FollowPlayer : MonoBehaviour
+public class PlayerCamera : MonoBehaviour
 {
-    [SerializeField]
-    Player player;
-
     [SerializeField, Range(3, 20)]
     float distance = 8f;
 
@@ -31,18 +28,18 @@ public class FollowPlayer : MonoBehaviour
     {
         get
         {
-            if (player.OnLadder)
+            if (Player.OnLadder)
             {
                 // TODO introduce Direction class
-                if (player.OnLadder.Orientation == Vector3Int.right)
+                if (Player.OnLadder.Orientation == Vector3Int.right)
                 {
                     return new Vector2(viewingAngle, -climbingRotation);
                 }
-                else if (player.OnLadder.Orientation == Vector3Int.left)
+                else if (Player.OnLadder.Orientation == Vector3Int.left)
                 {
                     return new Vector2(viewingAngle, climbingRotation);
                 }
-                else if (player.OnLadder.Orientation == Vector3Int.back)
+                else if (Player.OnLadder.Orientation == Vector3Int.back)
                 {
                     return new Vector2(viewingAngle, 0f);
                 }
@@ -58,15 +55,28 @@ public class FollowPlayer : MonoBehaviour
         }
     }
 
+    Player player;
+
+    public Player Player
+    {
+        get => player;
+        set
+        {
+            player = value;
+            playerTransform = player.transform;
+            currentOrbitAngles = OrbitAngles;
+        }
+    }
+
     void Awake()
     {
         cameraTransform = transform;
-        playerTransform = player.transform;
-        currentOrbitAngles = OrbitAngles;
     }
 
     void LateUpdate()
     {
+        if (!Player) return;
+
         // smoothly rotate to viewing angle (based on player status: walking/climbing)
         currentOrbitAngles = Vector2.SmoothDamp(currentOrbitAngles, OrbitAngles, ref orbitVelocity, rotationSmoothTime);
 

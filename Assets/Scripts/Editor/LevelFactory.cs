@@ -7,11 +7,11 @@ namespace Editor
     {
         public Level GetLevel(string name)
         {
-            GameObject l = FindOrCreate(name, FindOrCreate("Levels").transform);
+            GameObject l = FindOrCreate("Level");
             l.tag = "Level";
             return new Level(l.transform);
         }
-        
+
         static GameObject FindOrCreate(string s, Transform parentObj = null)
         {
             GameObject go = GameObject.Find(s);

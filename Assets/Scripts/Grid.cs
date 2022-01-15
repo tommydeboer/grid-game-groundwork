@@ -20,7 +20,7 @@ public static class Grid
     public static void Update()
     {
         Blocks = new Dictionary<Vector3Int, Block>();
-        var levelTransform = GameObject.Find("Levels").transform.GetChild(0);
+        var levelTransform = GameObject.FindWithTag("Level").transform;
 
         foreach (Transform item in levelTransform)
         {

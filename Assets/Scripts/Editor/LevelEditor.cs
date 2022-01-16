@@ -70,15 +70,6 @@ namespace Editor
 
             EnsureTagsExist();
 
-            if (string.IsNullOrEmpty(state.CurrentLevel))
-            {
-                GameObject level = GameObject.FindGameObjectWithTag("Level");
-                if (level != null)
-                {
-                    state.CurrentLevel = level.name;
-                }
-            }
-
             levels = LevelManager.GetLevelScenes();
         }
 
@@ -214,8 +205,7 @@ namespace Editor
 
                     if (check.changed)
                     {
-                        // TODO open or activate scene
-                        // TODO select Level root object
+                        state.CurrentLevel = LevelManager.SelectLevel(levels[sceneLevelIndex]);
                     }
 
                     // TODO Add New level button

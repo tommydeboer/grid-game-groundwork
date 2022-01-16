@@ -16,7 +16,6 @@ namespace Editor
         GUIContent iconContent;
 
         State state;
-        LevelFactory levelFactory;
         LevelEditor levelEditor;
         ModeModifier pickModifier;
         ModeModifier eraseModifier;
@@ -34,7 +33,6 @@ namespace Editor
                 tooltip = TITLE
             };
             state = EditorAssets.State;
-            levelFactory = new LevelFactory();
             pickModifier = new ModeModifier(state, EventModifiers.Shift, Mode.Pick);
             eraseModifier = new ModeModifier(state, EventModifiers.Control, Mode.Erase);
         }
@@ -111,8 +109,8 @@ namespace Editor
             {
                 switch (e.keyCode)
                 {
-                    case >= (KeyCode) 49 and <= (KeyCode) 57:
-                        state.SelectedPrefabId = (int) e.keyCode - 49;
+                    case >= (KeyCode)49 and <= (KeyCode)57:
+                        state.SelectedPrefabId = (int)e.keyCode - 49;
                         state.Mode = Mode.Create;
                         e.Use();
                         return;
@@ -228,19 +226,18 @@ namespace Editor
             }
 
             LevelEditor.Refresh();
-            Level level = levelFactory.GetLevel(state.CurrentLevel);
 
             switch (state.Mode)
             {
                 case Mode.Create:
                 {
-                    ApplyCreateSelection(level);
+                    ApplyCreateSelection(state.CurrentLevel);
                     break;
                 }
                 case Mode.Erase:
                 {
                     // TODO replace with single check in a box
-                    selection.ForEach(pos => level.ClearAt(pos));
+                    selection.ForEach(pos => state.CurrentLevel.ClearAt(pos));
                     break;
                 }
                 case Mode.Pick:

@@ -37,7 +37,7 @@ namespace Editor
             SpawnRotation = new Vector3(SpawnRotation.x, y, SpawnRotation.z);
         }
 
-        public string CurrentLevel { get; set; }
+        public Level CurrentLevel { get; set; }
         public EditorPrefabs EditorPrefabs { get; set; }
         public List<GameObject> Prefabs => EditorPrefabs.Prefabs;
         public int SelectedPrefabId { get; set; }

@@ -8,6 +8,7 @@ using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Editor
 {
@@ -38,7 +39,7 @@ namespace Editor
         int rotateInt;
         int modeInt;
         int sceneLevelIndex;
-        readonly List<string> sceneLevels = new();
+        List<KeyValuePair<string, string>> levels;
 
         #endregion
 
@@ -65,7 +66,7 @@ namespace Editor
             state = EditorAssets.State;
             editorPrefabs = EditorAssets.EditorPrefabs;
 
-            margin = new GUIStyle {margin = new RectOffset(15, 15, 10, 15)};
+            margin = new GUIStyle { margin = new RectOffset(15, 15, 10, 15) };
 
             EnsureTagsExist();
 
@@ -77,6 +78,18 @@ namespace Editor
                     state.CurrentLevel = level.name;
                 }
             }
+
+            RefreshLevels();
+        }
+
+        void RefreshLevels()
+        {
+            levels = AssetDatabase.FindAssets("t:Scene")
+                .ToList()
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .Select(path => new KeyValuePair<string, string>(path, Path.GetFileNameWithoutExtension(path)))
+                .Where(level => level.Value.StartsWith("Level_"))
+                .ToList();
         }
 
         static void EnsureTagsExist()
@@ -143,7 +156,7 @@ namespace Editor
             {
                 using (var check = new EditorGUI.ChangeCheckScope())
                 {
-                    mode = (Mode) GUILayout.Toolbar((int) state.Mode, modeLabels);
+                    mode = (Mode)GUILayout.Toolbar((int)state.Mode, modeLabels);
                     if (check.changed)
                     {
                         state.Mode = mode;
@@ -173,7 +186,7 @@ namespace Editor
                 {
                     GUILayout.Label("GameObject Rotation:", EditorStyles.boldLabel);
 
-                    rotateInt = GUILayout.SelectionGrid((int) state.SpawnRotation.y / 90, rotateLabels, 4);
+                    rotateInt = GUILayout.SelectionGrid((int)state.SpawnRotation.y / 90, rotateLabels, 4);
 
                     if (check.changed)
                     {
@@ -200,23 +213,24 @@ namespace Editor
 
         void DrawLevelSelectionUI()
         {
-            // TODO fix: new levels not added to dropdown
-            // TODO use ChangeCheckScope
             using (new GUILayout.VerticalScope(margin))
             {
-                GUILayout.Label("Currently Editing: ", EditorStyles.boldLabel);
-
-                sceneLevelIndex = 0;
-                for (int i = 0; i < sceneLevels.Count; i++)
+                using (var check = new EditorGUI.ChangeCheckScope())
                 {
-                    if (sceneLevels[i] == state.CurrentLevel)
-                    {
-                        sceneLevelIndex = i;
-                    }
-                }
+                    GUILayout.Label("Currently Editing: ", EditorStyles.boldLabel);
 
-                sceneLevelIndex = EditorGUILayout.Popup(sceneLevelIndex, sceneLevels.ToArray());
-                state.CurrentLevel = sceneLevels[sceneLevelIndex];
+                    sceneLevelIndex =
+                        EditorGUILayout.Popup(sceneLevelIndex, levels.Select(level => level.Value).ToArray());
+
+                    if (check.changed)
+                    {
+                        // TODO open or activate scene
+                        // TODO select Level root object
+                    }
+
+                    // TODO Add New level button
+                    // TODO Add Refresh button?
+                }
             }
         }
 
@@ -227,24 +241,12 @@ namespace Editor
 
         #endregion
 
-        public void Refresh()
+        public static void Refresh()
         {
             Game game = FindObjectOfType<Game>();
             if (game != null)
             {
                 game.EditorRefresh();
-            }
-
-            RefreshSceneLevels();
-        }
-
-        void RefreshSceneLevels()
-        {
-            sceneLevels.Clear();
-            GameObject[] levels = GameObject.FindGameObjectsWithTag("Level");
-            foreach (GameObject l in levels)
-            {
-                sceneLevels.Add(l.name);
             }
         }
 

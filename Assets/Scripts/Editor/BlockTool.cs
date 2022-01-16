@@ -227,7 +227,7 @@ namespace Editor
                 return;
             }
 
-            levelEditor.Refresh();
+            LevelEditor.Refresh();
             Level level = levelFactory.GetLevel(state.CurrentLevel);
 
             switch (state.Mode)
@@ -250,7 +250,7 @@ namespace Editor
             }
 
             selection = null;
-            levelEditor.Refresh();
+            LevelEditor.Refresh();
         }
 
         void ApplyCreateSelection(Level level)

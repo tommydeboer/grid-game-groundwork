@@ -79,17 +79,7 @@ namespace Editor
                 }
             }
 
-            RefreshLevels();
-        }
-
-        void RefreshLevels()
-        {
-            levels = AssetDatabase.FindAssets("t:Scene")
-                .ToList()
-                .Select(AssetDatabase.GUIDToAssetPath)
-                .Select(path => new KeyValuePair<string, string>(path, Path.GetFileNameWithoutExtension(path)))
-                .Where(level => level.Value.StartsWith("Level_"))
-                .ToList();
+            levels = LevelManager.GetLevelScenes();
         }
 
         static void EnsureTagsExist()

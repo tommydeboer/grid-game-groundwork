@@ -24,22 +24,46 @@ namespace Editor
         {
             var openedScene = EditorSceneManager.OpenScene(level.Key, OpenSceneMode.Additive);
             SceneManager.SetActiveScene(openedScene);
-            for (int i = 0; i < SceneManager.sceneCount; i++)
-            {
-                Scene scene = SceneManager.GetSceneAt(i);
-                if (scene.name.StartsWith("Level_") && scene.name != level.Value)
-                {
-                    EditorSceneManager.SaveScene(scene);
-                    SceneManager.UnloadSceneAsync(scene);
-                }
-            }
+
+            CloseLevelsExcept(level);
 
             GameObject levelRoot =
                 openedScene.GetRootGameObjects()
                     .ToList()
                     .Find(obj => obj.CompareTag("Level"));
 
+            if (levelRoot == null)
+            {
+                Debug.LogError("Level scene doesn't contain a Level object");
+            }
+
             return new Level(levelRoot.transform);
+        }
+
+        static void CloseLevelsExcept(KeyValuePair<string, string> level)
+        {
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                Scene scene = SceneManager.GetSceneAt(i);
+                if (scene.name.StartsWith("Level_") && scene.name != level.Value)
+                {
+                    if (scene.isDirty)
+                    {
+                        if (EditorUtility.DisplayDialog(
+                                "Unsaved Changes",
+                                $"Do you want to save the changes made to scene <b>{scene.name}</b>?",
+                                "Yes", "No"))
+                        {
+                            EditorSceneManager.SaveScene(scene);
+                        }
+                    }
+
+#pragma warning disable 0618
+                    // TODO change to UnloadSceneAsync
+                    SceneManager.UnloadScene(scene);
+#pragma warning restore 0618
+                }
+            }
         }
     }
 }

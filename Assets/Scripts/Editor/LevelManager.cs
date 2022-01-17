@@ -26,6 +26,7 @@ namespace Editor
                 .ToList();
         }
 
+
         public static void CreateNewLevel(string name)
         {
             var result = SceneTemplateService.Instantiate(EditorAssets.LevelTemplate, true,
@@ -71,7 +72,7 @@ namespace Editor
                     {
                         if (EditorUtility.DisplayDialog(
                                 "Unsaved Changes",
-                                $"Do you want to save the changes made to scene <b>{scene.name}</b>?",
+                                $"Do you want to save the changes made to scene {scene.name}?",
                                 "Yes", "No"))
                         {
                             EditorSceneManager.SaveScene(scene);

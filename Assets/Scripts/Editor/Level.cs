@@ -1,15 +1,18 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Editor
 {
     public class Level
     {
+        public Scene Scene { get; }
         Transform Root { get; }
 
-        public Level(Transform root)
+        public Level(Transform root, Scene scene)
         {
             Root = root;
+            Scene = scene;
         }
 
         public void CreateAt(Object prefab, Vector3 pos, Vector3? eulerAngles = null)

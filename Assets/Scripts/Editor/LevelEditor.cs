@@ -70,7 +70,13 @@ namespace Editor
 
             EnsureTagsExist();
 
-            levels = LevelManager.GetLevelScenes();
+            LevelManager.onLevelCreate += OnLevelCreate;
+            RefreshLevelList();
+        }
+
+        void OnDisable()
+        {
+            LevelManager.onLevelCreate -= OnLevelCreate;
         }
 
         static void EnsureTagsExist()
@@ -208,8 +214,17 @@ namespace Editor
                         state.CurrentLevel = LevelManager.SelectLevel(levels[sceneLevelIndex]);
                     }
 
-                    // TODO Add New level button
                     // TODO Add Refresh button?
+                }
+
+                if (GUILayout.Button("New"))
+                {
+                    InputDialog.ShowDialog(
+                        "Enter the name of the level",
+                        "Create",
+                        LevelManager.CreateNewLevel,
+                        "Level_"
+                    );
                 }
             }
         }
@@ -220,6 +235,27 @@ namespace Editor
         }
 
         #endregion
+
+        void OnLevelCreate(Level level)
+        {
+            RefreshLevelList();
+
+            // set level dropdown to new level
+            for (int i = 0; i < levels.Count; i++)
+            {
+                if (levels[i].Value == level.Scene.name)
+                {
+                    sceneLevelIndex = i;
+                }
+            }
+
+            state.CurrentLevel = level;
+        }
+
+        void RefreshLevelList()
+        {
+            levels = LevelManager.GetLevelScenes();
+        }
 
         public static void Refresh()
         {

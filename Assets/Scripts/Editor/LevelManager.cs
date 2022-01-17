@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEditor.SceneTemplate;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +12,10 @@ namespace Editor
 {
     public static class LevelManager
     {
+        public delegate void OnLevelCreate(Level level);
+
+        public static event OnLevelCreate onLevelCreate;
+
         public static List<KeyValuePair<string, string>> GetLevelScenes()
         {
             return AssetDatabase.FindAssets("t:Scene")
@@ -20,15 +26,29 @@ namespace Editor
                 .ToList();
         }
 
+        public static void CreateNewLevel(string name)
+        {
+            var result = SceneTemplateService.Instantiate(EditorAssets.LevelTemplate, true,
+                EditorAssets.ScenesLocation + $"/{name}.unity");
+            Scene scene = result.scene;
+            Level level = ChangeLevel(scene);
+            onLevelCreate?.Invoke(level);
+        }
+
         public static Level SelectLevel(KeyValuePair<string, string> level)
         {
-            var openedScene = EditorSceneManager.OpenScene(level.Key, OpenSceneMode.Additive);
-            SceneManager.SetActiveScene(openedScene);
+            var scene = EditorSceneManager.OpenScene(level.Key, OpenSceneMode.Additive);
+            return ChangeLevel(scene);
+        }
 
-            CloseLevelsExcept(level);
+        static Level ChangeLevel(Scene scene)
+        {
+            SceneManager.SetActiveScene(scene);
+
+            CloseLevelsExcept(scene.name);
 
             GameObject levelRoot =
-                openedScene.GetRootGameObjects()
+                scene.GetRootGameObjects()
                     .ToList()
                     .Find(obj => obj.CompareTag("Level"));
 
@@ -37,15 +57,15 @@ namespace Editor
                 Debug.LogError("Level scene doesn't contain a Level object");
             }
 
-            return new Level(levelRoot.transform);
+            return new Level(levelRoot.transform, scene);
         }
 
-        static void CloseLevelsExcept(KeyValuePair<string, string> level)
+        static void CloseLevelsExcept(string name)
         {
             for (int i = 0; i < SceneManager.sceneCount; i++)
             {
                 Scene scene = SceneManager.GetSceneAt(i);
-                if (scene.name.StartsWith("Level_") && scene.name != level.Value)
+                if (scene.name.StartsWith("Level_") && scene.name != name)
                 {
                     if (scene.isDirty)
                     {

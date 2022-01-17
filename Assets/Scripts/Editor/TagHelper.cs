@@ -9,6 +9,7 @@ namespace Editor
     {
         public static void AddTag(string name)
         {
+            // TODO move to EditorAssets?
             UnityEngine.Object[] asset = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
 
             if (asset != null && asset.Length > 0)

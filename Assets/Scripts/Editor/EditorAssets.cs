@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEditor.SceneTemplate;
 using UnityEngine;
 
 namespace Editor
@@ -8,10 +9,14 @@ namespace Editor
         public static EditorPrefabs EditorPrefabs;
         public static State State;
         public static GameObject SelectionOverlay;
+        public static SceneTemplateAsset LevelTemplate;
+
+        public const string ScenesLocation = "Assets/Scenes/";
 
         const string EditorPrefabsLocation = "Assets/Resources/Editor/EditorPrefabs.asset";
         const string EditorStateLocation = "Assets/Resources/Editor/State.asset";
         const string SelectionOverlayLocation = "Assets/Resources/Editor/SelectionOverlay.prefab";
+        const string LevelTemplateLocation = "Assets/Resources/Editor/LevelTemplate.scenetemplate";
 
         [InitializeOnLoadMethod]
         static void OnLoad()
@@ -49,6 +54,16 @@ namespace Editor
                 if (!SelectionOverlay)
                 {
                     Debug.LogWarning("Selection Overlay asset is missing");
+                }
+            }
+
+            if (!LevelTemplate)
+            {
+                LevelTemplate = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(LevelTemplateLocation);
+
+                if (!LevelTemplate)
+                {
+                    Debug.LogWarning("Level template is missing");
                 }
             }
         }

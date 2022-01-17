@@ -17,9 +17,6 @@ namespace Editor
     {
         #region CONFIG VARIABLES
 
-        bool showConfiguration;
-        bool showPlacement = true;
-        bool showLevelSelection;
         GUIStyle margin;
 
         readonly string[] rotateLabels =
@@ -29,10 +26,15 @@ namespace Editor
 
         readonly string[] modeLabels = Enum.GetNames(typeof(Mode));
 
+        Texture refreshIcon;
+
         #endregion
 
         #region GUI STATE
 
+        bool showConfiguration;
+        bool showPlacement = true;
+        bool showLevelSelection;
         Mode mode;
         int selectedPrefabId;
         int spawnHeight;
@@ -56,6 +58,7 @@ namespace Editor
         public static LevelEditor ShowWindow()
         {
             LevelEditor levelEditor = GetWindow<LevelEditor>();
+            levelEditor.refreshIcon = EditorGUIUtility.IconContent("TreeEditor.Refresh").image;
             var texture = EditorGUIUtility.IconContent("PreMatCube").image;
             levelEditor.titleContent = new GUIContent("Level Editor", texture);
             return levelEditor;
@@ -202,20 +205,26 @@ namespace Editor
         {
             using (new GUILayout.VerticalScope(margin))
             {
-                using (var check = new EditorGUI.ChangeCheckScope())
+                GUILayout.Label("Currently Editing: ", EditorStyles.boldLabel);
+                using (new GUILayout.HorizontalScope())
                 {
-                    GUILayout.Label("Currently Editing: ", EditorStyles.boldLabel);
-
-                    sceneLevelIndex =
-                        EditorGUILayout.Popup(sceneLevelIndex, levels.Select(level => level.Value).ToArray());
-
-                    if (check.changed)
+                    using (var check = new EditorGUI.ChangeCheckScope())
                     {
-                        state.CurrentLevel = LevelManager.SelectLevel(levels[sceneLevelIndex]);
-                    }
+                        sceneLevelIndex =
+                            EditorGUILayout.Popup(sceneLevelIndex, levels.Select(level => level.Value).ToArray());
 
-                    // TODO Add Refresh button?
+                        if (check.changed)
+                        {
+                            state.CurrentLevel = LevelManager.SelectLevel(levels[sceneLevelIndex]);
+                        }
+
+                        if (GUILayout.Button(refreshIcon, GUILayout.Width(30)))
+                        {
+                            RefreshLevelList();
+                        }
+                    }
                 }
+
 
                 if (GUILayout.Button("New"))
                 {

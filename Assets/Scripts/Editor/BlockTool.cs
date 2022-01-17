@@ -150,7 +150,7 @@ namespace Editor
                     switch (e.button)
                     {
                         case 0 when state.Mode == Mode.Pick:
-                            PickPrefab(e.mousePosition);
+                            PickPrefab(mousePos);
                             break;
                         case 0 when state.Mode == Mode.Create:
                             selection = new GridSelection(mousePos, state.SpawnHeight);
@@ -330,15 +330,15 @@ namespace Editor
             }
         }
 
-        void PickPrefab(Vector3 mousePos)
+        void PickPrefab(Vector3Int mousePos)
         {
-            Ray ray = HandleUtility.GUIPointToWorldRay(mousePos);
-
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
+            var block = Utils.GetBlockAtPos(mousePos);
+            if (block)
             {
+                string blockName = block.transform.name;
                 for (int i = 0; i < state.Prefabs.Count; i++)
                 {
-                    if (state.Prefabs[i].transform.name == hit.transform.parent.name)
+                    if (state.Prefabs[i].transform.name == blockName)
                     {
                         state.SelectedPrefabId = i;
                     }

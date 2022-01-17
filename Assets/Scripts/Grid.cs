@@ -39,6 +39,7 @@ public static class Grid
         return null;
     }
 
+    // TODO return block via out param?
     public static bool Has<T>(Vector3Int pos) where T : Block
     {
         return Get<T>(pos) != null;

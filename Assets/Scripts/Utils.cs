@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using JetBrains.Annotations;
 
 public class Utils
 {
@@ -128,16 +129,9 @@ public class Utils
     {
         Collider[] colliders = GetCollidersAt(pos);
 
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            Wall wall = colliders[i].GetComponentInParent<Wall>();
-            if (wall != null)
-            {
-                return wall;
-            }
-        }
-
-        return null;
+        return colliders
+            .Select(t => t.GetComponentInParent<Wall>())
+            .FirstOrDefault(wall => wall != null);
     }
 
     public static Wall GetWallAtPos(Vector3 pos)
@@ -162,20 +156,23 @@ public class Utils
         return GetMoverAtPos(Vec3ToInt(pos));
     }
 
+    [CanBeNull]
+    public static Block GetBlockAtPos(Vector3Int pos)
+    {
+        Collider[] colliders = GetCollidersAt(pos);
+
+        return colliders
+            .Select(collider => collider.GetComponentInParent<Block>())
+            .FirstOrDefault(block => block != null);
+    }
+
     public static Mover GetMoverAtPos(Vector3Int pos)
     {
         Collider[] colliders = GetCollidersAt(pos);
 
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            Mover m = colliders[i].GetComponentInParent<Mover>();
-            if (m != null)
-            {
-                return m;
-            }
-        }
-
-        return null;
+        return colliders
+            .Select(t => t.GetComponentInParent<Mover>())
+            .FirstOrDefault(m => m != null);
     }
 
     public static bool MoverIsAtPos(Vector3 pos)

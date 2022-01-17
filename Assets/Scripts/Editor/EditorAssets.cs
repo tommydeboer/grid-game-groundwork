@@ -21,6 +21,32 @@ namespace Editor
         [InitializeOnLoadMethod]
         static void OnLoad()
         {
+            LoadEditorPrefabs();
+            LoadState();
+            LoadSelectionOverlay();
+            LoadLevelTemplate();
+            AddTag("Level");
+            AddTag("Tile");
+        }
+
+        static void LoadState()
+        {
+            if (!State)
+            {
+                State = AssetDatabase.LoadAssetAtPath<State>(EditorStateLocation);
+                if (!State)
+                {
+                    State = ScriptableObject.CreateInstance<State>();
+                    AssetDatabase.CreateAsset(State, EditorStateLocation);
+                    AssetDatabase.Refresh();
+                }
+            }
+
+            State.EditorPrefabs = EditorPrefabs;
+        }
+
+        static void LoadEditorPrefabs()
+        {
             if (!EditorPrefabs)
             {
                 EditorPrefabs = AssetDatabase.LoadAssetAtPath<EditorPrefabs>(EditorPrefabsLocation);
@@ -31,32 +57,23 @@ namespace Editor
                     AssetDatabase.Refresh();
                 }
             }
+        }
 
-            if (!State)
-            {
-                State =
-                    AssetDatabase.LoadAssetAtPath<State>(EditorStateLocation);
-                if (!State)
-                {
-                    State = ScriptableObject.CreateInstance<State>();
-                    AssetDatabase.CreateAsset(State, EditorStateLocation);
-                    AssetDatabase.Refresh();
-                }
-            }
-
-            State.EditorPrefabs = EditorPrefabs;
-
+        static void LoadSelectionOverlay()
+        {
             if (!SelectionOverlay)
             {
-                SelectionOverlay =
-                    AssetDatabase.LoadAssetAtPath<GameObject>(SelectionOverlayLocation);
+                SelectionOverlay = AssetDatabase.LoadAssetAtPath<GameObject>(SelectionOverlayLocation);
 
                 if (!SelectionOverlay)
                 {
                     Debug.LogWarning("Selection Overlay asset is missing");
                 }
             }
+        }
 
+        static void LoadLevelTemplate()
+        {
             if (!LevelTemplate)
             {
                 LevelTemplate = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(LevelTemplateLocation);
@@ -65,6 +82,27 @@ namespace Editor
                 {
                     Debug.LogWarning("Level template is missing");
                 }
+            }
+        }
+
+        static void AddTag(string name)
+        {
+            Object[] asset = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
+
+            if (asset is { Length: > 0 })
+            {
+                SerializedObject so = new SerializedObject(asset[0]);
+                SerializedProperty tags = so.FindProperty("tags");
+
+                for (int i = 0; i < tags.arraySize; i++)
+                {
+                    if (tags.GetArrayElementAtIndex(i).stringValue == name) return;
+                }
+
+                tags.InsertArrayElementAtIndex(tags.arraySize);
+                tags.GetArrayElementAtIndex(tags.arraySize - 1).stringValue = name;
+                so.ApplyModifiedProperties();
+                so.Update();
             }
         }
     }

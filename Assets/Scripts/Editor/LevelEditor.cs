@@ -69,11 +69,7 @@ namespace Editor
         {
             state = EditorAssets.State;
             editorPrefabs = EditorAssets.EditorPrefabs;
-
             margin = new GUIStyle { margin = new RectOffset(15, 15, 10, 15) };
-
-            EnsureTagsExist();
-
             LevelManager.onLevelCreate += OnLevelCreate;
             RefreshLevelList();
         }
@@ -81,12 +77,6 @@ namespace Editor
         void OnDisable()
         {
             LevelManager.onLevelCreate -= OnLevelCreate;
-        }
-
-        static void EnsureTagsExist()
-        {
-            TagHelper.AddTag("Level");
-            TagHelper.AddTag("Tile");
         }
 
         #endregion

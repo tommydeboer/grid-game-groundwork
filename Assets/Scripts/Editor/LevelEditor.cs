@@ -25,8 +25,8 @@ namespace Editor
         };
 
         readonly string[] modeLabels = Enum.GetNames(typeof(Mode));
-
         Texture refreshIcon;
+        Texture newIcon;
 
         #endregion
 
@@ -59,6 +59,7 @@ namespace Editor
         {
             LevelEditor levelEditor = GetWindow<LevelEditor>();
             levelEditor.refreshIcon = EditorGUIUtility.IconContent("TreeEditor.Refresh").image;
+            levelEditor.newIcon = EditorGUIUtility.IconContent("Toolbar Plus").image;
             var texture = EditorGUIUtility.IconContent("PreMatCube").image;
             levelEditor.titleContent = new GUIContent("Level Editor", texture);
             return levelEditor;
@@ -218,22 +219,21 @@ namespace Editor
                             state.CurrentLevel = LevelManager.SelectLevel(levels[sceneLevelIndex]);
                         }
 
+                        if (GUILayout.Button(newIcon, GUILayout.Width(30)))
+                        {
+                            InputDialog.ShowDialog(
+                                "Enter the name of the level",
+                                "Create",
+                                LevelManager.CreateNewLevel,
+                                "Level_"
+                            );
+                        }
+
                         if (GUILayout.Button(refreshIcon, GUILayout.Width(30)))
                         {
                             RefreshLevelList();
                         }
                     }
-                }
-
-
-                if (GUILayout.Button("New"))
-                {
-                    InputDialog.ShowDialog(
-                        "Enter the name of the level",
-                        "Create",
-                        LevelManager.CreateNewLevel,
-                        "Level_"
-                    );
                 }
             }
         }

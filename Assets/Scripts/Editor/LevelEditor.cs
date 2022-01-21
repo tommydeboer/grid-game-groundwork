@@ -63,6 +63,8 @@ namespace Editor
             var texture = EditorGUIUtility.IconContent("PreMatCube").image;
             levelEditor.titleContent = new GUIContent("Level Editor", texture);
             return levelEditor;
+
+            // TODO FIXME state.CurrentLevel must be set (but based on what?)
         }
 
         void OnEnable()

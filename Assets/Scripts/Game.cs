@@ -137,7 +137,7 @@ public class Game : MonoBehaviour
         movingCount--;
         if (movingCount == 0)
         {
-            Grid.Update();
+            Grid.Refresh();
             FallStart();
         }
     }
@@ -160,7 +160,7 @@ public class Game : MonoBehaviour
 
     public void FallEnd()
     {
-        Grid.Update();
+        Grid.Refresh();
         if (movingCount == 0)
         {
             Refresh();

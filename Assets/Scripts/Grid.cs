@@ -5,35 +5,76 @@ using UnityEngine;
 
 public static class Grid
 {
-    static Dictionary<Vector3Int, Block> blocks;
+    static Dictionary<Vector3Int, Wall> walls;
+    static Dictionary<Vector3Int, Mover> movers;
 
-    static Dictionary<Vector3Int, Block> Blocks
+    static Dictionary<Vector3Int, Wall> Walls
     {
         get
         {
-            if (blocks == null) Update();
-            return blocks;
+            if (walls == null) Reset();
+            return walls;
         }
-        set => blocks = value;
+        set => walls = value;
     }
 
-    public static void Update()
+    static Dictionary<Vector3Int, Mover> Movers
     {
-        Blocks = new Dictionary<Vector3Int, Block>();
+        get
+        {
+            if (movers == null) Reset();
+            return movers;
+        }
+        set => movers = value;
+    }
+
+    static void Reset()
+    {
+        Walls = new Dictionary<Vector3Int, Wall>();
+        Movers = new Dictionary<Vector3Int, Mover>();
         var levelTransform = GameObject.FindWithTag("Level").transform;
 
         foreach (Transform item in levelTransform)
         {
             var block = item.GetComponentInParent<Block>();
-            Blocks[block.Tile.gridPos] = block;
+            switch (block)
+            {
+                case Wall wall:
+                    Walls[wall.Tile.gridPos] = wall;
+                    break;
+                case Mover mover:
+                    Movers[mover.Tile.gridPos] = mover;
+                    break;
+            }
+        }
+    }
+
+    public static void Refresh()
+    {
+        var allMovers = Movers.Values;
+        Movers = new Dictionary<Vector3Int, Mover>();
+
+        foreach (Mover mover in allMovers)
+        {
+            Movers[mover.Tile.gridPos] = mover;
         }
     }
 
     public static T Get<T>(Vector3Int pos) where T : Block
     {
-        if (Blocks.ContainsKey(pos) && Blocks[pos] is T t)
+        if (typeof(Wall).IsAssignableFrom(typeof(T)))
         {
-            return t;
+            if (Walls.ContainsKey(pos) && Walls[pos] is T t)
+            {
+                return t;
+            }
+        }
+        else if (typeof(Mover).IsAssignableFrom(typeof(T)))
+        {
+            if (Movers.ContainsKey(pos) && Movers[pos] is T t)
+            {
+                return t;
+            }
         }
 
         return null;
@@ -53,6 +94,6 @@ public static class Grid
 
     public static bool IsEmpty(Vector3Int pos)
     {
-        return !Blocks.ContainsKey(pos);
+        return !Walls.ContainsKey(pos);
     }
 }

@@ -165,9 +165,16 @@ public class Game : MonoBehaviour
         if (movingCount == 0)
         {
             Refresh();
+            CheckTriggers();
             CompleteMove();
         }
     }
+
+    static void CheckTriggers()
+    {
+        Grid.GetTriggers().ForEach(trigger => trigger.Check());
+    }
+
 
     static void CompleteMove()
     {

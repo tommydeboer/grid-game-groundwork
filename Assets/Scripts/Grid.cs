@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Blocks;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ public static class Grid
 {
     static Dictionary<Vector3Int, Wall> walls;
     static Dictionary<Vector3Int, Mover> movers;
+    static Dictionary<Vector3Int, Trigger> triggers;
 
     static Dictionary<Vector3Int, Wall> Walls
     {
@@ -29,10 +31,21 @@ public static class Grid
         set => movers = value;
     }
 
+    static Dictionary<Vector3Int, Trigger> Triggers
+    {
+        get
+        {
+            if (triggers == null) Reset();
+            return triggers;
+        }
+        set => triggers = value;
+    }
+
     static void Reset()
     {
         Walls = new Dictionary<Vector3Int, Wall>();
         Movers = new Dictionary<Vector3Int, Mover>();
+        Triggers = new Dictionary<Vector3Int, Trigger>();
         var levelTransform = GameObject.FindWithTag("Level").transform;
 
         foreach (Transform item in levelTransform)
@@ -45,6 +58,9 @@ public static class Grid
                     break;
                 case Mover mover:
                     Movers[mover.Tile.gridPos] = mover;
+                    break;
+                case Trigger trigger:
+                    Triggers[trigger.Tile.gridPos] = trigger;
                     break;
             }
         }
@@ -95,6 +111,11 @@ public static class Grid
 
     public static bool IsEmpty(Vector3Int pos)
     {
-        return !Walls.ContainsKey(pos);
+        return !Walls.ContainsKey(pos) && !Movers.ContainsKey(pos);
+    }
+
+    public static List<Trigger> GetTriggers()
+    {
+        return Triggers.Values.ToList();
     }
 }

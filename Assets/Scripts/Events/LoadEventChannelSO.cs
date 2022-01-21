@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine.SceneManagement;
 
 namespace Events
@@ -12,9 +13,9 @@ namespace Events
     [CreateAssetMenu(menuName = "Events/Load Event Channel")]
     public class LoadEventChannelSO : ScriptableObject
     {
-        public UnityAction<Scene, bool> OnLoadingRequested;
+        public UnityAction<SceneAsset, bool> OnLoadingRequested;
 
-        public void RaiseEvent(Scene levelToLoad, bool showLoadingScreen)
+        public void RaiseEvent(SceneAsset levelToLoad, bool showLoadingScreen)
         {
             if (OnLoadingRequested != null)
             {

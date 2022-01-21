@@ -258,15 +258,6 @@ namespace Editor
             levels = LevelManager.GetLevelScenes();
         }
 
-        public static void Refresh()
-        {
-            Game game = FindObjectOfType<Game>();
-            if (game != null)
-            {
-                game.EditorRefresh();
-            }
-        }
-
         [Shortcut("Enter Play Mode", null, KeyCode.P)]
         static void PlayShortcut()
         {

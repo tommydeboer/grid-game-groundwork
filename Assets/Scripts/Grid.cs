@@ -43,12 +43,16 @@ public static class Grid
 
     static void Reset()
     {
+        Reset(GameObject.FindWithTag("Level").transform);
+    }
+
+    public static void Reset(Transform levelRoot)
+    {
         Walls = new Dictionary<Vector3Int, Wall>();
         Movers = new Dictionary<Vector3Int, Mover>();
         Triggers = new Dictionary<Vector3Int, Trigger>();
-        var levelTransform = GameObject.FindWithTag("Level").transform;
 
-        foreach (Transform item in levelTransform)
+        foreach (Transform item in levelRoot)
         {
             var block = item.GetComponentInParent<Block>();
             switch (block)
@@ -117,5 +121,10 @@ public static class Grid
     public static List<Trigger> GetTriggers()
     {
         return Triggers.Values.ToList();
+    }
+
+    public static List<Mover> GetMovers()
+    {
+        return Movers.Values.ToList();
     }
 }

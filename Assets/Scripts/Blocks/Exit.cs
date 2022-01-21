@@ -19,7 +19,7 @@ namespace Blocks
         {
             if (Grid.Has<PlayerInput>(Tile.gridPos))
             {
-                // loadChannel.RaiseEvent(levelToLoad, false);
+                loadChannel.RaiseEvent(levelToLoad, false);
             }
         }
     }

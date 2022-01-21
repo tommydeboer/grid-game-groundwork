@@ -1,0 +1,109 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using DG.Tweening;
+using Events;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+/// <summary>
+/// This class manages the scenes loading and unloading
+/// </summary>
+public class SceneLoader : MonoBehaviour
+{
+    [Header("Initialization Scene")]
+    [SerializeField]
+    SceneAsset initializationScene;
+
+    //The load event we are listening to
+    [Header("Load Event")]
+    [SerializeField]
+    LoadEventChannelSO loadEventChannel;
+
+    //List of the scenes to load and track progress
+    readonly List<AsyncOperation> scenesToLoadAsyncOperations = new();
+
+    //List of scenes to unload
+    readonly List<Scene> scenesToUnload = new();
+
+    //Keep track of the scene we want to set as active (for lighting/skybox)
+    SceneAsset activeScene;
+
+    void OnEnable()
+    {
+        loadEventChannel.OnLoadingRequested += LoadScene;
+    }
+
+    void OnDisable()
+    {
+        loadEventChannel.OnLoadingRequested -= LoadScene;
+    }
+
+    /// <summary> This function loads the scenes passed as array parameter </summary>
+    void LoadScene(SceneAsset sceneToLoad, bool showLoadingScreen)
+    {
+        AddScenesToUnload();
+
+        activeScene = sceneToLoad;
+
+        string sceneName = sceneToLoad.name;
+        if (!CheckLoadState(sceneName))
+        {
+            scenesToLoadAsyncOperations.Add(SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive));
+        }
+
+        scenesToLoadAsyncOperations[0].completed += SetActiveScene;
+        scenesToLoadAsyncOperations.Clear();
+
+        UnloadScenes();
+    }
+
+    void SetActiveScene(AsyncOperation asyncOp)
+    {
+        Scene scene = SceneManager.GetSceneByName(activeScene.name);
+        GameObject levelRoot = scene.GetRootGameObjects().First(go => go.CompareTag("Level"));
+        SceneManager.SetActiveScene(scene);
+        Grid.Reset(levelRoot.transform);
+        State.Init();
+    }
+
+    void AddScenesToUnload()
+    {
+        for (int i = 0; i < SceneManager.sceneCount; ++i)
+        {
+            Scene scene = SceneManager.GetSceneAt(i);
+            if (scene.name != initializationScene.name)
+            {
+                scenesToUnload.Add(scene);
+            }
+        }
+    }
+
+    void UnloadScenes()
+    {
+        foreach (Scene scene in scenesToUnload)
+        {
+            SceneManager.UnloadSceneAsync(scene);
+        }
+
+        scenesToUnload.Clear();
+    }
+
+    /// <summary> This function checks if a scene is already loaded </summary>
+    static bool CheckLoadState(string sceneName)
+    {
+        for (int i = 0; i < SceneManager.sceneCount; ++i)
+        {
+            Scene scene = SceneManager.GetSceneAt(i);
+            if (scene.name == sceneName)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}

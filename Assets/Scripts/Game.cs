@@ -15,7 +15,6 @@ public class Game : MonoBehaviour
 
     public static Game instance;
 
-    public static Mover[] movers;
     public static readonly List<Mover> moversToMove = new();
 
     public float moveTime = 0.18f; // time it takes to move 1 unit
@@ -34,14 +33,8 @@ public class Game : MonoBehaviour
 
     void Start()
     {
-        movers = FindObjectsOfType<Mover>();
-        State.Init(movers);
+        State.Init();
         isMoving = false;
-    }
-
-    public void EditorRefresh()
-    {
-        movers = FindObjectsOfType<Mover>();
     }
 
     void Update()
@@ -146,12 +139,7 @@ public class Game : MonoBehaviour
     void FallStart()
     {
         isMoving = true;
-        movers = movers.OrderBy(mover => mover.transform.position.y).ToArray();
-
-        foreach (Mover m in movers)
-        {
-            m.FallStart();
-        }
+        Grid.GetMovers().OrderBy(mover => mover.transform.position.y).ToList().ForEach(mover => mover.FallStart());
 
         if (movingCount == 0)
         {

@@ -13,7 +13,7 @@ public static class State
         public List<Vector3Int> rotations;
     }
 
-    static readonly List<MoverToTrack> moversToTrack = new();
+    static List<MoverToTrack> moversToTrack = new();
     public static int undoIndex;
 
     static void AddMover(Mover mover)
@@ -30,9 +30,12 @@ public static class State
         moversToTrack.Add(newMover);
     }
 
-    public static void Init(IEnumerable<Mover> movers)
+    public static void Init()
     {
-        foreach (Mover mover in movers)
+        moversToTrack = new List<MoverToTrack>();
+        undoIndex = 0;
+
+        foreach (Mover mover in Grid.GetMovers())
         {
             AddMover(mover);
         }
@@ -74,7 +77,7 @@ public static class State
             undoIndex--;
             RemoveFromUndoStack();
             Grid.Refresh();
-            foreach (var item in Game.movers)
+            foreach (var item in Grid.GetMovers())
             {
                 item.isFalling = false;
             }
@@ -92,7 +95,7 @@ public static class State
 
         OnMoveComplete();
         Grid.Refresh();
-        foreach (var item in Game.movers)
+        foreach (var item in Grid.GetMovers())
         {
             item.isFalling = false;
         }

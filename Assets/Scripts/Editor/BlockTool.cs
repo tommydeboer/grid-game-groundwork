@@ -225,8 +225,6 @@ namespace Editor
                 return;
             }
 
-            LevelEditor.Refresh();
-
             switch (state.Mode)
             {
                 case Mode.Create:
@@ -247,7 +245,6 @@ namespace Editor
             }
 
             selection = null;
-            LevelEditor.Refresh();
         }
 
         void ApplyCreateSelection(Level level)

@@ -273,6 +273,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initializationScene: {fileID: 102900000, guid: 6411691214eb0e440baa691cbfb74f40,
     type: 3}
+  openingLevel: {fileID: 102900000, guid: f7173cf501b5a1b468dd254c3c702642, type: 3}
   loadEventChannel: {fileID: 11400000, guid: 71990008023d0d7409c82de0005aff05, type: 2}
 --- !u!1001 &877372581422755536
 PrefabInstance:

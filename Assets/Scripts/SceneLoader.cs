@@ -14,9 +14,12 @@ using UnityEngine.UI;
 /// </summary>
 public class SceneLoader : MonoBehaviour
 {
-    [Header("Initialization Scene")]
+    [Header("Scenes")]
     [SerializeField]
     SceneAsset initializationScene;
+
+    [SerializeField]
+    SceneAsset openingLevel;
 
     //The load event we are listening to
     [Header("Load Event")]
@@ -42,7 +45,14 @@ public class SceneLoader : MonoBehaviour
         loadEventChannel.OnLoadingRequested -= LoadScene;
     }
 
-    /// <summary> This function loads the scenes passed as array parameter </summary>
+    void Start()
+    {
+        if (!SceneManager.GetActiveScene().name.StartsWith("Level_"))
+        {
+            LoadScene(openingLevel, false);
+        }
+    }
+
     void LoadScene(SceneAsset sceneToLoad, bool showLoadingScreen)
     {
         AddScenesToUnload();
@@ -50,7 +60,7 @@ public class SceneLoader : MonoBehaviour
         activeScene = sceneToLoad;
 
         string sceneName = sceneToLoad.name;
-        if (!CheckLoadState(sceneName))
+        if (!IsLoaded(sceneName))
         {
             scenesToLoadAsyncOperations.Add(SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive));
         }
@@ -92,8 +102,7 @@ public class SceneLoader : MonoBehaviour
         scenesToUnload.Clear();
     }
 
-    /// <summary> This function checks if a scene is already loaded </summary>
-    static bool CheckLoadState(string sceneName)
+    static bool IsLoaded(string sceneName)
     {
         for (int i = 0; i < SceneManager.sceneCount; ++i)
         {

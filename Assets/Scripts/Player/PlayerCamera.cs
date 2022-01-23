@@ -65,6 +65,7 @@ namespace Player
             {
                 player = value;
                 playerTransform = player.transform;
+                cameraTransform.localPosition = playerTransform.position;
                 currentOrbitAngles = OrbitAngles;
             }
         }
@@ -79,7 +80,8 @@ namespace Player
             if (!Player) return;
 
             // smoothly rotate to viewing angle (based on player status: walking/climbing)
-            currentOrbitAngles = Vector2.SmoothDamp(currentOrbitAngles, OrbitAngles, ref orbitVelocity, rotationSmoothTime);
+            currentOrbitAngles =
+                Vector2.SmoothDamp(currentOrbitAngles, OrbitAngles, ref orbitVelocity, rotationSmoothTime);
 
             float moveTime = movementSmoothTime;
             if (currentOrbitAngles != OrbitAngles)

@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000002, guid: cbcf9b986b2fa404bad6737ae8727991,
+  m_LightingDataAsset: {fileID: 112000002, guid: b8cd7af67ba2fc040826809b18d29dd3,
     type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: 2092a3113729e6843a615a9bec2a0aab,
     type: 2}
@@ -273,7 +273,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initializationScene: {fileID: 102900000, guid: 6411691214eb0e440baa691cbfb74f40,
     type: 3}
-  openingLevel: {fileID: 102900000, guid: f7173cf501b5a1b468dd254c3c702642, type: 3}
+  openingLevel: {fileID: 102900000, guid: 4ee5595c87a86344eaa4d3b69942164e, type: 3}
   loadEventChannel: {fileID: 11400000, guid: 71990008023d0d7409c82de0005aff05, type: 2}
 --- !u!1001 &877372581422755536
 PrefabInstance:

@@ -244,7 +244,7 @@ namespace Editor
             // set level dropdown to new level
             for (int i = 0; i < levels.Count; i++)
             {
-                if (levels[i].Value == level.Scene.name)
+                if (levels[i].Value == level.sceneName)
                 {
                     sceneLevelIndex = i;
                 }

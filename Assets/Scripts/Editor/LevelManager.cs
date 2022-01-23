@@ -45,20 +45,8 @@ namespace Editor
         static Level ChangeLevel(Scene scene)
         {
             SceneManager.SetActiveScene(scene);
-
             CloseLevelsExcept(scene.name);
-
-            GameObject levelRoot =
-                scene.GetRootGameObjects()
-                    .ToList()
-                    .Find(obj => obj.CompareTag("Level"));
-
-            if (levelRoot == null)
-            {
-                Debug.LogError("Level scene doesn't contain a Level object");
-            }
-
-            return new Level(levelRoot.transform, scene);
+            return new Level(scene.name);
         }
 
         static void CloseLevelsExcept(string name)

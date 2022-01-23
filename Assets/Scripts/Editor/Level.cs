@@ -1,27 +1,50 @@
+using System;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Editor
 {
+    [Serializable]
     public class Level
     {
-        public Scene Scene { get; }
-        Transform Root { get; }
+        [SerializeField]
+        public string sceneName;
 
-        public Level(Transform root, Scene scene)
+        Transform root;
+
+        Transform Root
         {
-            Root = root;
-            Scene = scene;
+            get
+            {
+                if (root == null)
+                {
+                    root = SceneManager.GetSceneByName(sceneName)
+                        .GetRootGameObjects()
+                        .ToList()
+                        .Find(obj => obj.CompareTag("Level"))
+                        .transform;
+
+                    if (root == null)
+                    {
+                        Debug.LogError("Level scene doesn't contain a Level object");
+                    }
+                }
+
+                return root;
+            }
+        }
+
+        public Level(string sceneName)
+        {
+            this.sceneName = sceneName;
         }
 
         public void CreateAt(Object prefab, Vector3 pos, Vector3? eulerAngles = null)
         {
-            if (prefab == null)
-            {
-                Debug.LogWarning("Attempted to create null object");
-                return;
-            }
+            Debug.Assert(prefab != null, "Attempted to create null block");
 
             GameObject obj = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
             if (obj == null)

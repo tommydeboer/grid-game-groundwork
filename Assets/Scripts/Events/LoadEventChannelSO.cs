@@ -14,12 +14,13 @@ namespace Events
     public class LoadEventChannelSO : ScriptableObject
     {
         public UnityAction<SceneField, bool> OnLoadingRequested;
+        public UnityAction<Scene> OnLoadingFinished;
 
-        public void RaiseEvent(SceneField levelToLoad, bool showLoadingScreen)
+        public void RaiseSceneLoadRequestEvent(SceneField scene, bool showLoadingScreen)
         {
             if (OnLoadingRequested != null)
             {
-                OnLoadingRequested.Invoke(levelToLoad, showLoadingScreen);
+                OnLoadingRequested.Invoke(scene, showLoadingScreen);
             }
             else
             {
@@ -27,6 +28,11 @@ namespace Events
                                  "Check why there is no LevelLoader already present, " +
                                  "and make sure it's listening on this Load Event channel.");
             }
+        }
+
+        public void RaiseSceneLoadedEvent(Scene scene)
+        {
+            OnLoadingFinished?.Invoke(scene);
         }
     }
 }

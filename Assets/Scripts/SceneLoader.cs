@@ -16,10 +16,10 @@ public class SceneLoader : MonoBehaviour
 {
     [Header("Scenes")]
     [SerializeField]
-    SceneAsset initializationScene;
+    SceneField initializationScene;
 
     [SerializeField]
-    SceneAsset openingLevel;
+    SceneField openingLevel;
 
     //The load event we are listening to
     [Header("Load Event")]
@@ -33,7 +33,7 @@ public class SceneLoader : MonoBehaviour
     readonly List<Scene> scenesToUnload = new();
 
     //Keep track of the scene we want to set as active (for lighting/skybox)
-    SceneAsset activeScene;
+    SceneField activeScene;
 
     void OnEnable()
     {
@@ -53,13 +53,13 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
-    void LoadScene(SceneAsset sceneToLoad, bool showLoadingScreen)
+    void LoadScene(SceneField sceneToLoad, bool showLoadingScreen)
     {
         AddScenesToUnload();
 
         activeScene = sceneToLoad;
 
-        string sceneName = sceneToLoad.name;
+        string sceneName = sceneToLoad.SceneName;
         if (!IsLoaded(sceneName))
         {
             scenesToLoadAsyncOperations.Add(SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive));
@@ -73,7 +73,7 @@ public class SceneLoader : MonoBehaviour
 
     void SetActiveScene(AsyncOperation asyncOp)
     {
-        Scene scene = SceneManager.GetSceneByName(activeScene.name);
+        Scene scene = SceneManager.GetSceneByName(activeScene.SceneName);
         GameObject levelRoot = scene.GetRootGameObjects().First(go => go.CompareTag("Level"));
         SceneManager.SetActiveScene(scene);
         Grid.Reset(levelRoot.transform);
@@ -85,7 +85,7 @@ public class SceneLoader : MonoBehaviour
         for (int i = 0; i < SceneManager.sceneCount; ++i)
         {
             Scene scene = SceneManager.GetSceneAt(i);
-            if (scene.name != initializationScene.name)
+            if (scene.name != initializationScene.SceneName)
             {
                 scenesToUnload.Add(scene);
             }

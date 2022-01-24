@@ -13,9 +13,9 @@ namespace Events
     [CreateAssetMenu(menuName = "Events/Load Event Channel")]
     public class LoadEventChannelSO : ScriptableObject
     {
-        public UnityAction<SceneAsset, bool> OnLoadingRequested;
+        public UnityAction<SceneField, bool> OnLoadingRequested;
 
-        public void RaiseEvent(SceneAsset levelToLoad, bool showLoadingScreen)
+        public void RaiseEvent(SceneField levelToLoad, bool showLoadingScreen)
         {
             if (OnLoadingRequested != null)
             {

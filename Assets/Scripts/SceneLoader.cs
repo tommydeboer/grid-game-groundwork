@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GridGame.Events;
@@ -73,14 +74,14 @@ namespace GridGame
             Scene scene = SceneManager.GetSceneByName(activeScene.SceneName);
             GameObject levelRoot = scene.GetRootGameObjects().First(go => go.CompareTag("Level"));
             SceneManager.SetActiveScene(scene);
-            
+
             if (scene.IsLevel())
             {
                 loadEventChannel.OnLevelLoaded(scene);
             }
 
-            Grid.Reset(levelRoot.transform);
-            State.Init();
+            // TODO activate when undo system is back online
+            // State.Init();
         }
 
         void AddScenesToUnload()

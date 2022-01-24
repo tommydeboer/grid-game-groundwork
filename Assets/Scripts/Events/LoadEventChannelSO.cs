@@ -12,7 +12,7 @@ namespace GridGame.Events
     public class LoadEventChannelSO : ScriptableObject
     {
         public UnityAction<SceneField, bool> OnLoadingRequested;
-        public UnityAction<Scene> OnLoadingFinished;
+        public UnityAction<Scene> OnLevelLoaded;
 
         public void RaiseSceneLoadRequestEvent(SceneField scene, bool showLoadingScreen)
         {
@@ -28,9 +28,9 @@ namespace GridGame.Events
             }
         }
 
-        public void RaiseSceneLoadedEvent(Scene scene)
+        public void RaiseLevelLoadedEvent(Scene scene)
         {
-            OnLoadingFinished?.Invoke(scene);
+            OnLevelLoaded?.Invoke(scene);
         }
     }
 }

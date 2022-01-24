@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GridGame
 {
@@ -7,17 +8,22 @@ namespace GridGame
     {
         static readonly Dictionary<Vector3Int, string> DirectionStrings = new()
         {
-            {Vector3Int.back, "BACK"},
-            {Vector3Int.left, "LEFT"},
-            {Vector3Int.forward, "FORWARD"},
-            {Vector3Int.right, "RIGHT"},
-            {Vector3Int.up, "UP"},
-            {Vector3Int.down, "DOWN"},
+            { Vector3Int.back, "BACK" },
+            { Vector3Int.left, "LEFT" },
+            { Vector3Int.forward, "FORWARD" },
+            { Vector3Int.right, "RIGHT" },
+            { Vector3Int.up, "UP" },
+            { Vector3Int.down, "DOWN" },
         };
 
         public static string ToDirectionString(this Vector3Int dir)
         {
             return DirectionStrings.ContainsKey(dir) ? DirectionStrings[dir] : dir.ToString();
+        }
+
+        public static bool IsLevel(this Scene scene)
+        {
+            return scene.name.StartsWith("Level_");
         }
     }
 }

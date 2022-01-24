@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Editor
+namespace GridGame.Editor
 {
     internal class ModeModifier
     {

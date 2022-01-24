@@ -5,7 +5,7 @@ using UnityEditor.EditorTools;
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
-namespace Editor
+namespace GridGame.Editor
 {
     [SuppressMessage("ReSharper", "SwitchStatementMissingSomeEnumCasesNoDefault")]
     [EditorTool(TITLE)]

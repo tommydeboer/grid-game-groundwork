@@ -1,130 +1,131 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Blocks;
+using GridGame.Blocks;
 using UnityEngine;
 
-public static class Grid
+namespace GridGame
 {
-    static Dictionary<Vector3Int, Wall> walls;
-    static Dictionary<Vector3Int, Mover> movers;
-    static Dictionary<Vector3Int, Trigger> triggers;
-
-    static Dictionary<Vector3Int, Wall> Walls
+    public static class Grid
     {
-        get
+        static Dictionary<Vector3Int, Wall> walls;
+        static Dictionary<Vector3Int, Mover> movers;
+        static Dictionary<Vector3Int, Trigger> triggers;
+
+        static Dictionary<Vector3Int, Wall> Walls
         {
-            if (walls == null) Reset();
-            return walls;
-        }
-        set => walls = value;
-    }
-
-    static Dictionary<Vector3Int, Mover> Movers
-    {
-        get
-        {
-            if (movers == null) Reset();
-            return movers;
-        }
-        set => movers = value;
-    }
-
-    static Dictionary<Vector3Int, Trigger> Triggers
-    {
-        get
-        {
-            if (triggers == null) Reset();
-            return triggers;
-        }
-        set => triggers = value;
-    }
-
-    static void Reset()
-    {
-        Reset(GameObject.FindWithTag("Level").transform);
-    }
-
-    public static void Reset(Transform levelRoot)
-    {
-        Walls = new Dictionary<Vector3Int, Wall>();
-        Movers = new Dictionary<Vector3Int, Mover>();
-        Triggers = new Dictionary<Vector3Int, Trigger>();
-
-        foreach (Transform item in levelRoot)
-        {
-            var block = item.GetComponentInParent<Block>();
-            switch (block)
+            get
             {
-                case Wall wall:
-                    Walls[wall.Tile.gridPos] = wall;
-                    break;
-                case Mover mover:
-                    Movers[mover.Tile.gridPos] = mover;
-                    break;
-                case Trigger trigger:
-                    Triggers[trigger.Tile.gridPos] = trigger;
-                    break;
+                if (walls == null) Reset();
+                return walls;
             }
+            set => walls = value;
         }
-    }
 
-    public static void Refresh()
-    {
-        var allMovers = Movers.Values;
-        Movers = new Dictionary<Vector3Int, Mover>();
-
-        foreach (Mover mover in allMovers)
+        static Dictionary<Vector3Int, Mover> Movers
         {
-            Movers[mover.Tile.gridPos] = mover;
-        }
-    }
-
-    public static T Get<T>(Vector3Int pos) where T : Block
-    {
-        if (typeof(Wall).IsAssignableFrom(typeof(T)))
-        {
-            if (Walls.ContainsKey(pos) && Walls[pos] is T t)
+            get
             {
-                return t;
+                if (movers == null) Reset();
+                return movers;
             }
+            set => movers = value;
         }
-        else if (typeof(Mover).IsAssignableFrom(typeof(T)))
+
+        static Dictionary<Vector3Int, Trigger> Triggers
         {
-            if (Movers.ContainsKey(pos) && Movers[pos] is T t)
+            get
             {
-                return t;
+                if (triggers == null) Reset();
+                return triggers;
+            }
+            set => triggers = value;
+        }
+
+        static void Reset()
+        {
+            Reset(GameObject.FindWithTag("Level").transform);
+        }
+
+        public static void Reset(Transform levelRoot)
+        {
+            Walls = new Dictionary<Vector3Int, Wall>();
+            Movers = new Dictionary<Vector3Int, Mover>();
+            Triggers = new Dictionary<Vector3Int, Trigger>();
+
+            foreach (Transform item in levelRoot)
+            {
+                var block = item.GetComponentInParent<Block>();
+                switch (block)
+                {
+                    case Wall wall:
+                        Walls[wall.Tile.gridPos] = wall;
+                        break;
+                    case Mover mover:
+                        Movers[mover.Tile.gridPos] = mover;
+                        break;
+                    case Trigger trigger:
+                        Triggers[trigger.Tile.gridPos] = trigger;
+                        break;
+                }
             }
         }
 
-        return null;
-    }
+        public static void Refresh()
+        {
+            var allMovers = Movers.Values;
+            Movers = new Dictionary<Vector3Int, Mover>();
 
-    // TODO return block via out param?
-    public static bool Has<T>(Vector3Int pos) where T : Block
-    {
-        return Get<T>(pos) != null;
-    }
+            foreach (Mover mover in allMovers)
+            {
+                Movers[mover.Tile.gridPos] = mover;
+            }
+        }
 
-    public static bool HasOriented<T>(Vector3Int pos, Vector3Int orientation) where T : Block
-    {
-        var block = Get<T>(pos);
-        return block != null && block.Orientation == orientation;
-    }
+        public static T Get<T>(Vector3Int pos) where T : Block
+        {
+            if (typeof(Wall).IsAssignableFrom(typeof(T)))
+            {
+                if (Walls.ContainsKey(pos) && Walls[pos] is T t)
+                {
+                    return t;
+                }
+            }
+            else if (typeof(Mover).IsAssignableFrom(typeof(T)))
+            {
+                if (Movers.ContainsKey(pos) && Movers[pos] is T t)
+                {
+                    return t;
+                }
+            }
 
-    public static bool IsEmpty(Vector3Int pos)
-    {
-        return !Walls.ContainsKey(pos) && !Movers.ContainsKey(pos);
-    }
+            return null;
+        }
 
-    public static List<Trigger> GetTriggers()
-    {
-        return Triggers.Values.ToList();
-    }
+        // TODO return block via out param?
+        public static bool Has<T>(Vector3Int pos) where T : Block
+        {
+            return Get<T>(pos) != null;
+        }
 
-    public static List<Mover> GetMovers()
-    {
-        return Movers.Values.ToList();
+        public static bool HasOriented<T>(Vector3Int pos, Vector3Int orientation) where T : Block
+        {
+            var block = Get<T>(pos);
+            return block != null && block.Orientation == orientation;
+        }
+
+        public static bool IsEmpty(Vector3Int pos)
+        {
+            return !Walls.ContainsKey(pos) && !Movers.ContainsKey(pos);
+        }
+
+        public static List<Trigger> GetTriggers()
+        {
+            return Triggers.Values.ToList();
+        }
+
+        public static List<Mover> GetMovers()
+        {
+            return Movers.Values.ToList();
+        }
     }
 }

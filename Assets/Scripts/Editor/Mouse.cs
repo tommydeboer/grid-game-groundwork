@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor
+namespace GridGame.Editor
 {
     public static class Mouse
     {

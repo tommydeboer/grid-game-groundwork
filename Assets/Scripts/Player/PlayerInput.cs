@@ -1,8 +1,8 @@
-﻿using Blocks;
-using DG.Tweening;
+﻿using DG.Tweening;
+using GridGame.Blocks;
 using UnityEngine;
 
-namespace Player
+namespace GridGame.Player
 {
     public class PlayerInput : Mover
     {

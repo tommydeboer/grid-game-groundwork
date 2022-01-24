@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Blocks
+namespace GridGame.Blocks
 {
     public abstract class Block : MonoBehaviour
     {

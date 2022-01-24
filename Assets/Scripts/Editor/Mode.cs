@@ -1,4 +1,4 @@
-namespace Editor
+namespace GridGame.Editor
 {
     public enum Mode
     {

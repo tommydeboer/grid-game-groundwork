@@ -1,4 +1,4 @@
-namespace Blocks
+namespace GridGame.Blocks
 {
     public abstract class Trigger : Block
     {

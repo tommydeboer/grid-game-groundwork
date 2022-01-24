@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Editor
+namespace GridGame.Editor
 {
     internal class GridSelection
     {

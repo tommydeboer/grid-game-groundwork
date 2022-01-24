@@ -2,7 +2,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-namespace Blocks
+namespace GridGame.Blocks
 {
     public class Mover : Block
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Editor
+namespace GridGame.Editor
 {
     public static class BoundsExtensions
     {

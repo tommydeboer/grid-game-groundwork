@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor
+namespace GridGame.Editor
 {
     public class InputDialog : EditorWindow
     {

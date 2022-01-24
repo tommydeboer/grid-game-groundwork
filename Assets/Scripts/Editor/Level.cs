@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
-namespace Editor
+namespace GridGame.Editor
 {
     [Serializable]
     public class Level

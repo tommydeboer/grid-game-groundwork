@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Player
+namespace GridGame.Player
 {
     public class PlayerCamera : MonoBehaviour
     {

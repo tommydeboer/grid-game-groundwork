@@ -1,14 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.SceneTemplate;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Editor
+namespace GridGame.Editor
 {
     public static class LevelManager
     {

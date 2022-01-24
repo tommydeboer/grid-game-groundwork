@@ -1,48 +1,53 @@
+using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-[System.Serializable]
-public class SceneField
+namespace GridGame
 {
-    [SerializeField]
-    Object sceneAsset;
-
-    [SerializeField]
-    string sceneName = "";
-
-    public string SceneName => sceneName;
-
-    // makes it work with the existing Unity methods (LoadLevel/LoadScene)
-    public static implicit operator string(SceneField sceneField)
+    [Serializable]
+    public class SceneField
     {
-        return sceneField.SceneName;
+        [SerializeField]
+        Object sceneAsset;
+
+        [SerializeField]
+        string sceneName = "";
+
+        public string SceneName => sceneName;
+
+        // makes it work with the existing Unity methods (LoadLevel/LoadScene)
+        public static implicit operator string(SceneField sceneField)
+        {
+            return sceneField.SceneName;
+        }
     }
-}
 
 
 #if UNITY_EDITOR
-[CustomPropertyDrawer(typeof(SceneField))]
-public class SceneFieldPropertyDrawer : PropertyDrawer
-{
-    public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label)
+    [CustomPropertyDrawer(typeof(SceneField))]
+    public class SceneFieldPropertyDrawer : PropertyDrawer
     {
-        EditorGUI.BeginProperty(_position, GUIContent.none, _property);
-        SerializedProperty sceneAsset = _property.FindPropertyRelative("sceneAsset");
-        SerializedProperty sceneName = _property.FindPropertyRelative("sceneName");
-        _position = EditorGUI.PrefixLabel(_position, GUIUtility.GetControlID(FocusType.Passive), _label);
-        if (sceneAsset != null)
+        public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label)
         {
-            sceneAsset.objectReferenceValue =
-                EditorGUI.ObjectField(_position, sceneAsset.objectReferenceValue, typeof(SceneAsset), false);
-            if (sceneAsset.objectReferenceValue != null)
+            EditorGUI.BeginProperty(_position, GUIContent.none, _property);
+            SerializedProperty sceneAsset = _property.FindPropertyRelative("sceneAsset");
+            SerializedProperty sceneName = _property.FindPropertyRelative("sceneName");
+            _position = EditorGUI.PrefixLabel(_position, GUIUtility.GetControlID(FocusType.Passive), _label);
+            if (sceneAsset != null)
             {
-                sceneName.stringValue = ((sceneAsset.objectReferenceValue as SceneAsset)!).name;
+                sceneAsset.objectReferenceValue =
+                    EditorGUI.ObjectField(_position, sceneAsset.objectReferenceValue, typeof(SceneAsset), false);
+                if (sceneAsset.objectReferenceValue != null)
+                {
+                    sceneName.stringValue = ((sceneAsset.objectReferenceValue as SceneAsset)!).name;
+                }
             }
-        }
 
-        EditorGUI.EndProperty();
+            EditorGUI.EndProperty();
+        }
     }
-}
 #endif
+}

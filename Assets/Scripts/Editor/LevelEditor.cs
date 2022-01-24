@@ -2,15 +2,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.EditorTools;
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-namespace Editor
+namespace GridGame.Editor
 {
     //TODO add play mode persistence
     public class LevelEditor : EditorWindow

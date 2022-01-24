@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Editor
+namespace GridGame.Editor
 {
     public class EditorPrefabs : ScriptableObject
     {

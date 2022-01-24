@@ -1,103 +1,106 @@
 ﻿using System.Collections.Generic;
-using Blocks;
+using GridGame.Blocks;
 using UnityEngine;
 
-public static class State
+namespace GridGame
 {
-    struct MoverToTrack
+    public static class State
     {
-        public Mover mover;
-        public Vector3 initialPos;
-        public Vector3 initialRot;
-        public List<Vector3Int> positions;
-        public List<Vector3Int> rotations;
-    }
-
-    static List<MoverToTrack> moversToTrack = new();
-    public static int undoIndex;
-
-    static void AddMover(Mover mover)
-    {
-        var transform = mover.transform;
-        MoverToTrack newMover = new MoverToTrack
+        struct MoverToTrack
         {
-            mover = mover,
-            initialPos = transform.position,
-            initialRot = transform.eulerAngles,
-            positions = new List<Vector3Int>(),
-            rotations = new List<Vector3Int>()
-        };
-        moversToTrack.Add(newMover);
-    }
-
-    public static void Init()
-    {
-        moversToTrack = new List<MoverToTrack>();
-        undoIndex = 0;
-
-        foreach (Mover mover in Grid.GetMovers())
-        {
-            AddMover(mover);
+            public Mover mover;
+            public Vector3 initialPos;
+            public Vector3 initialRot;
+            public List<Vector3Int> positions;
+            public List<Vector3Int> rotations;
         }
 
-        AddToUndoStack();
-    }
+        static List<MoverToTrack> moversToTrack = new();
+        public static int undoIndex;
 
-    static void AddToUndoStack()
-    {
-        foreach (MoverToTrack m in moversToTrack)
+        static void AddMover(Mover mover)
         {
-            m.positions.Add(Vector3Int.RoundToInt(m.mover.transform.position));
-            m.rotations.Add(Vector3Int.RoundToInt(m.mover.transform.eulerAngles));
+            var transform = mover.transform;
+            MoverToTrack newMover = new MoverToTrack
+            {
+                mover = mover,
+                initialPos = transform.position,
+                initialRot = transform.eulerAngles,
+                positions = new List<Vector3Int>(),
+                rotations = new List<Vector3Int>()
+            };
+            moversToTrack.Add(newMover);
         }
-    }
 
-    static void RemoveFromUndoStack()
-    {
-        foreach (MoverToTrack m in moversToTrack)
+        public static void Init()
         {
-            m.positions.RemoveAt(m.positions.Count - 1);
-            m.rotations.RemoveAt(m.rotations.Count - 1);
-            var transform = m.mover.transform;
-            transform.position = m.positions[^1];
-            transform.eulerAngles = m.rotations[^1];
+            moversToTrack = new List<MoverToTrack>();
+            undoIndex = 0;
+
+            foreach (Mover mover in Grid.GetMovers())
+            {
+                AddMover(mover);
+            }
+
+            AddToUndoStack();
         }
-    }
 
-    public static void OnMoveComplete()
-    {
-        undoIndex++;
-        AddToUndoStack();
-    }
-
-    public static void DoUndo()
-    {
-        if (undoIndex > 0)
+        static void AddToUndoStack()
         {
-            undoIndex--;
-            RemoveFromUndoStack();
+            foreach (MoverToTrack m in moversToTrack)
+            {
+                m.positions.Add(Vector3Int.RoundToInt(m.mover.transform.position));
+                m.rotations.Add(Vector3Int.RoundToInt(m.mover.transform.eulerAngles));
+            }
+        }
+
+        static void RemoveFromUndoStack()
+        {
+            foreach (MoverToTrack m in moversToTrack)
+            {
+                m.positions.RemoveAt(m.positions.Count - 1);
+                m.rotations.RemoveAt(m.rotations.Count - 1);
+                var transform = m.mover.transform;
+                transform.position = m.positions[^1];
+                transform.eulerAngles = m.rotations[^1];
+            }
+        }
+
+        public static void OnMoveComplete()
+        {
+            undoIndex++;
+            AddToUndoStack();
+        }
+
+        public static void DoUndo()
+        {
+            if (undoIndex > 0)
+            {
+                undoIndex--;
+                RemoveFromUndoStack();
+                Grid.Refresh();
+                foreach (var item in Grid.GetMovers())
+                {
+                    item.isFalling = false;
+                }
+            }
+        }
+
+        public static void DoReset()
+        {
+            foreach (MoverToTrack m in moversToTrack)
+            {
+                var transform = m.mover.transform;
+                transform.position = m.initialPos;
+                transform.eulerAngles = m.initialRot;
+            }
+
+            OnMoveComplete();
             Grid.Refresh();
             foreach (var item in Grid.GetMovers())
             {
                 item.isFalling = false;
             }
-        }
-    }
-
-    public static void DoReset()
-    {
-        foreach (MoverToTrack m in moversToTrack)
-        {
-            var transform = m.mover.transform;
-            transform.position = m.initialPos;
-            transform.eulerAngles = m.initialRot;
-        }
-
-        OnMoveComplete();
-        Grid.Refresh();
-        foreach (var item in Grid.GetMovers())
-        {
-            item.isFalling = false;
         }
     }
 }

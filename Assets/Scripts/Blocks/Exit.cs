@@ -1,9 +1,8 @@
-using Events;
-using Player;
-using UnityEditor;
+using GridGame.Events;
+using GridGame.Player;
 using UnityEngine;
 
-namespace Blocks
+namespace GridGame.Blocks
 {
     public class Exit : Trigger
     {

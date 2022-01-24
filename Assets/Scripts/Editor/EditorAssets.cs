@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.SceneTemplate;
 using UnityEngine;
 
-namespace Editor
+namespace GridGame.Editor
 {
     public static class EditorAssets
     {

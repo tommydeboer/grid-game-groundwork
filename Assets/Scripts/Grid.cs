@@ -1,17 +1,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using GridGame.Blocks;
+using GridGame.Events;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GridGame
 {
-    public static class Grid
+    public class Grid : MonoBehaviour
     {
-        static Dictionary<Vector3Int, Wall> walls;
-        static Dictionary<Vector3Int, Mover> movers;
-        static Dictionary<Vector3Int, Trigger> triggers;
+        [SerializeField]
+        LoadEventChannelSO loadEventChannel;
 
-        static Dictionary<Vector3Int, Wall> Walls
+        Dictionary<Vector3Int, Wall> walls;
+        Dictionary<Vector3Int, Mover> movers;
+        Dictionary<Vector3Int, Trigger> triggers;
+
+        Dictionary<Vector3Int, Wall> Walls
         {
             get
             {
@@ -21,7 +26,7 @@ namespace GridGame
             set => walls = value;
         }
 
-        static Dictionary<Vector3Int, Mover> Movers
+        Dictionary<Vector3Int, Mover> Movers
         {
             get
             {
@@ -31,7 +36,7 @@ namespace GridGame
             set => movers = value;
         }
 
-        static Dictionary<Vector3Int, Trigger> Triggers
+        Dictionary<Vector3Int, Trigger> Triggers
         {
             get
             {
@@ -41,13 +46,20 @@ namespace GridGame
             set => triggers = value;
         }
 
-        static void Reset()
+        void Awake()
         {
-            Reset(GameObject.FindWithTag("Level").transform);
+            loadEventChannel.OnLevelLoaded += Reset;
         }
 
-        public static void Reset(Transform levelRoot)
+        void Reset()
         {
+            Reset(SceneManager.GetActiveScene());
+        }
+
+        void Reset(Scene scene)
+        {
+            Transform levelRoot = scene.GetRootGameObjects().First(go => go.CompareTag("Level")).transform;
+
             Walls = new Dictionary<Vector3Int, Wall>();
             Movers = new Dictionary<Vector3Int, Mover>();
             Triggers = new Dictionary<Vector3Int, Trigger>();
@@ -70,7 +82,7 @@ namespace GridGame
             }
         }
 
-        public static void Refresh()
+        public void Refresh()
         {
             var allMovers = Movers.Values;
             Movers = new Dictionary<Vector3Int, Mover>();
@@ -81,7 +93,7 @@ namespace GridGame
             }
         }
 
-        public static T Get<T>(Vector3Int pos) where T : Block
+        public T Get<T>(Vector3Int pos) where T : Block
         {
             if (typeof(Wall).IsAssignableFrom(typeof(T)))
             {
@@ -102,28 +114,28 @@ namespace GridGame
         }
 
         // TODO return block via out param?
-        public static bool Has<T>(Vector3Int pos) where T : Block
+        public bool Has<T>(Vector3Int pos) where T : Block
         {
             return Get<T>(pos) != null;
         }
 
-        public static bool HasOriented<T>(Vector3Int pos, Vector3Int orientation) where T : Block
+        public bool HasOriented<T>(Vector3Int pos, Vector3Int orientation) where T : Block
         {
             var block = Get<T>(pos);
             return block != null && block.Orientation == orientation;
         }
 
-        public static bool IsEmpty(Vector3Int pos)
+        public bool IsEmpty(Vector3Int pos)
         {
             return !Walls.ContainsKey(pos) && !Movers.ContainsKey(pos);
         }
 
-        public static List<Trigger> GetTriggers()
+        public List<Trigger> GetTriggers()
         {
             return Triggers.Values.ToList();
         }
 
-        public static List<Mover> GetMovers()
+        public List<Mover> GetMovers()
         {
             return Movers.Values.ToList();
         }

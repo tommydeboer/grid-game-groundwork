@@ -33,6 +33,24 @@ namespace GridGame
         //Keep track of the scene we want to set as active (for lighting/skybox)
         SceneField activeScene;
 
+        void Awake()
+        {
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                Scene scene = SceneManager.GetSceneAt(i);
+                if (scene.IsLevel())
+                {
+                    loadEventChannel.OnLevelLoaded(scene);
+                    break;
+                }
+            }
+
+            if (!SceneManager.GetActiveScene().IsLevel())
+            {
+                LoadScene(openingLevel, false);
+            }
+        }
+
         void OnEnable()
         {
             loadEventChannel.OnLoadingRequested += LoadScene;
@@ -43,13 +61,6 @@ namespace GridGame
             loadEventChannel.OnLoadingRequested -= LoadScene;
         }
 
-        void Start()
-        {
-            if (!SceneManager.GetActiveScene().name.StartsWith("Level_"))
-            {
-                LoadScene(openingLevel, false);
-            }
-        }
 
         void LoadScene(SceneField sceneToLoad, bool showLoadingScreen)
         {
@@ -72,7 +83,6 @@ namespace GridGame
         void SetActiveScene(AsyncOperation asyncOp)
         {
             Scene scene = SceneManager.GetSceneByName(activeScene.SceneName);
-            GameObject levelRoot = scene.GetRootGameObjects().First(go => go.CompareTag("Level"));
             SceneManager.SetActiveScene(scene);
 
             if (scene.IsLevel())

@@ -27,10 +27,13 @@ namespace GridGame
         public bool holdingUndo;
         public static bool isPolyban = true;
 
+        Grid grid;
+
         void Awake()
         {
             instance = this;
             Application.targetFrameRate = 60;
+            grid = CoreComponents.Grid;
         }
 
         void Start()

@@ -23,7 +23,7 @@ namespace GridGame.Blocks
         {
             Vector3Int posToCheck = Tile.gridPos + dir;
 
-            if (Grid.Has<Wall>(posToCheck))
+            if (grid.Has<Wall>(posToCheck))
             {
                 return false;
             }
@@ -38,7 +38,7 @@ namespace GridGame.Blocks
         void TryMoveStacked(Vector3Int dir)
         {
             Vector3Int above = Tile.gridPos + Vector3Int.up;
-            Mover stackedMover = Grid.Get<Mover>(above);
+            Mover stackedMover = grid.Get<Mover>(above);
             if (stackedMover != null)
             {
                 if (stackedMover.TryMove(dir))
@@ -50,7 +50,7 @@ namespace GridGame.Blocks
 
         bool TryPush(Vector3Int dir, Vector3Int posToCheck)
         {
-            Mover m = Grid.Get<Mover>(posToCheck);
+            Mover m = grid.Get<Mover>(posToCheck);
             if (m != null && m != this)
             {
                 if (!Game.isPolyban)
@@ -133,12 +133,12 @@ namespace GridGame.Blocks
         bool GroundBelowTile()
         {
             Vector3Int posToCheck = Tile.gridPos + Vector3Int.down;
-            if (Grid.Has<Wall>(posToCheck))
+            if (grid.Has<Wall>(posToCheck))
             {
                 return true;
             }
 
-            Mover m = Grid.Get<Mover>(posToCheck);
+            Mover m = grid.Get<Mover>(posToCheck);
             if (m != null && m != this && !m.isFalling)
             {
                 return true;

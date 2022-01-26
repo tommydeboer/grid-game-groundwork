@@ -14,15 +14,16 @@ namespace GridGame.Blocks
 
         public override BlockType Type => BlockType.Exit;
 
-        void Start()
+        protected override void Start()
         {
+            base.Start();
             Debug.Assert(levelToLoad != null, "Exit misses target level", gameObject);
             Debug.Assert(loadChannel != null, "Exit has no channel to broadcast to", gameObject);
         }
 
         public override void Check()
         {
-            if (Grid.Has<PlayerInput>(Tile.gridPos))
+            if (grid.Has<PlayerInput>(Tile.gridPos))
             {
                 loadChannel.RaiseSceneLoadRequestEvent(levelToLoad, false);
             }

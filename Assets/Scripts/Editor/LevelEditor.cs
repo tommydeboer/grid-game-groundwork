@@ -55,8 +55,7 @@ namespace GridGame.Editor
         public static LevelEditor ShowWindow()
         {
             LevelEditor levelEditor = GetWindow<LevelEditor>();
-            levelEditor.refreshIcon = EditorGUIUtility.IconContent("TreeEditor.Refresh").image;
-            levelEditor.newIcon = EditorGUIUtility.IconContent("Toolbar Plus").image;
+
             var texture = EditorGUIUtility.IconContent("PreMatCube").image;
             levelEditor.titleContent = new GUIContent("Level Editor", texture);
             return levelEditor;
@@ -68,7 +67,11 @@ namespace GridGame.Editor
         {
             state = EditorAssets.State;
             editorPrefabs = EditorAssets.EditorPrefabs;
+
+            refreshIcon = EditorGUIUtility.IconContent("TreeEditor.Refresh").image;
+            newIcon = EditorGUIUtility.IconContent("Toolbar Plus").image;
             margin = new GUIStyle { margin = new RectOffset(15, 15, 10, 15) };
+
             LevelManager.onLevelCreate += OnLevelCreate;
             RefreshLevelList();
         }

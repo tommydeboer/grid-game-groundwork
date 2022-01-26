@@ -12,7 +12,7 @@ namespace GridGame
             {
                 if (grid == null)
                 {
-                    grid = GameObject.FindWithTag("Grid").GetComponent<Grid>();
+                    grid = GameObject.FindWithTag(Tags.GRID).GetComponent<Grid>();
                 }
 
                 return grid;

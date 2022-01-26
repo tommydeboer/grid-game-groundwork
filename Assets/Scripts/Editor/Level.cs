@@ -24,7 +24,7 @@ namespace GridGame.Editor
                     root = SceneManager.GetSceneByName(sceneName)
                         .GetRootGameObjects()
                         .ToList()
-                        .Find(obj => obj.CompareTag("Level"))
+                        .Find(obj => obj.CompareTag(Tags.LEVEL))
                         .transform;
 
                     if (root == null)
@@ -72,7 +72,7 @@ namespace GridGame.Editor
                     {
                         var position1 = tile.position;
                         bool atPosition = Utils.VectorRoughly(position1, pos);
-                        if (tile.CompareTag("Tile") && atPosition)
+                        if (tile.CompareTag(Tags.TILE) && atPosition)
                         {
                             foundSomething = true;
                             Undo.DestroyObjectImmediate(child.gameObject);

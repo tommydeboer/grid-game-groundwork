@@ -52,7 +52,7 @@ namespace GridGame.Editor
             for (int i = 0; i < SceneManager.sceneCount; i++)
             {
                 Scene scene = SceneManager.GetSceneAt(i);
-                if (scene.name.StartsWith("Level_") && scene.name != name)
+                if (scene.IsLevel() && scene.name != name)
                 {
                     if (scene.isDirty)
                     {

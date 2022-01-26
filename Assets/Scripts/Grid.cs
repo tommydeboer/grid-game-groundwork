@@ -58,7 +58,7 @@ namespace GridGame
 
         void Reset(Scene scene)
         {
-            Transform levelRoot = scene.GetRootGameObjects().First(go => go.CompareTag("Level")).transform;
+            Transform levelRoot = scene.GetRootGameObjects().First(go => go.CompareTag(Tags.LEVEL)).transform;
 
             Walls = new Dictionary<Vector3Int, Wall>();
             Movers = new Dictionary<Vector3Int, Mover>();

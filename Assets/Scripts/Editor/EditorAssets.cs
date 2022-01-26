@@ -25,8 +25,9 @@ namespace GridGame.Editor
             LoadState();
             LoadSelectionOverlay();
             LoadLevelTemplate();
-            AddTag("Level");
-            AddTag("Tile");
+            AddTag(Tags.LEVEL);
+            AddTag(Tags.TILE);
+            AddTag(Tags.GRID);
         }
 
         static void LoadState()

@@ -59,7 +59,7 @@ namespace GridGame
                 intersecting = false;
                 foreach (Transform tile in root)
                 {
-                    if (tile.gameObject.CompareTag("Tile"))
+                    if (tile.gameObject.CompareTag(Tags.TILE))
                     {
                         Mover m = GetMoverAtPos(tile.position);
                         if (m != null && m.transform != root)

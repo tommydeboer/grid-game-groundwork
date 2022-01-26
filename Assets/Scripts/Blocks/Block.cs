@@ -26,7 +26,7 @@ namespace GridGame.Blocks
             bool found = false;
             foreach (Transform child in transform)
             {
-                if (child.gameObject.CompareTag("Tile"))
+                if (child.gameObject.CompareTag(Tags.TILE))
                 {
                     if (found)
                     {

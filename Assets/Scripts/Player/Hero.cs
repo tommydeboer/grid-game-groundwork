@@ -1,6 +1,8 @@
 ﻿using DG.Tweening;
 using GridGame.Blocks;
+using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace GridGame.Player
 {
@@ -12,6 +14,8 @@ namespace GridGame.Player
         public Ladder OnLadder { get; private set; }
         const float LadderOffset = 0.35f;
         public override BlockType Type => BlockType.Player;
+
+        Vector3Int currentMovementDir;
 
         protected override void Start()
         {
@@ -29,9 +33,10 @@ namespace GridGame.Player
 
         void Update()
         {
-            if (CanInput())
+            if (CanInput() && currentMovementDir != Vector3Int.zero)
             {
-                CheckInput();
+                TryPlayerMove(currentMovementDir);
+                Game.instance.DoScheduledMoves();
             }
         }
 
@@ -40,49 +45,11 @@ namespace GridGame.Player
             return !Game.isMoving && !Game.instance.holdingUndo;
         }
 
-        void CheckInput()
+        [UsedImplicitly]
+        public void OnMove(InputValue value)
         {
-            float hor = Input.GetAxisRaw("Horizontal");
-            float ver = Input.GetAxisRaw("Vertical");
-
-            var direction = Vector3Int.zero;
-
-            if (hor == 0 && ver == 0)
-            {
-                return;
-            }
-
-            if (hor != 0 && ver != 0)
-            {
-                if (direction == Vector3.right || direction == Vector3.left)
-                {
-                    hor = 0;
-                }
-                else
-                {
-                    ver = 0;
-                }
-            }
-
-            if (hor == 1)
-            {
-                direction = Vector3Int.right;
-            }
-            else if (hor == -1)
-            {
-                direction = Vector3Int.left;
-            }
-            else if (ver == -1)
-            {
-                direction = Vector3Int.back;
-            }
-            else if (ver == 1)
-            {
-                direction = Vector3Int.forward;
-            }
-
-            TryPlayerMove(direction);
-            Game.instance.DoScheduledMoves();
+            var movement = value.Get<Vector2>();
+            currentMovementDir = new Vector3Int((int)movement.x, 0, (int)movement.y);
         }
 
         void LookAt(Vector3 dir)
@@ -90,7 +57,6 @@ namespace GridGame.Player
             var q = Quaternion.LookRotation(dir);
             transform.DORotate(q.eulerAngles, 0.1f);
         }
-
 
         void TryPlayerMove(Vector3Int dir)
         {

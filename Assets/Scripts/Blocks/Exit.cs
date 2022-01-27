@@ -23,7 +23,7 @@ namespace GridGame.Blocks
 
         public override void Check()
         {
-            if (grid.Has<PlayerInput>(Tile.gridPos))
+            if (grid.Has<Hero>(Tile.gridPos))
             {
                 loadChannel.RaiseSceneLoadRequestEvent(levelToLoad, false);
             }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GridGame.Player
 {
-    public class PlayerInput : Mover
+    public class Hero : Mover
     {
         [SerializeField]
         bool debugLadders;

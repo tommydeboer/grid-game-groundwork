@@ -56,9 +56,9 @@ namespace GridGame.Player
             }
         }
 
-        PlayerInput player;
+        Hero player;
 
-        public PlayerInput Player
+        public Hero Player
         {
             get => player;
             set

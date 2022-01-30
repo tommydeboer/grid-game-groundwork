@@ -465,6 +465,6 @@ MonoBehaviour:
     m_ActionName: CharacterControls/Move[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow,/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: CharacterControls
+  m_DefaultActionMap: 18bf113c-c81d-476f-a443-2d47eab4014d
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}

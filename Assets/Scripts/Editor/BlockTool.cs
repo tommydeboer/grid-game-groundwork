@@ -45,7 +45,7 @@ namespace GridGame.Editor
 
         public override void OnToolGUI(EditorWindow window)
         {
-            if (!(window is SceneView))
+            if (window is not SceneView)
             {
                 return;
             }

@@ -2,19 +2,19 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-namespace GridGame.Events
+namespace GridGame.SO
 {
     /// <summary>
     /// This class is a used for scene loading events.
     /// Takes an array of the scenes we want to load and a bool to specify if we want to show a loading screen.
     /// </summary>
-    [CreateAssetMenu(menuName = "Events/Load Event Channel")]
+    [CreateAssetMenu(menuName = "SO/Load Event Channel")]
     public class LoadEventChannelSO : ScriptableObject
     {
         public UnityAction<SceneReference, bool> OnLoadingRequested;
         public UnityAction<Scene> OnLevelLoaded;
 
-        public void RaiseSceneLoadRequestEvent(SceneReference scene, bool showLoadingScreen)
+        public void RequestSceneLoad(SceneReference scene, bool showLoadingScreen)
         {
             if (OnLoadingRequested != null)
             {

@@ -12284,6 +12284,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5117419130138940746, guid: 4135c5026846a3d44baa16a1ab754192,
         type: 3}
+      propertyPath: levelList
+      value: 
+      objectReference: {fileID: 11400000, guid: fa6bdbe74109683439fdfe6289163c46,
+        type: 2}
+    - target: {fileID: 5117419130138940746, guid: 4135c5026846a3d44baa16a1ab754192,
+        type: 3}
+      propertyPath: nextLevel.sceneName
+      value: Level_intro2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5117419130138940746, guid: 4135c5026846a3d44baa16a1ab754192,
+        type: 3}
+      propertyPath: nextLevel.scenePath
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5117419130138940746, guid: 4135c5026846a3d44baa16a1ab754192,
+        type: 3}
+      propertyPath: nextLevel.sceneAsset
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5117419130138940746, guid: 4135c5026846a3d44baa16a1ab754192,
+        type: 3}
       propertyPath: levelToLoad.sceneName
       value: Level_intro2
       objectReference: {fileID: 0}
@@ -12596,6 +12617,36 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1400058570}
     m_Modifications:
+    - target: {fileID: 3440376311780014295, guid: 3a95e24bd87ff454f93485d5315c861e,
+        type: 3}
+      propertyPath: m_DefaultActionMap
+      value: CharacterControls
+      objectReference: {fileID: 0}
+    - target: {fileID: 3440376311780014295, guid: 3a95e24bd87ff454f93485d5315c861e,
+        type: 3}
+      propertyPath: m_NotificationBehavior
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3440376311780014295, guid: 3a95e24bd87ff454f93485d5315c861e,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3440376311780014295, guid: 3a95e24bd87ff454f93485d5315c861e,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3440376311780014295, guid: 3a95e24bd87ff454f93485d5315c861e,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3440376311780014295, guid: 3a95e24bd87ff454f93485d5315c861e,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8509588148537724625, guid: 3a95e24bd87ff454f93485d5315c861e,
         type: 3}
       propertyPath: m_RootOrder

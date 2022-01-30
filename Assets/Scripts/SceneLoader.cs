@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GridGame.Events;
+using GridGame.SO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -64,16 +64,16 @@ namespace GridGame
 
         void LoadScene(SceneReference sceneToLoad, bool showLoadingScreen)
         {
+            if (IsLoaded(sceneToLoad.ScenePath))
+            {
+                return;
+            }
+
             AddScenesToUnload();
 
             activeScene = sceneToLoad;
 
-            string sceneName = sceneToLoad.ScenePath;
-            if (!IsLoaded(sceneName))
-            {
-                scenesToLoadAsyncOperations.Add(SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive));
-            }
-
+            scenesToLoadAsyncOperations.Add(SceneManager.LoadSceneAsync(sceneToLoad.ScenePath, LoadSceneMode.Additive));
             scenesToLoadAsyncOperations[0].completed += SetActiveScene;
             scenesToLoadAsyncOperations.Clear();
 

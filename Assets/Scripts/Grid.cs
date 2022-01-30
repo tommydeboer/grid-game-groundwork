@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GridGame.Blocks;
-using GridGame.Events;
+using GridGame.SO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

@@ -318,10 +318,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initializationScene:
     sceneAsset: {fileID: 102900000, guid: 6411691214eb0e440baa691cbfb74f40, type: 3}
-    sceneName: Persistent
+    scenePath: Assets/Scenes/Persistent.unity
   openingLevel:
     sceneAsset: {fileID: 102900000, guid: 4ee5595c87a86344eaa4d3b69942164e, type: 3}
-    sceneName: Level_intro1
+    scenePath: Assets/Scenes/Level_intro1.unity
   loadEventChannel: {fileID: 11400000, guid: 71990008023d0d7409c82de0005aff05, type: 2}
 --- !u!1001 &877372581422755536
 PrefabInstance:

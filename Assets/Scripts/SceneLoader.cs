@@ -14,10 +14,10 @@ namespace GridGame
     {
         [Header("Scenes")]
         [SerializeField]
-        SceneField initializationScene;
+        SceneReference initializationScene;
 
         [SerializeField]
-        SceneField openingLevel;
+        SceneReference openingLevel;
 
         //The load event we are listening to
         [Header("Load Event")]
@@ -31,7 +31,7 @@ namespace GridGame
         readonly List<Scene> scenesToUnload = new();
 
         //Keep track of the scene we want to set as active (for lighting/skybox)
-        SceneField activeScene;
+        SceneReference activeScene;
 
         void Awake()
         {
@@ -62,13 +62,13 @@ namespace GridGame
         }
 
 
-        void LoadScene(SceneField sceneToLoad, bool showLoadingScreen)
+        void LoadScene(SceneReference sceneToLoad, bool showLoadingScreen)
         {
             AddScenesToUnload();
 
             activeScene = sceneToLoad;
 
-            string sceneName = sceneToLoad.SceneName;
+            string sceneName = sceneToLoad.ScenePath;
             if (!IsLoaded(sceneName))
             {
                 scenesToLoadAsyncOperations.Add(SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive));
@@ -82,7 +82,7 @@ namespace GridGame
 
         void SetActiveScene(AsyncOperation asyncOp)
         {
-            Scene scene = SceneManager.GetSceneByName(activeScene.SceneName);
+            Scene scene = SceneManager.GetSceneByPath(activeScene.ScenePath);
             SceneManager.SetActiveScene(scene);
 
             if (scene.IsLevel())
@@ -99,7 +99,7 @@ namespace GridGame
             for (int i = 0; i < SceneManager.sceneCount; ++i)
             {
                 Scene scene = SceneManager.GetSceneAt(i);
-                if (scene.name != initializationScene.SceneName)
+                if (scene.path != initializationScene.ScenePath)
                 {
                     scenesToUnload.Add(scene);
                 }
@@ -116,12 +116,12 @@ namespace GridGame
             scenesToUnload.Clear();
         }
 
-        static bool IsLoaded(string sceneName)
+        static bool IsLoaded(string scenePath)
         {
             for (int i = 0; i < SceneManager.sceneCount; ++i)
             {
                 Scene scene = SceneManager.GetSceneAt(i);
-                if (scene.name == sceneName)
+                if (scene.path == scenePath)
                 {
                     return true;
                 }

@@ -7,7 +7,7 @@ namespace GridGame.Blocks
     public class Exit : Trigger
     {
         [SerializeField]
-        SceneField levelToLoad;
+        SceneReference levelToLoad;
 
         [SerializeField]
         LoadEventChannelSO loadChannel;

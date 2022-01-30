@@ -11,10 +11,10 @@ namespace GridGame.Events
     [CreateAssetMenu(menuName = "Events/Load Event Channel")]
     public class LoadEventChannelSO : ScriptableObject
     {
-        public UnityAction<SceneField, bool> OnLoadingRequested;
+        public UnityAction<SceneReference, bool> OnLoadingRequested;
         public UnityAction<Scene> OnLevelLoaded;
 
-        public void RaiseSceneLoadRequestEvent(SceneField scene, bool showLoadingScreen)
+        public void RaiseSceneLoadRequestEvent(SceneReference scene, bool showLoadingScreen)
         {
             if (OnLoadingRequested != null)
             {

@@ -11,7 +11,7 @@ namespace GridGame.Player
         [SerializeField]
         bool debugLadders;
 
-        public Ladder OnLadder { get; private set; }
+        public Ladder OnLadder { get; set; }
         const float LadderOffset = 0.35f;
         public override BlockType Type => BlockType.Player;
 

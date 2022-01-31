@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GridGame.Blocks;
+using GridGame.Player;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,15 +13,20 @@ namespace GridGame
         struct MoverState
         {
             public Mover mover;
-            public Vector3 initialPos;
-            public Vector3 initialRot;
-            public List<Vector3Int> positions;
-            public List<Vector3Int> rotations;
+            public List<Vector3> positions;
+            public List<Vector3> rotations;
+        }
+
+        struct HeroState
+        {
+            public Hero hero;
+            public List<Ladder> onLadder;
         }
 
         readonly Grid grid;
 
         List<MoverState> moversToTrack = new();
+        HeroState heroToTrack;
         public int undoIndex;
 
         public UndoCache(Grid grid)
@@ -34,17 +40,24 @@ namespace GridGame
             MoverState newMover = new MoverState
             {
                 mover = mover,
-                initialPos = tf.position,
-                initialRot = tf.eulerAngles,
-                positions = new List<Vector3Int>(),
-                rotations = new List<Vector3Int>()
+                positions = new List<Vector3>(),
+                rotations = new List<Vector3>()
             };
+            newMover.positions.Add(tf.position);
+            newMover.rotations.Add(tf.eulerAngles);
             moversToTrack.Add(newMover);
+
+            if (mover is Hero hero)
+            {
+                heroToTrack.hero = hero;
+                heroToTrack.onLadder = new List<Ladder>();
+            }
         }
 
         public void Reset()
         {
             moversToTrack = new List<MoverState>();
+            heroToTrack = new HeroState();
             undoIndex = 0;
 
             foreach (Mover mover in grid.GetMovers())
@@ -59,9 +72,11 @@ namespace GridGame
         {
             foreach (MoverState m in moversToTrack)
             {
-                m.positions.Add(Vector3Int.RoundToInt(m.mover.transform.position));
-                m.rotations.Add(Vector3Int.RoundToInt(m.mover.transform.eulerAngles));
+                m.positions.Add(m.mover.transform.position);
+                m.rotations.Add(m.mover.transform.eulerAngles);
             }
+
+            heroToTrack.onLadder.Add(heroToTrack.hero.OnLadder);
         }
 
         void RemoveFromUndoStack()
@@ -74,6 +89,9 @@ namespace GridGame
                 tf.position = m.positions[^1];
                 tf.eulerAngles = m.rotations[^1];
             }
+
+            heroToTrack.onLadder.RemoveAt(heroToTrack.onLadder.Count - 1);
+            heroToTrack.hero.OnLadder = heroToTrack.onLadder[^1];
         }
 
         public void OnMoveComplete()
@@ -101,9 +119,11 @@ namespace GridGame
             foreach (MoverState m in moversToTrack)
             {
                 var tf = m.mover.transform;
-                tf.position = m.initialPos;
-                tf.eulerAngles = m.initialRot;
+                tf.position = m.positions[0];
+                tf.eulerAngles = m.rotations[0];
             }
+
+            heroToTrack.hero.OnLadder = heroToTrack.onLadder[0];
 
             OnMoveComplete();
             grid.Refresh();

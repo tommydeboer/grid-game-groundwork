@@ -15,7 +15,8 @@ namespace GridGame.SO
         public SceneReference Next(Scene currentScene)
         {
             int index = scenes.FindIndex(scene => scene.ScenePath.Equals(currentScene.path));
-            return index < scenes.Count ? scenes[index + 1] : scenes[0];
+            index++;
+            return index < scenes.Count ? scenes[index] : scenes[0];
         }
 
         [CanBeNull]

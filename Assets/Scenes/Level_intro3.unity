@@ -680,9 +680,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1539a571c884ad2aa81dd618d0f1f5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelToLoad:
-    sceneAsset: {fileID: 102900000, guid: 4ee5595c87a86344eaa4d3b69942164e, type: 3}
-    sceneName: Level_intro1
+  levelList: {fileID: 11400000, guid: fa6bdbe74109683439fdfe6289163c46, type: 2}
+  nextLevel:
+    sceneAsset: {fileID: 0}
+    scenePath: 
   loadChannel: {fileID: 11400000, guid: 71990008023d0d7409c82de0005aff05, type: 2}
 --- !u!4 &139433248 stripped
 Transform:
@@ -8019,6 +8020,7 @@ Transform:
   - {fileID: 566464852}
   - {fileID: 182918279}
   - {fileID: 242188787}
+  - {fileID: 423794166}
   - {fileID: 714726276}
   - {fileID: 2059984607}
   - {fileID: 102710666}
@@ -8026,9 +8028,8 @@ Transform:
   - {fileID: 101549354}
   - {fileID: 125085560}
   - {fileID: 1414780826}
-  - {fileID: 423794166}
-  - {fileID: 1868607466}
   - {fileID: 657017915}
+  - {fileID: 1868607466}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

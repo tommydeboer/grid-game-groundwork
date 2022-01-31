@@ -281,7 +281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb637ccd3caa4bcaa4636bc9a85b0e73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 10.62
+  distance: 13.19
   viewingAngle: 50
   climbingRotation: 50
   movementSmoothTime: 0.3
@@ -362,6 +362,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ecf93c1bc3a47ef97c6dcd5d2eda736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  holdUndoDelay: 0.75
+  holdUndoInterval: 0.075
 --- !u!1 &2001662977
 GameObject:
   m_ObjectHideFlags: 0

@@ -33,11 +33,11 @@ namespace GridGame
     [Serializable]
     public class SceneReference : ISerializationCallbackReceiver
     {
-#if UNITY_EDITOR
         // What we use in editor to select the scene
         [SerializeField]
         Object sceneAsset;
 
+#if UNITY_EDITOR
         bool IsValidSceneAsset
         {
             get

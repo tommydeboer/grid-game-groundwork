@@ -30,7 +30,6 @@ namespace GridGame
         void Awake()
         {
             instance = this;
-            Application.targetFrameRate = 60;
             grid = CoreComponents.Grid;
         }
 

@@ -19,3 +19,5 @@ MonoBehaviour:
     scenePath: Assets/Scenes/Level_intro2.unity
   - sceneAsset: {fileID: 102900000, guid: e6769ced77b3a7d448347beaca13eeb2, type: 3}
     scenePath: Assets/Scenes/Level_intro3.unity
+  - sceneAsset: {fileID: 102900000, guid: 5bb1aad428dabe3469422a36a2c98b7d, type: 3}
+    scenePath: Assets/Scenes/Level_intro4.unity

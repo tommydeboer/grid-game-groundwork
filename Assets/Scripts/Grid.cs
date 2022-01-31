@@ -3,6 +3,7 @@ using System.Linq;
 using GridGame.Blocks;
 using GridGame.SO;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 namespace GridGame
@@ -11,6 +12,8 @@ namespace GridGame
     {
         [SerializeField]
         LoadEventChannelSO loadEventChannel;
+
+        public UnityAction OnGridReset;
 
         Dictionary<Vector3Int, Wall> walls;
         Dictionary<Vector3Int, Mover> movers;
@@ -80,6 +83,8 @@ namespace GridGame
                         break;
                 }
             }
+
+            OnGridReset?.Invoke();
         }
 
         public void Refresh()

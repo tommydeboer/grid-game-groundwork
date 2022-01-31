@@ -40,7 +40,7 @@ namespace GridGame
                 Scene scene = SceneManager.GetSceneAt(i);
                 if (scene.IsLevel())
                 {
-                    loadEventChannel.OnLevelLoaded(scene);
+                    loadEventChannel.RaiseLevelLoadedEvent(scene);
                     break;
                 }
             }

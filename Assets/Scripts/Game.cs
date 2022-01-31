@@ -11,8 +11,6 @@ namespace GridGame
     {
         public delegate void GameEvent();
 
-        public static GameEvent onUndo;
-        public static GameEvent onReset;
         public static GameEvent onMoveComplete;
 
         public static Game instance;
@@ -38,88 +36,15 @@ namespace GridGame
 
         void Start()
         {
-            // TODO uncomment when undo system is back online
-            // State.Init();
             isMoving = false;
         }
 
-        void Update()
-        {
-            // TODO uncomment when undo system is back online
-            // if (Input.GetKeyDown(KeyCode.Z))
-            // {
-            //     holdingUndo = true;
-            //     DoUndo();
-            //     DOVirtual.DelayedCall(0.75f, UndoRepeat);
-            // }
-            // else if (Input.GetKeyDown(KeyCode.R))
-            // {
-            //     DoReset();
-            // }
-            //
-            // if (Input.GetKeyUp(KeyCode.Z))
-            // {
-            //     StartCoroutine(StopUndoing());
-            // }
-        }
-
-        void Refresh()
+        public void Refresh()
         {
             isMoving = false;
-            Debug.Assert(movingCount == 0, "Not all movers have finished");
             moversToMove.Clear();
             movingCount = 0;
         }
-
-        /////////////////////////////////////////////////////////////////// UNDO / RESET
-        // TODO uncomment when undo system is back online
-        //
-        // void DoReset()
-        // {
-        //     DOTween.KillAll();
-        //     isMoving = false;
-        //     State.DoReset();
-        //     Refresh();
-        //     if (onReset != null)
-        //     {
-        //         onReset();
-        //     }
-        // }
-        //
-        // void DoUndo()
-        // {
-        //     if (State.undoIndex > 0)
-        //     {
-        //         DOTween.KillAll();
-        //         if (isMoving)
-        //         {
-        //             CompleteMove();
-        //         }
-        //
-        //         isMoving = false;
-        //         State.DoUndo();
-        //         Refresh();
-        //         if (onUndo != null)
-        //         {
-        //             onUndo();
-        //         }
-        //     }
-        // }
-        //
-        // void UndoRepeat()
-        // {
-        //     if (Input.GetKey(KeyCode.Z) && holdingUndo)
-        //     {
-        //         DoUndo();
-        //         DOVirtual.DelayedCall(0.075f, UndoRepeat);
-        //     }
-        // }
-        //
-        // IEnumerator StopUndoing()
-        // {
-        //     yield return WaitFor.EndOfFrame;
-        //     holdingUndo = false;
-        // }
 
         /////////////////////////////////////////////////////////////////// MOVE
 
@@ -172,10 +97,8 @@ namespace GridGame
         }
 
 
-        static void CompleteMove()
+        public static void CompleteMove()
         {
-            // TODO uncomment when undo system is back online
-            // State.OnMoveComplete();
             onMoveComplete?.Invoke();
         }
     }

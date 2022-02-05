@@ -12,7 +12,7 @@ namespace GridGame
     {
         struct MoverState
         {
-            public Mover mover;
+            public Movable mover;
             public List<Vector3> positions;
             public List<Vector3> rotations;
         }
@@ -20,7 +20,7 @@ namespace GridGame
         struct HeroState
         {
             public Hero hero;
-            public List<Ladder> onLadder;
+            public List<Climbable> onClimbable;
         }
 
         readonly Grid grid;
@@ -34,12 +34,12 @@ namespace GridGame
             this.grid = grid;
         }
 
-        void AddMover(Mover mover)
+        void AddMover(Movable movable)
         {
-            var tf = mover.transform;
+            var tf = movable.transform;
             MoverState newMover = new MoverState
             {
-                mover = mover,
+                mover = movable,
                 positions = new List<Vector3>(),
                 rotations = new List<Vector3>()
             };
@@ -47,10 +47,11 @@ namespace GridGame
             newMover.rotations.Add(tf.eulerAngles);
             moversToTrack.Add(newMover);
 
-            if (mover is Hero hero)
+            // TODO very inefficient
+            if (movable.GetComponent<Hero>() != null)
             {
-                heroToTrack.hero = hero;
-                heroToTrack.onLadder = new List<Ladder>();
+                heroToTrack.hero = movable.GetComponent<Hero>();
+                heroToTrack.onClimbable = new List<Climbable>();
             }
         }
 
@@ -60,7 +61,7 @@ namespace GridGame
             heroToTrack = new HeroState();
             undoIndex = 0;
 
-            foreach (Mover mover in grid.GetMovers())
+            foreach (Movable mover in grid.GetMovers())
             {
                 AddMover(mover);
             }
@@ -76,7 +77,7 @@ namespace GridGame
                 m.rotations.Add(m.mover.transform.eulerAngles);
             }
 
-            heroToTrack.onLadder.Add(heroToTrack.hero.OnLadder);
+            heroToTrack.onClimbable.Add(heroToTrack.hero.OnClimbable);
         }
 
         void RemoveFromUndoStack()
@@ -90,8 +91,8 @@ namespace GridGame
                 tf.eulerAngles = m.rotations[^1];
             }
 
-            heroToTrack.onLadder.RemoveAt(heroToTrack.onLadder.Count - 1);
-            heroToTrack.hero.OnLadder = heroToTrack.onLadder[^1];
+            heroToTrack.onClimbable.RemoveAt(heroToTrack.onClimbable.Count - 1);
+            heroToTrack.hero.OnClimbable = heroToTrack.onClimbable[^1];
         }
 
         public void OnMoveComplete()
@@ -123,7 +124,7 @@ namespace GridGame
                 tf.eulerAngles = m.rotations[0];
             }
 
-            heroToTrack.hero.OnLadder = heroToTrack.onLadder[0];
+            heroToTrack.hero.OnClimbable = heroToTrack.onClimbable[0];
 
             OnMoveComplete();
             grid.Refresh();

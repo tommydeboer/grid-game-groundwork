@@ -16,38 +16,16 @@ namespace GridGame
 
         public UnityAction OnGridReset;
 
-        Dictionary<Vector3Int, Wall> walls;
-        Dictionary<Vector3Int, List<Mover>> movers;
-        Dictionary<Vector3Int, Trigger> triggers;
+        Dictionary<Vector3Int, List<Block>> blocks;
 
-        Dictionary<Vector3Int, Wall> Walls
+        Dictionary<Vector3Int, List<Block>> Blocks
         {
             get
             {
-                if (walls == null) Reset();
-                return walls;
+                if (blocks == null) Reset();
+                return blocks;
             }
-            set => walls = value;
-        }
-
-        Dictionary<Vector3Int, List<Mover>> Movers
-        {
-            get
-            {
-                if (movers == null) Reset();
-                return movers;
-            }
-            set => movers = value;
-        }
-
-        Dictionary<Vector3Int, Trigger> Triggers
-        {
-            get
-            {
-                if (triggers == null) Reset();
-                return triggers;
-            }
-            set => triggers = value;
+            set => blocks = value;
         }
 
         void Awake()
@@ -64,25 +42,12 @@ namespace GridGame
         {
             Transform levelRoot = scene.GetRootGameObjects().First(go => go.CompareTag(Tags.LEVEL)).transform;
 
-            Walls = new Dictionary<Vector3Int, Wall>();
-            Movers = new Dictionary<Vector3Int, List<Mover>>();
-            Triggers = new Dictionary<Vector3Int, Trigger>();
+            Blocks = new Dictionary<Vector3Int, List<Block>>();
 
             foreach (Transform item in levelRoot)
             {
                 var block = item.GetComponentInParent<Block>();
-                switch (block)
-                {
-                    case Wall wall:
-                        Walls[wall.Tile.gridPos] = wall;
-                        break;
-                    case Mover mover:
-                        AddMover(mover);
-                        break;
-                    case Trigger trigger:
-                        Triggers[trigger.Tile.gridPos] = trigger;
-                        break;
-                }
+                AddBlock(block);
             }
 
             OnGridReset?.Invoke();
@@ -90,74 +55,90 @@ namespace GridGame
 
         public void Refresh()
         {
-            var allMovers = Movers.Values;
-            Movers = new Dictionary<Vector3Int, List<Mover>>();
+            var allBlocks = Blocks.Values;
+            Blocks = new Dictionary<Vector3Int, List<Block>>();
 
-            allMovers.SelectMany(x => x).ToList().ForEach(AddMover);
+            allBlocks.SelectMany(x => x).ToList().ForEach(AddBlock);
         }
 
-        void AddMover(Mover mover)
+        void AddBlock(Block block)
         {
-            var pos = mover.Tile.gridPos;
-            if (!Movers.ContainsKey(pos))
+            var pos = block.Tile.gridPos;
+            if (!Blocks.ContainsKey(pos))
             {
-                Movers[mover.Tile.gridPos] = new List<Mover>();
+                Blocks[block.Tile.gridPos] = new List<Block>();
             }
 
-            Movers[pos].Add(mover);
+            Blocks[pos].Add(block);
         }
 
-        public T Get<T>(Vector3Int pos) where T : Block
+        public T Get<T>(Vector3Int pos) where T : BlockBehaviour
         {
-            if (typeof(Wall).IsAssignableFrom(typeof(T)))
+            if (blocks.ContainsKey(pos))
             {
-                if (Walls.ContainsKey(pos) && Walls[pos] is T t)
-                {
-                    return t;
-                }
-            }
-            else if (typeof(Mover).IsAssignableFrom(typeof(T)))
-            {
-                if (Movers.ContainsKey(pos))
-                {
-                    foreach (var mover in Movers[pos])
-                    {
-                        if (mover is T t)
-                        {
-                            return t;
-                        }
-                    }
-                }
+                return blocks[pos]
+                    .Select(block => block.GetComponent<T>())
+                    .FirstOrDefault(t => t != null);
             }
 
             return null;
         }
 
+        public List<T> GetAll<T>(Vector3Int pos) where T : BlockBehaviour
+        {
+            List<T> blockBehaviours = new();
+            if (blocks.ContainsKey(pos))
+            {
+                blockBehaviours.AddRange(
+                    from block in blocks[pos]
+                    where block.GetComponent<T>() != null
+                    select block.GetComponent<T>());
+            }
+
+            return blockBehaviours;
+        }
+
         // TODO return block via out param?
-        public bool Has<T>(Vector3Int pos) where T : Block
+        public bool Has<T>(Vector3Int pos) where T : BlockBehaviour
         {
             return Get<T>(pos) != null;
         }
 
-        public bool HasOriented<T>(Vector3Int pos, Vector3Int orientation) where T : Block
+        public bool HasOriented<T>(Vector3Int pos, Vector3Int orientation) where T : BlockBehaviour
         {
-            var block = Get<T>(pos);
-            return block != null && block.Orientation == orientation;
+            var t = Get<T>(pos);
+            return t != null && t.Block.Orientation == orientation;
         }
 
         public bool IsEmpty(Vector3Int pos)
         {
-            return !Walls.ContainsKey(pos) && !Movers.ContainsKey(pos);
+            return !Blocks.ContainsKey(pos);
         }
 
-        public List<Trigger> GetTriggers()
+        public List<Triggerable> GetTriggers()
         {
-            return Triggers.Values.ToList();
+            List<Triggerable> triggerables = new();
+            foreach (List<Block> blockList in Blocks.Values)
+            {
+                triggerables.AddRange(
+                    blockList.Select(block => block.GetComponent<Triggerable>())
+                        .Where(triggerable => triggerable != null));
+            }
+
+            return triggerables;
         }
 
-        public List<Mover> GetMovers()
+        public List<Movable> GetMovers()
         {
-            return Movers.Values.SelectMany(x => x).ToList();
+            List<Movable> movables = new();
+            foreach (List<Block> blockList in Blocks.Values)
+            {
+                movables.AddRange(
+                    blockList.Select(block => block.GetComponent<Movable>())
+                        .Where(triggerable => triggerable != null));
+            }
+
+            return movables;
         }
     }
 }

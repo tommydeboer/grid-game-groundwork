@@ -2,24 +2,18 @@ using UnityEngine;
 
 namespace GridGame.Blocks
 {
-    public abstract class Block : MonoBehaviour
+    public class Block : MonoBehaviour
     {
-        public abstract BlockType Type { get; }
-
         public Tile Tile { get; private set; }
         public Vector3Int Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Tile.rot) * Vector3.back);
-
-        protected Grid grid;
 
         void Awake()
         {
             CreateTile();
         }
 
-        protected virtual void Start()
-        {
-            grid = CoreComponents.Grid;
-        }
+        public Vector3Int Below => Tile.gridPos + Vector3Int.down;
+
 
         void CreateTile()
         {

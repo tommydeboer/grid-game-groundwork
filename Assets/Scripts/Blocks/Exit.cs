@@ -8,7 +8,8 @@ using UnityEngine.SceneManagement;
 
 namespace GridGame.Blocks
 {
-    public class Exit : Trigger
+    [RequireComponent(typeof(Triggerable))]
+    public class Exit : MonoBehaviour
     {
         [Header("Levels")]
         [SerializeField]
@@ -24,11 +25,18 @@ namespace GridGame.Blocks
         [SerializeField]
         LoadEventChannelSO loadChannel;
 
-        public override BlockType Type => BlockType.Exit;
+        Grid grid;
+        Block block;
 
-        public override void Check()
+        public void Start()
         {
-            if (grid.Has<Hero>(Tile.gridPos))
+            grid = CoreComponents.Grid;
+            block = GetComponent<Block>();
+        }
+
+        public void Check()
+        {
+            if (grid.Has<Hero>(block.Tile.gridPos))
             {
                 GoToNextLevel();
             }

@@ -1,35 +1,39 @@
-﻿using System.Collections;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using GridGame.Player;
 using UnityEngine;
 
 namespace GridGame.Blocks
 {
-    public class Mover : Block
+    public class Movable : BlockBehaviour
     {
-        [SerializeField]
-        bool isHollow;
-
         [HideInInspector]
         public Vector3 goalPosition;
 
         [HideInInspector]
         public bool isFalling;
 
-        public override BlockType Type => BlockType.Mover;
+        Grid grid;
+        Hero hero;
 
-        public bool IsHollow => isHollow;
+        void Start()
+        {
+            grid = CoreComponents.Grid;
+            hero = GetComponent<Hero>();
+        }
 
         public void Reset()
         {
             isFalling = false;
         }
 
-        protected bool TryMove(Vector3Int dir)
+        public bool TryMove(Vector3Int dir)
         {
-            Vector3Int posToCheck = Tile.gridPos + dir;
+            Vector3Int posToCheck = Block.Tile.gridPos + dir;
 
-            if (grid.Has<Wall>(posToCheck))
+            if (grid.Has<Static>(posToCheck))
             {
                 return false;
             }
@@ -43,8 +47,8 @@ namespace GridGame.Blocks
 
         void TryMoveStacked(Vector3Int dir)
         {
-            Vector3Int above = Tile.gridPos + Vector3Int.up;
-            Mover stackedMover = grid.Get<Mover>(above);
+            Vector3Int above = Block.Tile.gridPos + Vector3Int.up;
+            Movable stackedMover = grid.Get<Movable>(above);
             if (stackedMover != null)
             {
                 if (stackedMover.TryMove(dir))
@@ -56,7 +60,7 @@ namespace GridGame.Blocks
 
         bool TryPush(Vector3Int dir, Vector3Int posToCheck)
         {
-            Mover m = grid.Get<Mover>(posToCheck);
+            Movable m = grid.Get<Movable>(posToCheck);
             if (m != null && m != this)
             {
                 if (!Game.isPolyban)
@@ -77,7 +81,7 @@ namespace GridGame.Blocks
             return true;
         }
 
-        protected void ScheduleMove(Vector3 dir)
+        public void ScheduleMove(Vector3 dir)
         {
             if (!Game.moversToMove.Contains(this))
             {
@@ -86,8 +90,21 @@ namespace GridGame.Blocks
             }
         }
 
-        protected virtual bool ShouldFall()
+        bool ShouldFall()
         {
+            if (hero != null)
+            {
+                if (hero.OnClimbable)
+                {
+                    return false;
+                }
+
+                if (grid.Has<Container>(Block.Below))
+                {
+                    return true;
+                }
+            }
+
             if (GroundBelowTile())
             {
                 return false;
@@ -138,16 +155,16 @@ namespace GridGame.Blocks
 
         bool GroundBelowTile()
         {
-            Vector3Int posToCheck = Tile.gridPos + Vector3Int.down;
-            if (grid.Has<Wall>(posToCheck))
+            if (grid.Has<Static>(Block.Below))
             {
                 return true;
             }
 
-            Mover m = grid.Get<Mover>(posToCheck);
-            if (m != null && m != this && !m.isFalling)
+            if (grid.Has<Movable>(Block.Below))
             {
-                return true;
+                // Need to get all movers because an Hero can be inside a Container
+                List<Movable> movables = grid.GetAll<Movable>(Block.Below);
+                return movables.Any(movable => !movable.isFalling);
             }
 
             return false;

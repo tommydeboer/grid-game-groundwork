@@ -15,7 +15,7 @@ namespace GridGame
 
         public static Game instance;
 
-        public static readonly List<Mover> moversToMove = new();
+        public static readonly List<Movable> moversToMove = new();
 
         public float moveTime = 0.18f; // time it takes to move 1 unit
         public float fallTime = 0.1f; // time it takes to fall 1 unit
@@ -51,7 +51,7 @@ namespace GridGame
         {
             if (moversToMove.Count == 0) return;
             isMoving = true;
-            foreach (Mover m in moversToMove)
+            foreach (Movable m in moversToMove)
             {
                 movingCount++;
                 m.transform.DOMove(m.goalPosition, moveTime).OnComplete(MoveEnd).SetEase(Ease.Linear);

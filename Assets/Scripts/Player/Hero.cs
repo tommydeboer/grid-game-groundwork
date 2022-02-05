@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using GridGame.Blocks;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -6,20 +7,30 @@ using UnityEngine.InputSystem;
 
 namespace GridGame.Player
 {
-    public class Hero : Mover
+    [RequireComponent(typeof(Movable))]
+    public class Hero : BlockBehaviour
     {
         [SerializeField]
-        bool debugLadders;
+        bool debugClimbables;
 
-        public Ladder OnLadder { get; set; }
-        const float LadderOffset = 0.35f;
-        public override BlockType Type => BlockType.Player;
+        public Climbable OnClimbable { get; set; }
+        const float ClimbableOffset = 0.35f;
 
         Vector3Int currentMovementDir;
 
-        protected override void Start()
+        Movable movable;
+        Grid grid;
+
+        protected override void Awake()
         {
-            base.Start();
+            base.Awake();
+            movable = GetComponent<Movable>();
+        }
+
+        void Start()
+        {
+            grid = CoreComponents.Grid;
+
             if (Camera.main != null)
             {
                 var playerCamera = Camera.main.GetComponent<PlayerCamera>();
@@ -60,53 +71,53 @@ namespace GridGame.Player
 
         void TryPlayerMove(Vector3Int dir)
         {
-            var playerPos = Tile.gridPos;
+            var playerPos = Block.Tile.gridPos;
             Vector3Int targetPos = playerPos + dir;
             var belowPlayer = playerPos + Vector3Int.down;
 
-            if (OnLadder)
+            if (OnClimbable)
             {
                 TryClimb(dir, playerPos, belowPlayer);
                 return;
             }
-            else if (grid.HasOriented<Ladder>(belowPlayer, dir) && grid.IsEmpty(targetPos) &&
+            else if (grid.HasOriented<Climbable>(belowPlayer, dir) && grid.IsEmpty(targetPos) &&
                      grid.IsEmpty(targetPos + Vector3Int.down))
             {
-                LogLadderDebug("Mounting ladder from above");
+                LogClimbableDebug("Mounting climbable from above");
 
-                // mount ladder from above
-                ScheduleMove(Vector3Int.down + (Vector3)dir * (1 - LadderOffset));
-                OnLadder = grid.Get<Ladder>(belowPlayer);
+                // mount climbable from above
+                movable.ScheduleMove(Vector3Int.down + (Vector3)dir * (1 - ClimbableOffset));
+                OnClimbable = grid.Get<Climbable>(belowPlayer);
                 LookAt(-dir);
             }
-            else if (grid.HasOriented<Ladder>(targetPos, -dir))
+            else if (grid.HasOriented<Climbable>(targetPos, -dir))
             {
-                LogLadderDebug("Mounting ladder");
+                LogClimbableDebug("Mounting climbable");
 
-                ScheduleMove((Vector3)dir * LadderOffset);
-                OnLadder = grid.Get<Ladder>(targetPos);
+                movable.ScheduleMove((Vector3)dir * ClimbableOffset);
+                OnClimbable = grid.Get<Climbable>(targetPos);
                 LookAt(dir);
             }
-            else if (grid.Has<Mover>(targetPos))
+            else if (grid.Has<Container>(targetPos))
             {
-                if (grid.Get<Mover>(targetPos).IsHollow)
+                movable.ScheduleMove(dir);
+                OnClimbable = null;
+            }
+            else if (grid.Has<Movable>(targetPos))
+            {
+                if (movable.TryMove(dir))
                 {
-                    ScheduleMove(dir);
-                    OnLadder = null;
-                }
-                else if (TryMove(dir))
-                {
-                    ScheduleMove(dir);
-                    OnLadder = null;
+                    movable.ScheduleMove(dir);
+                    OnClimbable = null;
                 }
             }
-            else if (grid.IsEmpty(targetPos))
+            else if (grid.IsEmpty(targetPos) || grid.Has<Empty>(targetPos))
             {
-                ScheduleMove(dir);
-                OnLadder = null;
+                movable.ScheduleMove(dir);
+                OnClimbable = null;
             }
 
-            if (!OnLadder)
+            if (!OnClimbable)
             {
                 LookAt(dir);
             }
@@ -114,129 +125,116 @@ namespace GridGame.Player
 
         void TryClimb(Vector3Int dir, Vector3Int playerPos, Vector3Int belowPlayer)
         {
-            // correct input direction based on ladder's orientation
-            dir = Vector3Int.RoundToInt(Quaternion.Euler(OnLadder.Tile.rot) * dir);
+            // correct input direction based on climbable's orientation
+            dir = Vector3Int.RoundToInt(Quaternion.Euler(OnClimbable.Block.Tile.rot) * dir);
             Vector3Int targetPos = playerPos + dir;
 
             var abovePlayer = playerPos + Vector3Int.up;
-            var ladderPos = OnLadder.Tile.gridPos;
-            if (targetPos == ladderPos)
+            var climbablePos = OnClimbable.Block.Tile.gridPos;
+            if (targetPos == climbablePos)
             {
-                if (grid.Has<Block>(abovePlayer)) return;
+                //TODO decide what to do: new behaviour "Solid"?
+                if (grid.Has<BlockBehaviour>(abovePlayer)) return;
 
-                var aboveLadder = targetPos + Vector3Int.up;
-                if (grid.HasOriented<Ladder>(aboveLadder, -dir))
+                var aboveClimbable = targetPos + Vector3Int.up;
+                if (grid.HasOriented<Climbable>(aboveClimbable, -dir))
                 {
-                    LogLadderDebug("Climbing up ladder");
+                    LogClimbableDebug("Climbing up climbable");
 
-                    ScheduleMove(Vector3Int.up);
-                    OnLadder = grid.Get<Ladder>(aboveLadder);
+                    movable.ScheduleMove(Vector3Int.up);
+                    OnClimbable = grid.Get<Climbable>(aboveClimbable);
                     LookAt(dir);
                 }
-                else if (grid.IsEmpty(aboveLadder))
+                else if (grid.IsEmpty(aboveClimbable))
                 {
-                    LogLadderDebug("Climbing up ladder over edge");
+                    LogClimbableDebug("Climbing up climbable over edge");
 
-                    ScheduleMove(Vector3Int.up + ((Vector3)dir * (1 - LadderOffset)));
-                    OnLadder = null;
+                    movable.ScheduleMove(Vector3Int.up + ((Vector3)dir * (1 - ClimbableOffset)));
+                    OnClimbable = null;
                 }
             }
-            else if (grid.HasOriented<Ladder>(ladderPos + dir, OnLadder.Orientation))
+            else if (grid.HasOriented<Climbable>(climbablePos + dir, OnClimbable.Block.Orientation))
             {
-                if (TryMove(dir))
+                if (movable.TryMove(dir))
                 {
-                    LogLadderDebug("Climbing to neighbouring ladder");
+                    LogClimbableDebug("Climbing to neighbouring climbable");
 
-                    ScheduleMove(dir);
-                    OnLadder = grid.Get<Ladder>(ladderPos + dir);
+                    movable.ScheduleMove(dir);
+                    OnClimbable = grid.Get<Climbable>(climbablePos + dir);
                 }
             }
-            else if (OnLadder == grid.Get<Ladder>(playerPos - dir))
+            else if (OnClimbable == grid.Get<Climbable>(playerPos - dir))
             {
-                var belowLadder = ladderPos + Vector3Int.down;
+                var belowClimbable = climbablePos + Vector3Int.down;
 
-                if (grid.HasOriented<Ladder>(belowLadder, OnLadder.Orientation) && grid.IsEmpty(belowPlayer))
+                if (grid.HasOriented<Climbable>(belowClimbable, OnClimbable.Block.Orientation) &&
+                    grid.IsEmpty(belowPlayer))
                 {
-                    LogLadderDebug("Climbing down ladder");
+                    LogClimbableDebug("Climbing down climbable");
 
-                    ScheduleMove(Vector3Int.down);
-                    OnLadder = grid.Get<Ladder>(belowLadder);
+                    movable.ScheduleMove(Vector3Int.down);
+                    OnClimbable = grid.Get<Climbable>(belowClimbable);
                 }
-                else if (grid.IsEmpty(belowLadder) && grid.IsEmpty(belowPlayer))
+                else if (grid.IsEmpty(belowClimbable) && grid.IsEmpty(belowPlayer))
                 {
-                    LogLadderDebug("Falling down ladder");
+                    LogClimbableDebug("Falling down climbable");
 
-                    ScheduleMove(Vector3Int.down + ((Vector3)dir * LadderOffset));
-                    OnLadder = null;
+                    movable.ScheduleMove(Vector3Int.down + ((Vector3)dir * ClimbableOffset));
+                    OnClimbable = null;
                 }
                 else
                 {
-                    LogLadderDebug("Stepping off ladder");
+                    LogClimbableDebug("Stepping off climbable");
 
-                    ScheduleMove((Vector3)dir * LadderOffset);
-                    OnLadder = null;
+                    movable.ScheduleMove((Vector3)dir * ClimbableOffset);
+                    OnClimbable = null;
                 }
             }
-            else if (grid.HasOriented<Ladder>(playerPos + dir, -dir))
+            else if (grid.HasOriented<Climbable>(playerPos + dir, -dir))
             {
-                LogLadderDebug("Climbing to other ladder in corner");
+                LogClimbableDebug("Climbing to other climbable in corner");
 
-                Vector3 directionToLadder = ((Vector3)playerPos - ladderPos).normalized;
-                ScheduleMove((directionToLadder * LadderOffset) + ((Vector3)dir * LadderOffset));
-                OnLadder = grid.Get<Ladder>(playerPos + dir);
+                Vector3 directionToClimbable = ((Vector3)playerPos - climbablePos).normalized;
+                movable.ScheduleMove((directionToClimbable * ClimbableOffset) + ((Vector3)dir * ClimbableOffset));
+                OnClimbable = grid.Get<Climbable>(playerPos + dir);
                 LookAt(dir);
             }
             else
             {
-                Vector3 directionToLadder = ((Vector3)playerPos - ladderPos).normalized;
-                LogLadderDebug("Stepping off ladder sideways");
-                if (grid.Has<Mover>(targetPos) && grid.Get<Mover>(targetPos).IsHollow)
+                Vector3 directionToClimbable = ((Vector3)playerPos - climbablePos).normalized;
+                LogClimbableDebug("Stepping off climbable sideways");
+                var movableAtPos = grid.Get<Movable>(targetPos);
+                if (movableAtPos != null && movableAtPos.gameObject.GetComponent<Container>())
                 {
-                    ScheduleMove(dir + (directionToLadder * LadderOffset));
-                    OnLadder = null;
+                    movable.ScheduleMove(dir + (directionToClimbable * ClimbableOffset));
+                    OnClimbable = null;
                 }
-                else if (TryMove(dir))
+                else if (movable.TryMove(dir))
                 {
-                    ScheduleMove(dir + (directionToLadder * LadderOffset));
-                    OnLadder = null;
+                    movable.ScheduleMove(dir + (directionToClimbable * ClimbableOffset));
+                    OnClimbable = null;
                 }
             }
 
-            if (!OnLadder)
+            if (!OnClimbable)
             {
                 LookAt(dir);
             }
         }
 
 
-        protected override bool ShouldFall()
-        {
-            return !OnLadder && (HasHollowMoverBelow() || base.ShouldFall());
-        }
-
-        bool HasHollowMoverBelow()
-        {
-            Mover m = grid.Get<Mover>(Tile.gridPos + Vector3Int.down);
-            if (m != null && m != this && !m.isFalling && m.IsHollow)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         public void OnDrawGizmos()
         {
-            if (debugLadders && OnLadder)
+            if (debugClimbables && OnClimbable)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawWireCube(OnLadder.Tile.pos, Vector3.one);
+                Gizmos.DrawWireCube(OnClimbable.Block.Tile.pos, Vector3.one);
             }
         }
 
-        void LogLadderDebug(string log)
+        void LogClimbableDebug(string log)
         {
-            if (debugLadders)
+            if (debugClimbables)
             {
                 Debug.Log(log);
             }

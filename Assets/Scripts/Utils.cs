@@ -10,7 +10,7 @@ namespace GridGame
 {
     public class Utils
     {
-        public static List<Mover> movers = new();
+        public static List<Movable> movers = new();
         static int maxColliders = 5;
 
         public static IEnumerator LoadScene(string scene)
@@ -61,7 +61,7 @@ namespace GridGame
                 {
                     if (tile.gameObject.CompareTag(Tags.TILE))
                     {
-                        Mover m = GetMoverAtPos(tile.position);
+                        Movable m = GetMoverAtPos(tile.position);
                         if (m != null && m.transform != root)
                         {
                             root.position += Vector3.back;
@@ -69,8 +69,8 @@ namespace GridGame
                         }
                         else
                         {
-                            Wall wall = GetWallAtPos(tile.position);
-                            if (wall != null && wall.transform != root)
+                            Static static_ = GetStaticAtPos(tile.position);
+                            if (static_ != null && static_.transform != root)
                             {
                                 root.position += Vector3.back;
                                 intersecting = true;
@@ -110,7 +110,7 @@ namespace GridGame
 
         public static bool TileIsEmpty(Vector3Int pos)
         {
-            return WallIsAtPos(pos) == false && MoverIsAtPos(pos) == false;
+            return StaticIsAtPos(pos) == false && MoverIsAtPos(pos) == false;
         }
 
         public static Collider[] GetCollidersAt(Vector3 pos)
@@ -128,33 +128,33 @@ namespace GridGame
 
         // WALLS // 
 
-        public static Wall GetWallAtPos(Vector3Int pos)
+        public static Static GetStaticAtPos(Vector3Int pos)
         {
             Collider[] colliders = GetCollidersAt(pos);
 
             return colliders
-                .Select(t => t.GetComponentInParent<Wall>())
-                .FirstOrDefault(wall => wall != null);
+                .Select(t => t.GetComponentInParent<Static>())
+                .FirstOrDefault(static_ => static_ != null);
         }
 
-        public static Wall GetWallAtPos(Vector3 pos)
+        public static Static GetStaticAtPos(Vector3 pos)
         {
-            return GetWallAtPos(Vec3ToInt(pos));
+            return GetStaticAtPos(Vec3ToInt(pos));
         }
 
-        public static bool WallIsAtPos(Vector3 pos)
+        public static bool StaticIsAtPos(Vector3 pos)
         {
-            return WallIsAtPos(Vec3ToInt(pos));
+            return StaticIsAtPos(Vec3ToInt(pos));
         }
 
-        public static bool WallIsAtPos(Vector3Int pos)
+        public static bool StaticIsAtPos(Vector3Int pos)
         {
-            return GetWallAtPos(pos) != null;
+            return GetStaticAtPos(pos) != null;
         }
 
         // MOVERS // 
 
-        public static Mover GetMoverAtPos(Vector3 pos)
+        public static Movable GetMoverAtPos(Vector3 pos)
         {
             return GetMoverAtPos(Vec3ToInt(pos));
         }
@@ -169,12 +169,12 @@ namespace GridGame
                 .FirstOrDefault(block => block != null);
         }
 
-        public static Mover GetMoverAtPos(Vector3Int pos)
+        public static Movable GetMoverAtPos(Vector3Int pos)
         {
             Collider[] colliders = GetCollidersAt(pos);
 
             return colliders
-                .Select(t => t.GetComponentInParent<Mover>())
+                .Select(t => t.GetComponentInParent<Movable>())
                 .FirstOrDefault(m => m != null);
         }
 
@@ -188,14 +188,14 @@ namespace GridGame
             return GetMoverAtPos(pos) != null;
         }
 
-        public static List<Mover> MoversAbove(Mover m, bool clear = true)
+        public static List<Movable> MoversAbove(Movable m, bool clear = true)
         {
             if (clear)
             {
                 movers.Clear();
             }
 
-            Mover m2 = GetMoverAtPos(m.Tile.pos + Vector3.back);
+            Movable m2 = GetMoverAtPos(m.Block.Tile.pos + Vector3.back);
             if (m2 != null && !movers.Contains(m2))
             {
                 movers.Add(m2);

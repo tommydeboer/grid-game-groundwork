@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GridGame.Blocks;
+using GridGame.Player;
 using GridGame.SO;
 using UnityEngine;
 using UnityEngine.Events;
@@ -16,7 +17,7 @@ namespace GridGame
         public UnityAction OnGridReset;
 
         Dictionary<Vector3Int, Wall> walls;
-        Dictionary<Vector3Int, Mover> movers;
+        Dictionary<Vector3Int, List<Mover>> movers;
         Dictionary<Vector3Int, Trigger> triggers;
 
         Dictionary<Vector3Int, Wall> Walls
@@ -29,7 +30,7 @@ namespace GridGame
             set => walls = value;
         }
 
-        Dictionary<Vector3Int, Mover> Movers
+        Dictionary<Vector3Int, List<Mover>> Movers
         {
             get
             {
@@ -64,7 +65,7 @@ namespace GridGame
             Transform levelRoot = scene.GetRootGameObjects().First(go => go.CompareTag(Tags.LEVEL)).transform;
 
             Walls = new Dictionary<Vector3Int, Wall>();
-            Movers = new Dictionary<Vector3Int, Mover>();
+            Movers = new Dictionary<Vector3Int, List<Mover>>();
             Triggers = new Dictionary<Vector3Int, Trigger>();
 
             foreach (Transform item in levelRoot)
@@ -76,7 +77,7 @@ namespace GridGame
                         Walls[wall.Tile.gridPos] = wall;
                         break;
                     case Mover mover:
-                        Movers[mover.Tile.gridPos] = mover;
+                        AddMover(mover);
                         break;
                     case Trigger trigger:
                         Triggers[trigger.Tile.gridPos] = trigger;
@@ -90,12 +91,20 @@ namespace GridGame
         public void Refresh()
         {
             var allMovers = Movers.Values;
-            Movers = new Dictionary<Vector3Int, Mover>();
+            Movers = new Dictionary<Vector3Int, List<Mover>>();
 
-            foreach (Mover mover in allMovers)
+            allMovers.SelectMany(x => x).ToList().ForEach(AddMover);
+        }
+
+        void AddMover(Mover mover)
+        {
+            var pos = mover.Tile.gridPos;
+            if (!Movers.ContainsKey(pos))
             {
-                Movers[mover.Tile.gridPos] = mover;
+                Movers[mover.Tile.gridPos] = new List<Mover>();
             }
+
+            Movers[pos].Add(mover);
         }
 
         public T Get<T>(Vector3Int pos) where T : Block
@@ -109,9 +118,15 @@ namespace GridGame
             }
             else if (typeof(Mover).IsAssignableFrom(typeof(T)))
             {
-                if (Movers.ContainsKey(pos) && Movers[pos] is T t)
+                if (Movers.ContainsKey(pos))
                 {
-                    return t;
+                    foreach (var mover in Movers[pos])
+                    {
+                        if (mover is T t)
+                        {
+                            return t;
+                        }
+                    }
                 }
             }
 
@@ -142,7 +157,7 @@ namespace GridGame
 
         public List<Mover> GetMovers()
         {
-            return Movers.Values.ToList();
+            return Movers.Values.SelectMany(x => x).ToList();
         }
     }
 }

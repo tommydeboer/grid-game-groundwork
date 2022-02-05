@@ -89,7 +89,12 @@ namespace GridGame.Player
             }
             else if (grid.Has<Mover>(targetPos))
             {
-                if (TryMove(dir))
+                if (grid.Get<Mover>(targetPos).IsHollow)
+                {
+                    ScheduleMove(dir);
+                    OnLadder = null;
+                }
+                else if (TryMove(dir))
                 {
                     ScheduleMove(dir);
                     OnLadder = null;
@@ -184,10 +189,14 @@ namespace GridGame.Player
             else
             {
                 Vector3 directionToLadder = ((Vector3)playerPos - ladderPos).normalized;
-                if (TryMove(dir))
+                LogLadderDebug("Stepping off ladder sideways");
+                if (grid.Has<Mover>(targetPos) && grid.Get<Mover>(targetPos).IsHollow)
                 {
-                    LogLadderDebug("Stepping off ladder sideways");
-
+                    ScheduleMove(dir + (directionToLadder * LadderOffset));
+                    OnLadder = null;
+                }
+                else if (TryMove(dir))
+                {
                     ScheduleMove(dir + (directionToLadder * LadderOffset));
                     OnLadder = null;
                 }
@@ -202,7 +211,18 @@ namespace GridGame.Player
 
         protected override bool ShouldFall()
         {
-            return !OnLadder && base.ShouldFall();
+            return !OnLadder && (HasHollowMoverBelow() || base.ShouldFall());
+        }
+
+        bool HasHollowMoverBelow()
+        {
+            Mover m = grid.Get<Mover>(Tile.gridPos + Vector3Int.down);
+            if (m != null && m != this && !m.isFalling && m.IsHollow)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public void OnDrawGizmos()

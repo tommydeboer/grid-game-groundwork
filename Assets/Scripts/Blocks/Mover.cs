@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using DG.Tweening;
+using GridGame.Player;
 using UnityEngine;
 
 namespace GridGame.Blocks
 {
     public class Mover : Block
     {
+        [SerializeField]
+        bool isHollow;
+
         [HideInInspector]
         public Vector3 goalPosition;
 
@@ -13,6 +17,8 @@ namespace GridGame.Blocks
         public bool isFalling;
 
         public override BlockType Type => BlockType.Mover;
+
+        public bool IsHollow => isHollow;
 
         public void Reset()
         {

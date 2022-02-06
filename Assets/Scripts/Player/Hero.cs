@@ -90,7 +90,7 @@ namespace GridGame.Player
                 OnClimbable = grid.Get<Climbable>(belowPlayer);
                 LookAt(-dir);
             }
-            else if (grid.HasOriented<Climbable>(targetPos, -dir))
+            else if (grid.HasOriented<Climbable>(targetPos, -dir) && !grid.Has<Container>(playerPos))
             {
                 LogClimbableDebug("Mounting climbable");
 

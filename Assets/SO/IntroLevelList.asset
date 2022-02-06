@@ -23,5 +23,7 @@ MonoBehaviour:
     scenePath: Assets/Scenes/Level_intro4.unity
   - sceneAsset: {fileID: 102900000, guid: c91ccd2045951a1468ef20bcb8d8b935, type: 3}
     scenePath: Assets/Scenes/Level_intro5.unity
+  - sceneAsset: {fileID: 102900000, guid: e0724629773d09848b3c20d43d0d4135, type: 3}
+    scenePath: Assets/Scenes/Level_Frame_Maze.unity
   - sceneAsset: {fileID: 102900000, guid: 992c231dbf290b348b5309cff5a0ac2e, type: 3}
     scenePath: Assets/Scenes/Level_intro6.unity

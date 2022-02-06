@@ -5709,6 +5709,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Exit
       objectReference: {fileID: 0}
+    - target: {fileID: 5117419130138940746, guid: 4135c5026846a3d44baa16a1ab754192,
+        type: 3}
+      propertyPath: levelList
+      value: 
+      objectReference: {fileID: 11400000, guid: fa6bdbe74109683439fdfe6289163c46,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4135c5026846a3d44baa16a1ab754192, type: 3}
 --- !u!1001 &795508541

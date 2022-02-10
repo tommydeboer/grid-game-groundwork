@@ -66,8 +66,8 @@ MonoBehaviour:
   dependencies:
   - dependency: {fileID: 4890085278179872738, guid: 2092a3113729e6843a615a9bec2a0aab,
       type: 2}
-    instantiationMode: 1
+    instantiationMode: 0
   - dependency: {fileID: 2100000, guid: ef2c652f61f0aa54190cb30d0f635f58, type: 2}
-    instantiationMode: 1
+    instantiationMode: 0
   templatePipeline: {fileID: 0}
   addToDefaults: 0

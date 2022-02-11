@@ -110,7 +110,7 @@ MonoBehaviour:
       Data2: 1331207701
       Data3: -1004798787
       Data4: 180433516
-    Path: event:/Test/Crate Fall
+    Path: event:/Blocks/Crate Fall
   goalPosition: {x: 0, y: 0, z: 0}
   isFalling: 0
 --- !u!1001 &4987693278947189513

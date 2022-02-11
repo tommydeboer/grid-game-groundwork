@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
-	<object class="AudioFile" id="{4d7e141d-6677-4527-bebf-a7c8400b49a8}">
+	<object class="AudioFile" id="{75f170ba-6eab-4ecb-9e64-26d331a185f8}">
 		<property name="assetPath">
-			<value>zapsplat_impacts_metal_pole_small_hit_drop_on_metal_rack_001_36372.mp3</value>
+			<value>zapsplat_impacts_metal_pole_small_hit_drop_on_metal_rack_015_36386.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>48</value>
@@ -11,7 +11,7 @@
 			<value>2</value>
 		</property>
 		<property name="length">
-			<value>0.95999999999999996</value>
+			<value>1.2410000000000001</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{7a6a42c0-19c8-4b38-87e6-9debbc0185ca}</destination>

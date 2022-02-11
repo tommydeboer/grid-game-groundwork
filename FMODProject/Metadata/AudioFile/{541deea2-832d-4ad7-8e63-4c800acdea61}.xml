@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
-	<object class="AudioFile" id="{04515579-bf50-460d-9686-ecda1d4daef7}">
+	<object class="AudioFile" id="{541deea2-832d-4ad7-8e63-4c800acdea61}">
 		<property name="assetPath">
-			<value>Crash_01.wav</value>
+			<value>zapsplat_impacts_metal_pole_small_hit_drop_on_metal_rack_001_36372.wav</value>
 		</property>
 		<property name="frequencyInKHz">
-			<value>96</value>
+			<value>48</value>
 		</property>
 		<property name="channelCount">
 			<value>2</value>
 		</property>
 		<property name="length">
-			<value>2.8173333333333335</value>
+			<value>0.87839583333333338</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{7a6a42c0-19c8-4b38-87e6-9debbc0185ca}</destination>

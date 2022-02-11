@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{040129a4-11bd-4d27-8259-e240033c0fef}">
+		<property name="assetPath">
+			<value>zapsplat_impact_wood_thump_hit_hollow_005_22522.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.84799999999999998</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{7a6a42c0-19c8-4b38-87e6-9debbc0185ca}</destination>
+		</relationship>
+	</object>
+</objects>

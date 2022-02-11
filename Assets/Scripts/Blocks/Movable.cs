@@ -1,14 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using GridGame.Player;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace GridGame.Blocks
 {
     public class Movable : BlockBehaviour
     {
+        [SerializeField]
+        FMODUnity.EventReference LandedEvent;
+
         [HideInInspector]
         public Vector3 goalPosition;
 
@@ -32,7 +37,6 @@ namespace GridGame.Blocks
         public bool TryMove(Vector3Int dir)
         {
             Vector3Int posToCheck = Block.Tile.gridPos + dir;
-
             if (grid.Has<Static>(posToCheck))
             {
                 return false;
@@ -40,7 +44,10 @@ namespace GridGame.Blocks
 
             if (!TryPush(dir, posToCheck)) return false;
 
-            TryMoveStacked(dir);
+            if (hero == null)
+            {
+                TryMoveStacked(dir);
+            }
 
             return true;
         }
@@ -147,6 +154,11 @@ namespace GridGame.Blocks
         {
             if (isFalling)
             {
+                if (!LandedEvent.IsNull)
+                {
+                    FMODUnity.RuntimeManager.PlayOneShot(LandedEvent, transform.position);
+                }
+
                 isFalling = false;
                 Game.instance.movingCount--;
                 Game.instance.FallEnd();

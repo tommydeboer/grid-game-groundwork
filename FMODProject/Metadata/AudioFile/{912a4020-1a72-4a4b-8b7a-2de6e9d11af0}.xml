@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{912a4020-1a72-4a4b-8b7a-2de6e9d11af0}">
+		<property name="assetPath">
+			<value>zapsplat_household_coffee_table_wood_maple_heavy_legs_slide_wood_floor_medium_001_44753.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.752</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{7a6a42c0-19c8-4b38-87e6-9debbc0185ca}</destination>
+		</relationship>
+	</object>
+</objects>

@@ -11,6 +11,9 @@ namespace GridGame.Player
     public class Hero : BlockBehaviour
     {
         [SerializeField]
+        FMODUnity.EventReference WalkEvent;
+
+        [SerializeField]
         bool debugClimbables;
 
         public Climbable OnClimbable { get; set; }
@@ -86,7 +89,7 @@ namespace GridGame.Player
                 LogClimbableDebug("Mounting climbable from above");
 
                 // mount climbable from above
-                movable.ScheduleMove(Vector3Int.down + (Vector3)dir * (1 - ClimbableOffset));
+                Move(Vector3Int.down + (Vector3)dir * (1 - ClimbableOffset));
                 OnClimbable = grid.Get<Climbable>(belowPlayer);
                 LookAt(-dir);
             }
@@ -94,26 +97,26 @@ namespace GridGame.Player
             {
                 LogClimbableDebug("Mounting climbable");
 
-                movable.ScheduleMove((Vector3)dir * ClimbableOffset);
+                Move((Vector3)dir * ClimbableOffset);
                 OnClimbable = grid.Get<Climbable>(targetPos);
                 LookAt(dir);
             }
             else if (grid.Has<Container>(targetPos))
             {
-                movable.ScheduleMove(dir);
+                Move(dir);
                 OnClimbable = null;
             }
             else if (grid.Has<Movable>(targetPos))
             {
                 if (movable.TryMove(dir))
                 {
-                    movable.ScheduleMove(dir);
+                    Move(dir);
                     OnClimbable = null;
                 }
             }
             else if (grid.IsEmpty(targetPos) || grid.Has<Empty>(targetPos))
             {
-                movable.ScheduleMove(dir);
+                Move(dir);
                 OnClimbable = null;
             }
 
@@ -141,7 +144,7 @@ namespace GridGame.Player
                 {
                     LogClimbableDebug("Climbing up climbable");
 
-                    movable.ScheduleMove(Vector3Int.up);
+                    Move(Vector3Int.up);
                     OnClimbable = grid.Get<Climbable>(aboveClimbable);
                     LookAt(dir);
                 }
@@ -149,7 +152,7 @@ namespace GridGame.Player
                 {
                     LogClimbableDebug("Climbing up climbable over edge");
 
-                    movable.ScheduleMove(Vector3Int.up + ((Vector3)dir * (1 - ClimbableOffset)));
+                    Move(Vector3Int.up + ((Vector3)dir * (1 - ClimbableOffset)));
                     OnClimbable = null;
                 }
             }
@@ -159,7 +162,7 @@ namespace GridGame.Player
                 {
                     LogClimbableDebug("Climbing to neighbouring climbable");
 
-                    movable.ScheduleMove(dir);
+                    Move(dir);
                     OnClimbable = grid.Get<Climbable>(climbablePos + dir);
                 }
             }
@@ -172,21 +175,21 @@ namespace GridGame.Player
                 {
                     LogClimbableDebug("Climbing down climbable");
 
-                    movable.ScheduleMove(Vector3Int.down);
+                    Move(Vector3Int.down);
                     OnClimbable = grid.Get<Climbable>(belowClimbable);
                 }
                 else if (grid.IsEmpty(belowClimbable) && grid.IsEmpty(belowPlayer))
                 {
                     LogClimbableDebug("Falling down climbable");
 
-                    movable.ScheduleMove(Vector3Int.down + ((Vector3)dir * ClimbableOffset));
+                    Move(Vector3Int.down + ((Vector3)dir * ClimbableOffset));
                     OnClimbable = null;
                 }
                 else
                 {
                     LogClimbableDebug("Stepping off climbable");
 
-                    movable.ScheduleMove((Vector3)dir * ClimbableOffset);
+                    Move((Vector3)dir * ClimbableOffset);
                     OnClimbable = null;
                 }
             }
@@ -195,7 +198,7 @@ namespace GridGame.Player
                 LogClimbableDebug("Climbing to other climbable in corner");
 
                 Vector3 directionToClimbable = ((Vector3)playerPos - climbablePos).normalized;
-                movable.ScheduleMove((directionToClimbable * ClimbableOffset) + ((Vector3)dir * ClimbableOffset));
+                Move((directionToClimbable * ClimbableOffset) + ((Vector3)dir * ClimbableOffset));
                 OnClimbable = grid.Get<Climbable>(playerPos + dir);
                 LookAt(dir);
             }
@@ -206,12 +209,12 @@ namespace GridGame.Player
                 var movableAtPos = grid.Get<Movable>(targetPos);
                 if (movableAtPos != null && movableAtPos.gameObject.GetComponent<Container>())
                 {
-                    movable.ScheduleMove(dir + (directionToClimbable * ClimbableOffset));
+                    Move(dir + (directionToClimbable * ClimbableOffset));
                     OnClimbable = null;
                 }
                 else if (movable.TryMove(dir))
                 {
-                    movable.ScheduleMove(dir + (directionToClimbable * ClimbableOffset));
+                    Move(dir + (directionToClimbable * ClimbableOffset));
                     OnClimbable = null;
                 }
             }
@@ -220,6 +223,12 @@ namespace GridGame.Player
             {
                 LookAt(dir);
             }
+        }
+
+        void Move(Vector3 dir)
+        {
+            FMODUnity.RuntimeManager.PlayOneShot(WalkEvent, transform.position);
+            movable.ScheduleMove(dir);
         }
 
 

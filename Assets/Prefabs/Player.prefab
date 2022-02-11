@@ -481,6 +481,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9523338d1f7b468dacd3002a3e9a2b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LandedEvent:
+    Guid:
+      Data1: 708870944
+      Data2: 1207873543
+      Data3: -2026474832
+      Data4: 769724085
+    Path: event:/Blocks/Hero Footstep
   goalPosition: {x: 0, y: 0, z: 0}
   isFalling: 0
 --- !u!114 &2122996217392361326
@@ -495,6 +502,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc8093f936db2cc4280fa562d94bb49a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WalkEvent:
+    Guid:
+      Data1: 708870944
+      Data2: 1207873543
+      Data3: -2026474832
+      Data4: 769724085
+    Path: event:/Blocks/Hero Footstep
   debugClimbables: 0
 --- !u!114 &4361077980924387608
 MonoBehaviour:

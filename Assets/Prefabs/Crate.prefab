@@ -111,6 +111,13 @@ MonoBehaviour:
       Data3: -1004798787
       Data4: 180433516
     Path: event:/Blocks/Crate Fall
+  MovingEvent:
+    Guid:
+      Data1: -1430845289
+      Data2: 1168408983
+      Data3: 10213005
+      Data4: 549634434
+    Path: event:/Blocks/Crate Slide
   goalPosition: {x: 0, y: 0, z: 0}
   isFalling: 0
 --- !u!1001 &4987693278947189513

@@ -14,12 +14,38 @@ namespace GridGame.Blocks
         [SerializeField]
         FMODUnity.EventReference LandedEvent;
 
+        [SerializeField]
+        FMODUnity.EventReference MovingEvent;
+
         [HideInInspector]
         public Vector3 goalPosition;
 
         [HideInInspector]
         public bool isFalling;
 
+        bool isMoving;
+        Vector3 previousPos;
+
+        bool IsMoving
+        {
+            set
+            {
+                if (value == isMoving || MovingEvent.IsNull) return;
+                if (value)
+                {
+                    sfxMoving.start();
+                    FMODUnity.RuntimeManager.AttachInstanceToGameObject(sfxMoving, GetComponent<Transform>());
+                }
+                else
+                {
+                    sfxMoving.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+                }
+
+                isMoving = value;
+            }
+        }
+
+        FMOD.Studio.EventInstance sfxMoving;
         Grid grid;
         Hero hero;
 
@@ -27,6 +53,25 @@ namespace GridGame.Blocks
         {
             grid = CoreComponents.Grid;
             hero = GetComponent<Hero>();
+            if (!MovingEvent.IsNull)
+            {
+                sfxMoving = FMODUnity.RuntimeManager.CreateInstance(MovingEvent);
+                FMODUnity.RuntimeManager.AttachInstanceToGameObject(sfxMoving, GetComponent<Transform>());
+            }
+
+            previousPos = transform.position;
+        }
+
+        void Update()
+        {
+            var pos = transform.position;
+            IsMoving = !isFalling && pos != previousPos;
+            previousPos = pos;
+        }
+
+        void OnDestroy()
+        {
+            sfxMoving.release();
         }
 
         public void Reset()

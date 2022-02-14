@@ -89,9 +89,6 @@ namespace GridGame
             {
                 loadEventChannel.OnLevelLoaded(scene);
             }
-
-            // TODO activate when undo system is back online
-            // State.Init();
         }
 
         void AddScenesToUnload()

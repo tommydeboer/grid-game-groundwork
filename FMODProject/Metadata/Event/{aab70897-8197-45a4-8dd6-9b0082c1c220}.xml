@@ -103,6 +103,7 @@
 		</property>
 		<relationship name="modulators">
 			<destination>{a1c4c677-0a60-40f9-b50b-705f5495755f}</destination>
+			<destination>{b2bd9062-92eb-43e4-bedb-f48cd24af8f6}</destination>
 		</relationship>
 		<relationship name="audioFile">
 			<destination>{e6dc3bcf-f021-47e7-b5c9-fd76515942a6}</destination>
@@ -156,6 +157,14 @@
 		</property>
 		<property name="amount">
 			<value>100</value>
+		</property>
+	</object>
+	<object class="RandomizerModulator" id="{b2bd9062-92eb-43e4-bedb-f48cd24af8f6}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>pitch</value>
+		</property>
+		<property name="amount">
+			<value>2.5</value>
 		</property>
 	</object>
 	<object class="ADSRModulator" id="{82d8f46d-41a4-4951-895f-cfdb1c41cef0}">

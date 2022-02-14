@@ -1028,6 +1028,13 @@ MonoBehaviour:
       Data3: 1347279508
       Data4: -1908903390
     Path: event:/Blocks/Frame Fall
+  MovingEvent:
+    Guid:
+      Data1: -1311528064
+      Data2: 1158248417
+      Data3: -1549452359
+      Data4: -1570850525
+    Path: event:/Blocks/Frame Slide
   goalPosition: {x: 0, y: 0, z: 0}
   isFalling: 0
 --- !u!114 &3870007292111014343

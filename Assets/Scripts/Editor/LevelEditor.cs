@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GridGame.Editor
 {
@@ -58,9 +59,8 @@ namespace GridGame.Editor
 
             var texture = EditorGUIUtility.IconContent("PreMatCube").image;
             levelEditor.titleContent = new GUIContent("Level Editor", texture);
+            levelEditor.SetSceneLevelIndex();
             return levelEditor;
-
-            // TODO FIXME state.CurrentLevel must be set (but based on what?)
         }
 
         void OnEnable()
@@ -251,6 +251,24 @@ namespace GridGame.Editor
             }
 
             state.CurrentLevel = level;
+        }
+
+        void SetSceneLevelIndex()
+        {
+            Scene scene = SceneManager.GetActiveScene();
+            if (scene.IsLevel())
+            {
+                state.CurrentLevel = LevelManager.GetLevel(scene);
+                LevelManager.CloseLevelsExcept(scene);
+                for (int i = 0; i < levels.Count; i++)
+                {
+                    if (levels[i].Value == scene.name)
+                    {
+                        sceneLevelIndex = i;
+                        return;
+                    }
+                }
+            }
         }
 
         void RefreshLevelList()

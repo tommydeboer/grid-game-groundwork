@@ -40,19 +40,24 @@ namespace GridGame.Editor
             return ChangeLevel(scene);
         }
 
-        static Level ChangeLevel(Scene scene)
+        public static Level GetLevel(Scene scene)
         {
-            SceneManager.SetActiveScene(scene);
-            CloseLevelsExcept(scene.name);
             return new Level(scene.name);
         }
 
-        static void CloseLevelsExcept(string name)
+        static Level ChangeLevel(Scene scene)
+        {
+            SceneManager.SetActiveScene(scene);
+            CloseLevelsExcept(scene);
+            return GetLevel(scene);
+        }
+
+        public static void CloseLevelsExcept(Scene excludedScene)
         {
             for (int i = 0; i < SceneManager.sceneCount; i++)
             {
                 Scene scene = SceneManager.GetSceneAt(i);
-                if (scene.IsLevel() && scene.name != name)
+                if (scene.IsLevel() && scene.name != excludedScene.name)
                 {
                     if (scene.isDirty)
                     {

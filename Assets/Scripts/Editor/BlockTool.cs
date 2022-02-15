@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using GridGame.Blocks;
 using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.ShortcutManagement;
@@ -17,8 +20,7 @@ namespace GridGame.Editor
 
         State state;
         LevelEditor levelEditor;
-        ModeModifier pickModifier;
-        ModeModifier eraseModifier;
+        ModeModifiers modeModifiers;
 
         GridSelection selection;
         Vector3Int mousePos;
@@ -33,8 +35,11 @@ namespace GridGame.Editor
                 tooltip = TITLE
             };
             state = EditorAssets.State;
-            pickModifier = new ModeModifier(state, EventModifiers.Shift, Mode.Pick);
-            eraseModifier = new ModeModifier(state, EventModifiers.Control, Mode.Erase);
+
+            modeModifiers = new ModeModifiers(state);
+            modeModifiers.Register(EventModifiers.Shift, Mode.Pick);
+            modeModifiers.Register(EventModifiers.Control, Mode.Erase);
+            modeModifiers.Register((EventModifiers.Control | EventModifiers.Shift), Mode.Select);
         }
 
         public override void OnActivated()
@@ -99,8 +104,7 @@ namespace GridGame.Editor
                 selection = null;
             }
 
-            pickModifier.Evaluate(e.modifiers);
-            eraseModifier.Evaluate(e.modifiers);
+            modeModifiers.Evaluate(e.modifiers);
         }
 
         void HandleShortcuts(Event e, EventType eventType)
@@ -154,6 +158,9 @@ namespace GridGame.Editor
                             break;
                         case 0 when state.Mode == Mode.Create:
                             selection = new GridSelection(mousePos, state.SpawnHeight);
+                            break;
+                        case 0 when state.Mode == Mode.Select:
+                            selection = new GridSelection(mousePos);
                             break;
                         case 0:
                             selection = new GridSelection(mousePos);
@@ -238,6 +245,11 @@ namespace GridGame.Editor
                     selection.ForEach(pos => state.CurrentLevel.ClearAt(pos));
                     break;
                 }
+                case Mode.Select:
+                {
+                    ApplySelectSelection();
+                    break;
+                }
                 case Mode.Pick:
                     throw new InvalidOperationException();
                 default:
@@ -264,6 +276,22 @@ namespace GridGame.Editor
             }
         }
 
+        void ApplySelectSelection()
+        {
+            var objects = new List<GameObject>();
+            selection.ForEach(pos =>
+            {
+                Block blockAtPos = Utils.GetBlockAtPos(pos);
+                if (blockAtPos)
+                {
+                    objects.Add(blockAtPos.gameObject);
+                }
+            });
+
+            // ReSharper disable once CoVariantArrayConversion
+            Selection.objects = objects.ToArray();
+        }
+
 
         void DrawSelection()
         {
@@ -274,6 +302,9 @@ namespace GridGame.Editor
                     break;
                 case Mode.Erase:
                     DrawEraseSelection();
+                    break;
+                case Mode.Select:
+                    Draw.DrawWireBox(selection.Bounds, Color.white);
                     break;
                 case Mode.Pick:
                     throw new InvalidOperationException();
@@ -322,6 +353,9 @@ namespace GridGame.Editor
                 case Mode.Pick:
                     Draw.DrawWireCube(pos, Color.yellow);
                     break;
+                case Mode.Select:
+                    Draw.DrawWireCube(pos, Color.white);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -342,7 +376,7 @@ namespace GridGame.Editor
                 }
             }
 
-            pickModifier.Reset();
+            modeModifiers.Reset();
             state.Mode = Mode.Create;
         }
 

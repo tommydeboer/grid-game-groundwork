@@ -43,19 +43,7 @@ namespace GridGame.Editor
         public int SelectedPrefabId { get; set; }
         public GameObject SelectedPrefab => Prefabs[SelectedPrefabId];
 
-        Mode mode;
-
-        public Mode Mode
-        {
-            get => mode;
-            set
-            {
-                PreviousMode = mode;
-                mode = value;
-            }
-        }
-
-        public Mode PreviousMode { get; private set; }
+        public Mode Mode { get; set; }
 
         public void SetNextMode()
         {

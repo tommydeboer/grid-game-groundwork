@@ -4,6 +4,7 @@ namespace GridGame.Editor
     {
         Erase,
         Create,
-        Pick
+        Pick,
+        Select
     }
 }

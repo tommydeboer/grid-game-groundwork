@@ -14,16 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scenes:
   - sceneAsset: {fileID: 102900000, guid: 4ee5595c87a86344eaa4d3b69942164e, type: 3}
-    scenePath: Assets/Scenes/Level_intro1.unity
+    scenePath: Assets/Scenes/Level_Crate_Introduction.unity
   - sceneAsset: {fileID: 102900000, guid: d9dc2e8e75c616947a69c94753f289ee, type: 3}
-    scenePath: Assets/Scenes/Level_intro2.unity
+    scenePath: Assets/Scenes/Level_Ladder_Introduction.unity
   - sceneAsset: {fileID: 102900000, guid: e6769ced77b3a7d448347beaca13eeb2, type: 3}
-    scenePath: Assets/Scenes/Level_intro3.unity
+    scenePath: Assets/Scenes/Level_Crate_Bridge.unity
   - sceneAsset: {fileID: 102900000, guid: 5bb1aad428dabe3469422a36a2c98b7d, type: 3}
-    scenePath: Assets/Scenes/Level_intro4.unity
+    scenePath: Assets/Scenes/Level_Diminishing_Stacks.unity
   - sceneAsset: {fileID: 102900000, guid: c91ccd2045951a1468ef20bcb8d8b935, type: 3}
-    scenePath: Assets/Scenes/Level_intro5.unity
+    scenePath: Assets/Scenes/Level_Frame_Introduction.unity
   - sceneAsset: {fileID: 102900000, guid: e0724629773d09848b3c20d43d0d4135, type: 3}
     scenePath: Assets/Scenes/Level_Frame_Maze.unity
   - sceneAsset: {fileID: 102900000, guid: 992c231dbf290b348b5309cff5a0ac2e, type: 3}
-    scenePath: Assets/Scenes/Level_intro6.unity
+    scenePath: Assets/Scenes/Level_Frame_Mountaineering.unity
+  - sceneAsset: {fileID: 102900000, guid: 03b6d8e7fc378a146ad5d597be1767a2, type: 3}
+    scenePath: Assets/Scenes/Level_Island.unity

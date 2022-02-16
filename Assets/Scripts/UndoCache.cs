@@ -105,6 +105,7 @@ namespace GridGame
         {
             if (undoIndex > 0)
             {
+                heroToTrack.hero.IsAlive = true;
                 undoIndex--;
                 RemoveFromUndoStack();
                 grid.Refresh();

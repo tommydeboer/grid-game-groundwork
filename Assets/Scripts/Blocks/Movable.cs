@@ -48,11 +48,14 @@ namespace GridGame.Blocks
         FMOD.Studio.EventInstance sfxMoving;
         Grid grid;
         Hero hero;
+        Container container;
 
         void Start()
         {
             grid = CoreComponents.Grid;
             hero = GetComponent<Hero>();
+            container = GetComponent<Container>();
+
             if (!MovingEvent.IsNull)
             {
                 sfxMoving = FMODUnity.RuntimeManager.CreateInstance(MovingEvent);
@@ -175,8 +178,12 @@ namespace GridGame.Blocks
                     Game.instance.movingCount++;
                 }
 
-                goalPosition = transform.position + Vector3.down;
-                transform.DOMove(goalPosition, Game.instance.fallTime).OnComplete(FallAgain).SetEase(Ease.Linear);
+                transform.DOMove(Block.Below, Game.instance.fallTime).OnComplete(FallAgain).SetEase(Ease.Linear);
+
+                if (!container && grid.Has<Crushable>(Block.Below))
+                {
+                    grid.Get<Crushable>(Block.Below).Crush();
+                }
             }
             else
             {
@@ -221,7 +228,7 @@ namespace GridGame.Blocks
             {
                 // Need to get all movers because an Hero can be inside a Container
                 List<Movable> movables = grid.GetAll<Movable>(Block.Below);
-                return movables.Any(movable => !movable.isFalling);
+                return movables.Any(movable => !movable.isFalling && movable.GetComponent<Crushable>() == null);
             }
 
             return false;

@@ -20,14 +20,33 @@ namespace GridGame.Player
         const float ClimbableOffset = 0.35f;
 
         Vector3Int currentMovementDir;
+        public bool IsAlive { get; set; }
 
         Movable movable;
+        Crushable crushable;
         Grid grid;
 
         protected override void Awake()
         {
             base.Awake();
             movable = GetComponent<Movable>();
+            crushable = GetComponent<Crushable>();
+            IsAlive = true;
+        }
+
+        void OnEnable()
+        {
+            crushable.OnCrushed += OnCrush;
+        }
+
+        void OnDisable()
+        {
+            crushable.OnCrushed -= OnCrush;
+        }
+
+        void OnCrush()
+        {
+            IsAlive = false;
         }
 
         void Start()
@@ -54,9 +73,9 @@ namespace GridGame.Player
             }
         }
 
-        static bool CanInput()
+        bool CanInput()
         {
-            return !Game.isMoving && !Game.instance.holdingUndo;
+            return !Game.isMoving && !Game.instance.holdingUndo && IsAlive;
         }
 
         [UsedImplicitly]

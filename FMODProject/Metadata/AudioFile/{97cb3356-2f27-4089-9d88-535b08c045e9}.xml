@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
-	<object class="AudioFile" id="{912a4020-1a72-4a4b-8b7a-2de6e9d11af0}">
+	<object class="AudioFile" id="{97cb3356-2f27-4089-9d88-535b08c045e9}">
 		<property name="assetPath">
-			<value>zapsplat_household_coffee_table_wood_maple_heavy_legs_slide_wood_floor_medium_001_44753.mp3</value>
+			<value>zapsplat_foley_footstep_single_female_walking_leather_shoe_on_wood_010_50947.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>48</value>
@@ -11,7 +11,7 @@
 			<value>2</value>
 		</property>
 		<property name="length">
-			<value>1.752</value>
+			<value>0.37397916666666664</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{7a6a42c0-19c8-4b38-87e6-9debbc0185ca}</destination>

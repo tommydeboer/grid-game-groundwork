@@ -19,6 +19,8 @@ MonoBehaviour:
     scenePath: Assets/Scenes/Level_Ladder_Introduction.unity
   - sceneAsset: {fileID: 102900000, guid: e6769ced77b3a7d448347beaca13eeb2, type: 3}
     scenePath: Assets/Scenes/Level_Crate_Bridge.unity
+  - sceneAsset: {fileID: 102900000, guid: b9bc152b3b20ac64e934ec0f06eef921, type: 3}
+    scenePath: Assets/Scenes/Level_Climbing_Gym.unity
   - sceneAsset: {fileID: 102900000, guid: 03b6d8e7fc378a146ad5d597be1767a2, type: 3}
     scenePath: Assets/Scenes/Level_Bridge_Cross.unity
   - sceneAsset: {fileID: 102900000, guid: 5bb1aad428dabe3469422a36a2c98b7d, type: 3}

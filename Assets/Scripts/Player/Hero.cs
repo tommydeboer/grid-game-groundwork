@@ -20,6 +20,7 @@ namespace GridGame.Player
         const float ClimbableOffset = 0.35f;
 
         Vector3Int currentMovementDir;
+        Vector3Int mountDirection;
         public bool IsAlive { get; set; }
 
         Movable movable;
@@ -83,6 +84,11 @@ namespace GridGame.Player
         {
             var movement = value.Get<Vector2>();
             currentMovementDir = new Vector3Int((int)movement.x, 0, (int)movement.y);
+
+            if (currentMovementDir == Vector3Int.zero)
+            {
+                mountDirection = Vector3Int.zero;
+            }
         }
 
         void LookAt(Vector3 dir)
@@ -99,6 +105,11 @@ namespace GridGame.Player
 
             if (OnClimbable)
             {
+                if (dir != Vector3Int.forward && mountDirection == dir)
+                {
+                    return;
+                }
+
                 TryClimb(dir, playerPos, belowPlayer);
                 return;
             }
@@ -107,7 +118,7 @@ namespace GridGame.Player
             {
                 LogClimbableDebug("Mounting climbable from above");
 
-                // mount climbable from above
+                mountDirection = dir;
                 Move(Vector3Int.down + (Vector3)dir * (1 - ClimbableOffset));
                 OnClimbable = grid.Get<Climbable>(belowPlayer);
                 LookAt(-dir);
@@ -116,6 +127,7 @@ namespace GridGame.Player
             {
                 LogClimbableDebug("Mounting climbable");
 
+                mountDirection = dir;
                 Move((Vector3)dir * ClimbableOffset);
                 OnClimbable = grid.Get<Climbable>(targetPos);
                 LookAt(dir);

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ namespace GridGame.Editor
                     Matrix4x4 childToWorld = poseToWorld * childToPose;
                     Mesh mesh = filter.sharedMesh;
                     mat.SetPass(0);
-                    Graphics.DrawMeshNow(mesh, childToWorld, 0);
+                    Graphics.DrawMesh(mesh, childToWorld, mat, 0);
                 }
             }
         }
@@ -37,7 +38,7 @@ namespace GridGame.Editor
             {
                 Mesh mesh = filter.sharedMesh;
                 mat.SetPass(0);
-                Graphics.DrawMeshNow(mesh, poseToWorld, 0);
+                Graphics.DrawMesh(mesh, poseToWorld, mat, 0);
             }
         }
 

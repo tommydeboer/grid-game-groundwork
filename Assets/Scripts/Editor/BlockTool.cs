@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using GridGame.Blocks;
+using GridGame.DevTools;
 using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.ShortcutManagement;
@@ -25,6 +26,8 @@ namespace GridGame.Editor
         GridSelection selection;
         Vector3Int mousePos;
 
+        int lastRenderedFrame;
+        bool drawMeshes;
 
         void OnEnable()
         {
@@ -80,19 +83,40 @@ namespace GridGame.Editor
 
         void Paint(EditorWindow window, EventType eventType)
         {
-            if (eventType == EventType.Repaint)
-            {
-                if (selection != null)
-                {
-                    DrawSelection();
-                }
-                else
-                {
-                    DrawCursor(mousePos);
-                }
+            DecideDrawMeshes(eventType);
 
-                window.Repaint();
-                levelEditor.Repaint();
+            if (selection != null)
+            {
+                DrawSelection();
+            }
+            else
+            {
+                DrawCursor(mousePos);
+            }
+
+            window.Repaint();
+            levelEditor.Repaint();
+            drawMeshes = false;
+        }
+
+        /// <summary>
+        /// Meshes drawn with Graphics.DrawMesh are not automatically cleared outside of MonoBehaviour lifecycles.
+        /// This methods clears the meshes at the right time and tells the rest of the tool to draw new meshes during
+        /// the current event.
+        /// </summary>
+        void DecideDrawMeshes(EventType eventType)
+        {
+            if (eventType == EventType.Layout)
+            {
+                // Force the view to update.
+                EditorUtility.SetDirty(this);
+
+                // Only update if we know that the queue was cleared.
+                if (lastRenderedFrame != Time.renderedFrameCount)
+                {
+                    drawMeshes = true;
+                    lastRenderedFrame = Time.renderedFrameCount;
+                }
             }
         }
 
@@ -315,12 +339,15 @@ namespace GridGame.Editor
 
         void DrawEraseSelection()
         {
-            Vector3[] intersections = selection.Intersections;
-            if (intersections.Length > 0)
+            if (drawMeshes)
             {
-                foreach (Vector3 pos in intersections)
+                Vector3[] intersections = selection.Intersections;
+                if (intersections.Length > 0)
                 {
-                    Draw.DrawRedOverlayBox(pos, Vector3.one * 1.05f);
+                    foreach (Vector3 pos in intersections)
+                    {
+                        Draw.DrawRedOverlayBox(pos, Vector3.one * 1.05f);
+                    }
                 }
             }
 
@@ -329,6 +356,8 @@ namespace GridGame.Editor
 
         void DrawCreateSelection()
         {
+            if (!drawMeshes) return;
+
             selection.ForEach(pos => Draw.DrawPrefabPreview(pos, state.SpawnRotation, state.SelectedPrefab));
 
             if (selection.Intersections.Length > 0)
@@ -345,7 +374,7 @@ namespace GridGame.Editor
             {
                 case Mode.Create:
                     Draw.DrawHeightIndicator(pos, state.SpawnHeight);
-                    Draw.DrawPrefabPreview(pos, state.SpawnRotation, state.SelectedPrefab);
+                    if (drawMeshes) Draw.DrawPrefabPreview(pos, state.SpawnRotation, state.SelectedPrefab);
                     break;
                 case Mode.Erase:
                     Draw.DrawWireCube(pos, Color.red);

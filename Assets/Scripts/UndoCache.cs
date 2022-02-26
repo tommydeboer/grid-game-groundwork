@@ -126,6 +126,7 @@ namespace GridGame
             }
 
             heroToTrack.hero.OnClimbable = heroToTrack.onClimbable[0];
+            heroToTrack.hero.IsAlive = true;
 
             OnMoveComplete();
             grid.Refresh();

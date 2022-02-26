@@ -105,8 +105,9 @@ namespace GridGame.Player
 
             if (OnClimbable)
             {
-                if (dir != Vector3Int.forward && mountDirection == dir)
+                if ((dir != Vector3Int.forward && dir != Vector3Int.back) && mountDirection == dir)
                 {
+                    // prevent climbing when we just mounted a ladder sideways to prevent immediately stepping off
                     return;
                 }
 

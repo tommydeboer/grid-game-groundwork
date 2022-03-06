@@ -26,6 +26,8 @@ namespace GridGame.Blocks
         bool isMoving;
         Vector3 previousPos;
 
+        ParticleSystem particleSystem;
+
         bool IsMoving
         {
             set
@@ -55,6 +57,7 @@ namespace GridGame.Blocks
             grid = CoreComponents.Grid;
             hero = GetComponent<Hero>();
             container = GetComponent<Container>();
+            particleSystem = GetComponent<ParticleSystem>();
 
             if (!MovingEvent.IsNull)
             {
@@ -209,6 +212,11 @@ namespace GridGame.Blocks
                 if (!LandedEvent.IsNull)
                 {
                     FMODUnity.RuntimeManager.PlayOneShot(LandedEvent, transform.position);
+                }
+
+                if (particleSystem)
+                {
+                    particleSystem.Play();
                 }
 
                 isFalling = false;

@@ -33,9 +33,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Level_Frame_Mountaineering.unity
     guid: 992c231dbf290b348b5309cff5a0ac2e
   - enabled: 1
-    path: 
-    guid: e0724629773d09848b3c20d43d0d4135
-  - enabled: 1
     path: Assets/Scenes/Level_Bridge_Cross.unity
     guid: 03b6d8e7fc378a146ad5d597be1767a2
   - enabled: 1

@@ -16,6 +16,7 @@ namespace GridGame.Player
         [SerializeField]
         bool debugClimbables;
 
+        //TODO OnClimbable can be Block instead of Climbable
         public Climbable OnClimbable { get; set; }
         const float ClimbableOffset = 0.35f;
 
@@ -100,8 +101,10 @@ namespace GridGame.Player
         void TryPlayerMove(Vector3Int dir)
         {
             var playerPos = Block.Tile.gridPos;
-            Vector3Int targetPos = playerPos + dir;
-            var belowPlayer = playerPos + Vector3Int.down;
+
+            Block target = Block.GetNeighbour(dir);
+            bool targetIsEmpty = target == null;
+            Block below = Block.GetNeighbour(Vector3Int.down);
 
             if (OnClimbable)
             {
@@ -111,34 +114,37 @@ namespace GridGame.Player
                     return;
                 }
 
-                TryClimb(dir, playerPos, belowPlayer);
+                TryClimb(dir, below);
                 return;
             }
-            else if (grid.HasOriented<Climbable>(belowPlayer, dir) && grid.IsEmpty(targetPos) &&
-                     grid.IsEmpty(targetPos + Vector3Int.down))
+
+            Debug.Assert(below != null, "Trying to move player while not grounded");
+
+            if (below.IsOriented<Climbable>(dir) && targetIsEmpty && below.HasEmptyAt(dir))
             {
                 LogClimbableDebug("Mounting climbable from above");
 
                 mountDirection = dir;
                 Move(Vector3Int.down + (Vector3)dir * (1 - ClimbableOffset));
-                OnClimbable = grid.Get<Climbable>(belowPlayer);
+                OnClimbable = below.GetComponent<Climbable>();
                 LookAt(-dir);
             }
-            else if (grid.HasOriented<Climbable>(targetPos, -dir) && !grid.Has<Container>(playerPos))
+            // TODO Block.On<Container>() to remove last grid usage
+            else if (!targetIsEmpty && target.IsOriented<Climbable>(-dir) && !grid.Has<Container>(playerPos))
             {
                 LogClimbableDebug("Mounting climbable");
 
                 mountDirection = dir;
                 Move((Vector3)dir * ClimbableOffset);
-                OnClimbable = grid.Get<Climbable>(targetPos);
+                OnClimbable = target.GetComponent<Climbable>();
                 LookAt(dir);
             }
-            else if (grid.Has<Container>(targetPos))
+            else if (targetIsEmpty || target.Is<Empty>() || target.Is<Container>())
             {
                 Move(dir);
                 OnClimbable = null;
             }
-            else if (grid.Has<Movable>(targetPos))
+            else if (target.Is<Movable>())
             {
                 if (movable.TryMove(dir))
                 {
@@ -146,11 +152,7 @@ namespace GridGame.Player
                     OnClimbable = null;
                 }
             }
-            else if (grid.IsEmpty(targetPos) || grid.Has<Empty>(targetPos))
-            {
-                Move(dir);
-                OnClimbable = null;
-            }
+
 
             if (!OnClimbable)
             {
@@ -158,59 +160,64 @@ namespace GridGame.Player
             }
         }
 
-        void TryClimb(Vector3Int dir, Vector3Int playerPos, Vector3Int belowPlayer)
+        void TryClimb(Vector3Int dir, Block below)
         {
             // correct input direction based on climbable's orientation
             dir = Vector3Int.RoundToInt(Quaternion.Euler(OnClimbable.Block.Tile.rot) * dir);
-            Vector3Int targetPos = playerPos + dir;
 
-            var abovePlayer = playerPos + Vector3Int.up;
+            var above = Block.GetNeighbour(Vector3Int.up);
+            var opposite = Block.GetNeighbour(-dir);
+            var target = Block.GetNeighbour(dir);
             var climbablePos = OnClimbable.Block.Tile.gridPos;
-            if (targetPos == climbablePos)
+
+            if (target != null && target == OnClimbable.Block)
             {
                 //TODO decide what to do: new behaviour "Solid"?
-                if (grid.Has<BlockBehaviour>(abovePlayer)) return;
+                if (above != null) return;
 
-                var aboveClimbable = targetPos + Vector3Int.up;
-                if (grid.HasOriented<Climbable>(aboveClimbable, -dir))
+                var aboveClimbable = OnClimbable.Block.GetNeighbour(Vector3Int.up);
+                if (aboveClimbable != null && aboveClimbable.IsOriented<Climbable>(-dir))
                 {
                     LogClimbableDebug("Climbing up climbable");
 
                     Move(Vector3Int.up);
-                    OnClimbable = grid.Get<Climbable>(aboveClimbable);
+                    OnClimbable = aboveClimbable.GetComponent<Climbable>();
                     LookAt(dir);
                 }
-                else if (grid.IsEmpty(aboveClimbable))
+                else if (aboveClimbable == null)
                 {
                     LogClimbableDebug("Climbing up climbable over edge");
 
                     Move(Vector3Int.up + ((Vector3)dir * (1 - ClimbableOffset)));
                     OnClimbable = null;
                 }
+
+                return;
             }
-            else if (grid.HasOriented<Climbable>(climbablePos + dir, OnClimbable.Block.Orientation))
+            else if (OnClimbable.Block.HasNeighbouringOriented<Climbable>(dir, OnClimbable.Block.Orientation))
             {
                 if (movable.TryMove(dir))
                 {
                     LogClimbableDebug("Climbing to neighbouring climbable");
 
                     Move(dir);
-                    OnClimbable = grid.Get<Climbable>(climbablePos + dir);
+                    // ReSharper disable once PossibleNullReferenceException
+                    OnClimbable = OnClimbable.Block.GetNeighbour(dir).GetComponent<Climbable>();
                 }
             }
-            else if (OnClimbable == grid.Get<Climbable>(playerPos - dir))
+            else if (OnClimbable.Block == opposite)
             {
-                var belowClimbable = climbablePos + Vector3Int.down;
+                var belowClimbable = OnClimbable.Block.GetNeighbour(Vector3Int.down);
 
-                if (grid.HasOriented<Climbable>(belowClimbable, OnClimbable.Block.Orientation) &&
-                    grid.IsEmpty(belowPlayer))
+                if (belowClimbable != null && belowClimbable.IsOriented<Climbable>(OnClimbable.Block.Orientation) &&
+                    below == null)
                 {
                     LogClimbableDebug("Climbing down climbable");
 
                     Move(Vector3Int.down);
-                    OnClimbable = grid.Get<Climbable>(belowClimbable);
+                    OnClimbable = belowClimbable.GetComponent<Climbable>();
                 }
-                else if (grid.IsEmpty(belowClimbable) && grid.IsEmpty(belowPlayer))
+                else if (belowClimbable == null && below == null)
                 {
                     LogClimbableDebug("Falling down climbable");
 
@@ -225,21 +232,20 @@ namespace GridGame.Player
                     OnClimbable = null;
                 }
             }
-            else if (grid.HasOriented<Climbable>(playerPos + dir, -dir))
+            else if (target != null && target.IsOriented<Climbable>(-dir))
             {
                 LogClimbableDebug("Climbing to other climbable in corner");
 
-                Vector3 directionToClimbable = ((Vector3)playerPos - climbablePos).normalized;
+                Vector3 directionToClimbable = ((Vector3)Block.Tile.gridPos - climbablePos).normalized;
                 Move((directionToClimbable * ClimbableOffset) + ((Vector3)dir * ClimbableOffset));
-                OnClimbable = grid.Get<Climbable>(playerPos + dir);
+                OnClimbable = target.GetComponent<Climbable>();
                 LookAt(dir);
             }
             else
             {
-                Vector3 directionToClimbable = ((Vector3)playerPos - climbablePos).normalized;
+                Vector3 directionToClimbable = ((Vector3)Block.Tile.gridPos - climbablePos).normalized;
                 LogClimbableDebug("Stepping off climbable sideways");
-                var movableAtPos = grid.Get<Movable>(targetPos);
-                if (movableAtPos != null && movableAtPos.gameObject.GetComponent<Container>())
+                if (target != null && target.Is<Container>())
                 {
                     Move(dir + (directionToClimbable * ClimbableOffset));
                     OnClimbable = null;
@@ -271,6 +277,12 @@ namespace GridGame.Player
                 Gizmos.color = Color.red;
                 Gizmos.DrawWireCube(OnClimbable.Block.Tile.pos, Vector3.one);
             }
+
+            Gizmos.color = Color.yellow;
+            Transform tf = transform;
+            Vector3 forward = tf.TransformDirection(Vector3.forward);
+            Vector3 pos = tf.position;
+            Gizmos.DrawLine(pos, pos + forward);
         }
 
         void LogClimbableDebug(string log)

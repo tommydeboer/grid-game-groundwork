@@ -20,7 +20,7 @@ namespace GridGame
         struct HeroState
         {
             public Hero hero;
-            public List<Climbable> onClimbable;
+            public List<Block> onClimbable;
         }
 
         readonly Grid grid;
@@ -51,7 +51,7 @@ namespace GridGame
             if (movable.GetComponent<Hero>() != null)
             {
                 heroToTrack.hero = movable.GetComponent<Hero>();
-                heroToTrack.onClimbable = new List<Climbable>();
+                heroToTrack.onClimbable = new List<Block>();
             }
         }
 

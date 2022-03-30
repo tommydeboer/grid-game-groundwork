@@ -32,15 +32,15 @@ namespace GridGame.Player
                 if (Player.OnClimbable)
                 {
                     // TODO introduce Direction class
-                    if (Player.OnClimbable.Block.Orientation == Vector3Int.right)
+                    if (Player.OnClimbable.Orientation == Vector3Int.right)
                     {
                         return new Vector2(viewingAngle, -climbingRotation);
                     }
-                    else if (Player.OnClimbable.Block.Orientation == Vector3Int.left)
+                    else if (Player.OnClimbable.Orientation == Vector3Int.left)
                     {
                         return new Vector2(viewingAngle, climbingRotation);
                     }
-                    else if (Player.OnClimbable.Block.Orientation == Vector3Int.back)
+                    else if (Player.OnClimbable.Orientation == Vector3Int.back)
                     {
                         return new Vector2(viewingAngle, 0f);
                     }

@@ -84,37 +84,6 @@ namespace GridGame
             return null;
         }
 
-        public List<T> GetAll<T>(Vector3Int pos) where T : BlockBehaviour
-        {
-            List<T> blockBehaviours = new();
-            if (blocks.ContainsKey(pos))
-            {
-                blockBehaviours.AddRange(
-                    from block in blocks[pos]
-                    where block.GetComponent<T>() != null
-                    select block.GetComponent<T>());
-            }
-
-            return blockBehaviours;
-        }
-
-        // TODO return block via out param?
-        public bool Has<T>(Vector3Int pos) where T : BlockBehaviour
-        {
-            return Get<T>(pos) != null;
-        }
-
-        public bool HasOriented<T>(Vector3Int pos, Vector3Int orientation) where T : BlockBehaviour
-        {
-            var t = Get<T>(pos);
-            return t != null && t.Block.Orientation == orientation;
-        }
-
-        public bool IsEmpty(Vector3Int pos)
-        {
-            return !Blocks.ContainsKey(pos);
-        }
-
         public List<Triggerable> GetTriggers()
         {
             List<Triggerable> triggerables = new();

@@ -25,12 +25,12 @@ namespace GridGame
         public bool holdingUndo;
         public static bool isPolyban = true;
 
-        Grid grid;
+        readonly List<Movable> movables = new();
+        readonly List<Triggerable> triggers = new();
 
         void Awake()
         {
             instance = this;
-            grid = CoreComponents.Grid;
         }
 
         void Start()
@@ -43,6 +43,26 @@ namespace GridGame
             isMoving = false;
             moversToMove.Clear();
             movingCount = 0;
+        }
+
+        public void RegisterMovable(Movable movable)
+        {
+            movables.Add(movable);
+        }
+
+        public void UnregisterMovable(Movable movable)
+        {
+            movables.Remove(movable);
+        }
+
+        public void RegisterTrigger(Triggerable triggerable)
+        {
+            triggers.Add(triggerable);
+        }
+
+        public void UnregisterTrigger(Triggerable triggerable)
+        {
+            triggers.Remove(triggerable);
         }
 
         /////////////////////////////////////////////////////////////////// MOVE
@@ -63,7 +83,6 @@ namespace GridGame
             movingCount--;
             if (movingCount == 0)
             {
-                grid.Refresh();
                 FallStart();
             }
         }
@@ -71,7 +90,7 @@ namespace GridGame
         void FallStart()
         {
             isMoving = true;
-            grid.GetMovers().OrderBy(mover => mover.transform.position.y).ToList().ForEach(mover => mover.FallStart());
+            movables.OrderBy(mover => mover.transform.position.y).ToList().ForEach(mover => mover.FallStart());
 
             if (movingCount == 0)
             {
@@ -81,7 +100,6 @@ namespace GridGame
 
         public void FallEnd()
         {
-            grid.Refresh();
             if (movingCount == 0)
             {
                 Refresh();
@@ -92,7 +110,7 @@ namespace GridGame
 
         void CheckTriggers()
         {
-            grid.GetTriggers().ForEach(trigger => trigger.Check());
+            triggers.ForEach(trigger => trigger.Check());
         }
 
 

@@ -53,6 +53,8 @@ namespace GridGame.Blocks
 
         void Start()
         {
+            CoreComponents.Game.RegisterMovable(this);
+
             hero = GetComponent<Hero>();
             container = GetComponent<Container>();
             particleSys = GetComponent<ParticleSystem>();
@@ -76,6 +78,7 @@ namespace GridGame.Blocks
         void OnDestroy()
         {
             sfxMoving.release();
+            CoreComponents.Game.UnregisterMovable(this);
         }
 
         public void Reset()

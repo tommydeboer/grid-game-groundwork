@@ -56,7 +56,6 @@ GameObject:
   - component: {fileID: 6896035623923779227}
   - component: {fileID: 1040805247962093163}
   - component: {fileID: 1138110327624003692}
-  - component: {fileID: 2503726404512860180}
   m_Layer: 0
   m_Name: Eye2
   m_TagString: Untagged
@@ -129,19 +128,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2503726404512860180
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4569307359266482129}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5918212888113533655
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,7 +174,6 @@ GameObject:
   - component: {fileID: 4918871046507972642}
   - component: {fileID: 7869643024535592769}
   - component: {fileID: 7257442342276695863}
-  - component: {fileID: 869784865956521838}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -261,20 +246,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &869784865956521838
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5998289744017452723}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7761611565439874287
 GameObject:
   m_ObjectHideFlags: 0
@@ -286,7 +257,6 @@ GameObject:
   - component: {fileID: 8128607573351118425}
   - component: {fileID: 939922796815738767}
   - component: {fileID: 4636711112282937372}
-  - component: {fileID: 7084475885333793938}
   m_Layer: 0
   m_Name: Eye1
   m_TagString: Untagged
@@ -359,19 +329,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &7084475885333793938
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7761611565439874287}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8790303023509255344
 GameObject:
   m_ObjectHideFlags: 0
@@ -470,6 +427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1c96a4f495e436e8bb460d2467d25e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  material: 0
 --- !u!114 &4445390234703586206
 MonoBehaviour:
   m_ObjectHideFlags: 0

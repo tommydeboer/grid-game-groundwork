@@ -48,13 +48,11 @@ namespace GridGame.Blocks
         }
 
         FMOD.Studio.EventInstance sfxMoving;
-        Grid grid;
         Hero hero;
         Container container;
 
         void Start()
         {
-            grid = CoreComponents.Grid;
             hero = GetComponent<Hero>();
             container = GetComponent<Container>();
             particleSys = GetComponent<ParticleSystem>();
@@ -87,15 +85,14 @@ namespace GridGame.Blocks
 
         public bool TryMove(Vector3Int dir)
         {
-            Vector3Int posToCheck = Block.Tile.gridPos + dir;
-            if (grid.Has<Static>(posToCheck))
+            var neighbour = Block.GetNeighbour(dir);
+            if (neighbour)
             {
-                return false;
+                if (!neighbour.Is<Movable>()) return false;
+                if (!TryPush(dir, neighbour.GetComponent<Movable>())) return false;
             }
 
-            if (!TryPush(dir, posToCheck)) return false;
-
-            if (hero == null)
+            if (!hero)
             {
                 TryMoveStacked(dir);
             }
@@ -105,30 +102,28 @@ namespace GridGame.Blocks
 
         void TryMoveStacked(Vector3Int dir)
         {
-            Vector3Int above = Block.Tile.gridPos + Vector3Int.up;
-            Movable stackedMover = grid.Get<Movable>(above);
-            if (stackedMover != null)
+            Movable stackedMovable = Block.GetNeighbouring<Movable>(Vector3Int.up);
+            if (stackedMovable)
             {
-                if (stackedMover.TryMove(dir))
+                if (stackedMovable.TryMove(dir))
                 {
-                    stackedMover.ScheduleMove(dir);
+                    stackedMovable.ScheduleMove(dir);
                 }
             }
         }
 
-        bool TryPush(Vector3Int dir, Vector3Int posToCheck)
+        bool TryPush(Vector3Int dir, Movable neighbour)
         {
-            Movable m = grid.Get<Movable>(posToCheck);
-            if (m != null && m != this)
+            if (neighbour != this)
             {
                 if (!Game.isPolyban)
                 {
                     return false;
                 }
 
-                if (m.TryMove(dir))
+                if (neighbour.TryMove(dir))
                 {
-                    m.ScheduleMove(dir);
+                    neighbour.ScheduleMove(dir);
                 }
                 else
                 {
@@ -150,14 +145,14 @@ namespace GridGame.Blocks
 
         bool ShouldFall()
         {
-            if (hero != null)
+            if (hero)
             {
                 if (hero.OnClimbable)
                 {
                     return false;
                 }
 
-                if (grid.Has<Container>(Block.Below))
+                if (Block.HasNeighbouring<Container>(Vector3Int.down))
                 {
                     return true;
                 }
@@ -183,9 +178,9 @@ namespace GridGame.Blocks
 
                 transform.DOMove(Block.Below, Game.instance.fallTime).OnComplete(FallAgain).SetEase(Ease.Linear);
 
-                if (!container && grid.Has<Crushable>(Block.Below))
+                if (!container)
                 {
-                    grid.Get<Crushable>(Block.Below).Crush();
+                    Block.GetNeighbouring<Crushable>(Vector3Int.down)?.Crush();
                 }
             }
             else
@@ -227,16 +222,17 @@ namespace GridGame.Blocks
 
         bool GroundBelowTile()
         {
-            if (grid.Has<Static>(Block.Below))
+            if (Block.HasNeighbouring<Static>(Vector3Int.down))
             {
                 return true;
             }
 
-            if (grid.Has<Movable>(Block.Below))
+            Movable below = Block.GetNeighbouring<Movable>(Vector3Int.down);
+            if (below)
             {
-                // Need to get all movers because an Hero can be inside a Container
-                List<Movable> movables = grid.GetAll<Movable>(Block.Below);
-                return movables.Any(movable => !movable.isFalling && movable.GetComponent<Crushable>() == null);
+                if (below.isFalling) return false;
+                if (below.GetComponent<Crushable>()) return false;
+                return true;
             }
 
             return false;

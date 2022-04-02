@@ -35,14 +35,22 @@ namespace GridGame.Blocks
             return null;
         }
 
+        [CanBeNull]
+        public T GetNeighbouring<T>(Vector3Int direction) where T : BlockBehaviour
+        {
+            return GetNeighbour(direction)?.GetComponent<T>();
+        }
+
         public bool HasNeighbouring<T>(Vector3Int direction) where T : BlockBehaviour
         {
+            // TODO add an out parameter
             var neighbour = GetNeighbour(direction);
             return neighbour && neighbour.GetComponent<T>();
         }
 
         public bool HasNeighbouringOriented<T>(Vector3Int direction, Vector3Int orientation) where T : BlockBehaviour
         {
+            // TODO add an out parameter
             var neighbour = GetNeighbour(direction);
             return neighbour && neighbour.GetComponent<T>() && neighbour.Orientation == orientation;
         }

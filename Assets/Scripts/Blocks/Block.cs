@@ -57,6 +57,23 @@ namespace GridGame.Blocks
             return GetComponent<T>();
         }
 
+        readonly Collider[] intersections = new Collider[3];
+
+        public bool Intersects<T>() where T : BlockBehaviour
+        {
+            int hits = Physics.OverlapBoxNonAlloc(Tile.gridPos, Vector3.one * .49f, intersections);
+            for (int i = 0; i < hits; i++)
+            {
+                if (intersections[i].gameObject.GetComponentInParent<Block>() == this) continue;
+                if (intersections[i].gameObject.GetComponentInParent<T>())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         // TODO remove when GetNeighbour returns edge before block
         public bool IsOriented<T>(Vector3Int orientation) where T : BlockBehaviour
         {

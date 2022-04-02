@@ -25,7 +25,6 @@ namespace GridGame.Player
 
         Movable movable;
         Crushable crushable;
-        Grid grid;
 
         protected override void Awake()
         {
@@ -52,8 +51,6 @@ namespace GridGame.Player
 
         void Start()
         {
-            grid = CoreComponents.Grid;
-
             if (Camera.main != null)
             {
                 var playerCamera = Camera.main.GetComponent<PlayerCamera>();
@@ -99,8 +96,6 @@ namespace GridGame.Player
 
         void TryPlayerMove(Vector3Int dir)
         {
-            var playerPos = Block.Tile.gridPos;
-
             Block target = Block.GetNeighbour(dir);
             bool targetIsEmpty = target == null;
             Block below = Block.GetNeighbour(Vector3Int.down);
@@ -128,8 +123,7 @@ namespace GridGame.Player
                 OnClimbable = below;
                 LookAt(-dir);
             }
-            // TODO Block.On<Container>() to remove last grid usage
-            else if (!targetIsEmpty && target.IsOriented<Climbable>(-dir) && !grid.Has<Container>(playerPos))
+            else if (!targetIsEmpty && target.IsOriented<Climbable>(-dir) && !Block.Intersects<BlockBehaviour>())
             {
                 LogClimbableDebug("Mounting climbable");
 

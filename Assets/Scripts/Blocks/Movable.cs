@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using GridGame.Player;
+using GridGame.SO;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Object = System.Object;
 
 namespace GridGame.Blocks
 {
-    public class Movable : BlockBehaviour
+    public class Movable : BlockBehaviour, IUndoable
     {
         [SerializeField]
         FMODUnity.EventReference LandedEvent;
@@ -79,11 +81,6 @@ namespace GridGame.Blocks
         {
             sfxMoving.release();
             CoreComponents.Game.UnregisterMovable(this);
-        }
-
-        public void Reset()
-        {
-            isFalling = false;
         }
 
         public bool TryMove(Vector3Int dir)
@@ -239,6 +236,35 @@ namespace GridGame.Blocks
             }
 
             return false;
+        }
+
+        class State
+        {
+            public Vector3 position;
+            public Vector3 rotation;
+            public bool isFalling;
+        }
+
+        public object GetState()
+        {
+            var tf = transform;
+            return new State
+            {
+                position = tf.position,
+                rotation = tf.eulerAngles,
+                isFalling = isFalling
+            };
+        }
+
+        public void ApplyState(object values)
+        {
+            var state = values as State;
+            Debug.Assert(state != null, "Movable received a null undo state");
+
+            var tf = transform;
+            tf.position = state.position;
+            tf.eulerAngles = state.rotation;
+            isFalling = state.isFalling;
         }
     }
 }

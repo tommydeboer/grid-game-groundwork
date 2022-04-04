@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using GridGame.Blocks;
+using GridGame.SO;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,6 +16,9 @@ namespace GridGame
 
         [SerializeField]
         float holdUndoInterval = 0.075f;
+
+        [SerializeField]
+        UndoEventChannelSO undoEventChannel;
 
         Grid grid;
         Game game;
@@ -31,13 +36,11 @@ namespace GridGame
         void OnEnable()
         {
             grid.OnGridReset += cache.Reset;
-            Game.onMoveComplete += cache.OnMoveComplete;
         }
 
         void OnDisable()
         {
             grid.OnGridReset -= cache.Reset;
-            Game.onMoveComplete -= cache.OnMoveComplete;
         }
 
         [UsedImplicitly]
@@ -63,17 +66,9 @@ namespace GridGame
 
         void DoUndo()
         {
-            if (cache.undoIndex > 0)
-            {
-                DOTween.KillAll();
-                if (Game.isMoving)
-                {
-                    Game.CompleteMove();
-                }
-
-                cache.DoUndo();
-                game.Refresh();
-            }
+            DOTween.KillAll();
+            undoEventChannel.RequestUndo(Game.isMoving);
+            game.Refresh();
         }
 
         void UndoRepeat()
@@ -90,12 +85,12 @@ namespace GridGame
             yield return WaitFor.EndOfFrame;
             holdingUndo = false;
         }
-        
+
         void DoReset()
         {
             DOTween.KillAll();
-            cache.DoReset();
             game.Refresh();
+            undoEventChannel.RequestReset();
         }
     }
 }

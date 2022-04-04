@@ -453,6 +453,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   holdUndoDelay: 0.75
   holdUndoInterval: 0.075
+  undoEventChannel: {fileID: 11400000, guid: 18f539e9cb2a7a048ac267509007ceb8, type: 2}
 --- !u!1 &2001662977
 GameObject:
   m_ObjectHideFlags: 0
@@ -576,6 +577,12 @@ PrefabInstance:
       propertyPath: moveTime
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 877372581326712350, guid: 077771e453471a74990da57584a62930,
+        type: 3}
+      propertyPath: undoEventChannel
+      value: 
+      objectReference: {fileID: 11400000, guid: 18f539e9cb2a7a048ac267509007ceb8,
+        type: 2}
     - target: {fileID: 877372581326712351, guid: 077771e453471a74990da57584a62930,
         type: 3}
       propertyPath: m_RootOrder

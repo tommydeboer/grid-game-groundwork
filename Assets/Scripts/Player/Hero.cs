@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 namespace GridGame.Player
 {
     [RequireComponent(typeof(Movable))]
-    public class Hero : BlockBehaviour
+    public class Hero : BlockBehaviour, IUndoable
     {
         [SerializeField]
         FMODUnity.EventReference WalkEvent;
@@ -284,6 +284,30 @@ namespace GridGame.Player
             {
                 Debug.Log(log);
             }
+        }
+
+        class State
+        {
+            public Block onClimbable;
+            public bool isAlive;
+        }
+
+        public object GetState()
+        {
+            return new State
+            {
+                onClimbable = OnClimbable,
+                isAlive = IsAlive
+            };
+        }
+
+        public void ApplyState(object values)
+        {
+            var state = values as State;
+            Debug.Assert(state != null, "Hero received a null undo state");
+
+            IsAlive = state.isAlive;
+            OnClimbable = state.onClimbable;
         }
     }
 }

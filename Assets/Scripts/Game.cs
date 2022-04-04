@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using GridGame.Blocks;
+using GridGame.SO;
 using UnityEngine;
 
 namespace GridGame
 {
     public class Game : MonoBehaviour
     {
-        public delegate void GameEvent();
-
-        public static GameEvent onMoveComplete;
+        [SerializeField]
+        UndoEventChannelSO undoEventChannel;
 
         public static Game instance;
 
@@ -104,19 +104,13 @@ namespace GridGame
             {
                 Refresh();
                 CheckTriggers();
-                CompleteMove();
+                undoEventChannel.RequestSave();
             }
         }
 
         void CheckTriggers()
         {
             triggers.ForEach(trigger => trigger.Check());
-        }
-
-
-        public static void CompleteMove()
-        {
-            onMoveComplete?.Invoke();
         }
     }
 }

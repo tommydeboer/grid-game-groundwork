@@ -20,27 +20,13 @@ namespace GridGame
         [SerializeField]
         UndoEventChannelSO undoEventChannel;
 
-        Grid grid;
         Game game;
-        UndoCache cache;
 
         bool holdingUndo;
 
         void Awake()
         {
-            grid = CoreComponents.Grid;
             game = CoreComponents.Game;
-            cache = new UndoCache(grid);
-        }
-
-        void OnEnable()
-        {
-            grid.OnGridReset += cache.Reset;
-        }
-
-        void OnDisable()
-        {
-            grid.OnGridReset -= cache.Reset;
         }
 
         [UsedImplicitly]

@@ -21,13 +21,13 @@ namespace GridGame.Undo
             else
             {
                 history.Pop();
-                return history.Count == 0 ? initialValue : history.Peek();
+                return Current();
             }
         }
 
         public T Current()
         {
-            return history.Peek();
+            return history.Count == 0 ? initialValue : history.Peek();
         }
 
         public void Push(T value)

@@ -17,12 +17,12 @@ namespace GridGame.Player
         [SerializeField]
         bool debugClimbables;
 
-        public Block OnClimbable { get; set; }
+        public Block OnClimbable { get; private set; }
         const float ClimbableOffset = 0.35f;
 
         Vector3Int currentMovementDir;
         Vector3Int mountDirection;
-        public bool IsAlive { get; set; }
+        bool IsAlive { get; set; }
 
         Movable movable;
         Crushable crushable;

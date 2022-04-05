@@ -1,4 +1,4 @@
-namespace GridGame.Blocks
+namespace GridGame.Undo
 {
     public interface IUndoable
     {

@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
 using GridGame.SO;
 using UnityEngine;
 
-namespace GridGame.Blocks
+namespace GridGame.Undo
 {
     public class Undoable : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GridGame.Blocks
+namespace GridGame.Undo
 {
     public class History<T>
     {

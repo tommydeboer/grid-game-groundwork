@@ -57,7 +57,7 @@ namespace GridGame.Editor
             obj.transform.eulerAngles = eulerAngles ?? Vector3.zero;
 
             Utils.AvoidIntersect(obj.transform);
-            Undo.RegisterCreatedObjectUndo(obj, "Create object");
+            UnityEditor.Undo.RegisterCreatedObjectUndo(obj, "Create object");
         }
 
         public void ClearAt(Vector3Int pos)
@@ -75,7 +75,7 @@ namespace GridGame.Editor
                         if (tile.CompareTag(Tags.TILE) && atPosition)
                         {
                             foundSomething = true;
-                            Undo.DestroyObjectImmediate(child.gameObject);
+                            UnityEditor.Undo.DestroyObjectImmediate(child.gameObject);
                             break;
                         }
                     }

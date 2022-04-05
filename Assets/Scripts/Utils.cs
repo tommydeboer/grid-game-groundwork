@@ -187,22 +187,5 @@ namespace GridGame
         {
             return GetMoverAtPos(pos) != null;
         }
-
-        public static List<Movable> MoversAbove(Movable m, bool clear = true)
-        {
-            if (clear)
-            {
-                movers.Clear();
-            }
-
-            Movable m2 = GetMoverAtPos(m.Block.Tile.pos + Vector3.back);
-            if (m2 != null && !movers.Contains(m2))
-            {
-                movers.Add(m2);
-                movers.AddRange(MoversAbove(m2, false));
-            }
-
-            return movers.Distinct().ToList();
-        }
     }
 }

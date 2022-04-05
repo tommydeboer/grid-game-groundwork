@@ -157,12 +157,12 @@ namespace GridGame.Player
         void TryClimb(Vector3Int dir, Block below)
         {
             // correct input direction based on climbable's orientation
-            dir = Vector3Int.RoundToInt(Quaternion.Euler(OnClimbable.Tile.rot) * dir);
+            dir = Vector3Int.RoundToInt(Quaternion.Euler(OnClimbable.Rotation) * dir);
 
             var above = Block.GetNeighbour(Vector3Int.up);
             var opposite = Block.GetNeighbour(-dir);
             var target = Block.GetNeighbour(dir);
-            var climbablePos = OnClimbable.Tile.gridPos;
+            var climbablePos = OnClimbable.Position;
 
             if (target != null && target == OnClimbable)
             {
@@ -230,14 +230,14 @@ namespace GridGame.Player
             {
                 LogClimbableDebug("Climbing to other climbable in corner");
 
-                Vector3 directionToClimbable = ((Vector3)Block.Tile.gridPos - climbablePos).normalized;
+                Vector3 directionToClimbable = ((Vector3)Block.Position - climbablePos).normalized;
                 Move((directionToClimbable * ClimbableOffset) + ((Vector3)dir * ClimbableOffset));
                 OnClimbable = target;
                 LookAt(dir);
             }
             else
             {
-                Vector3 directionToClimbable = ((Vector3)Block.Tile.gridPos - climbablePos).normalized;
+                Vector3 directionToClimbable = ((Vector3)Block.Position - climbablePos).normalized;
                 LogClimbableDebug("Stepping off climbable sideways");
                 if (target != null && target.Is<Container>())
                 {
@@ -269,7 +269,7 @@ namespace GridGame.Player
             if (debugClimbables && OnClimbable)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawWireCube(OnClimbable.Tile.pos, Vector3.one);
+                Gizmos.DrawWireCube(OnClimbable.Position, Vector3.one);
             }
 
             Gizmos.color = Color.yellow;

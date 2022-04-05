@@ -11,15 +11,10 @@ namespace GridGame.Blocks
         BlockMaterial material = BlockMaterial.Default;
 
         public BlockMaterial Material => material;
-        public Tile Tile { get; private set; }
-        public Vector3Int Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Tile.rot) * Vector3.back);
-
-        void Awake()
-        {
-            CreateTile();
-        }
-
-        public Vector3Int Below => Tile.gridPos + Vector3Int.down;
+        public Vector3 Position => transform.position;
+        public Vector3 Rotation => transform.eulerAngles;
+        public Vector3Int Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Rotation) * Vector3.back);
+        public Vector3 Below => Position + Vector3.down;
 
         [CanBeNull]
         public Block GetNeighbour(Vector3Int direction)
@@ -69,7 +64,7 @@ namespace GridGame.Blocks
 
         public bool Intersects<T>() where T : BlockBehaviour
         {
-            int hits = Physics.OverlapBoxNonAlloc(Tile.gridPos, Vector3.one * .49f, intersections);
+            int hits = Physics.OverlapBoxNonAlloc(Position, Vector3.one * .49f, intersections);
             for (int i = 0; i < hits; i++)
             {
                 if (intersections[i].gameObject.GetComponentInParent<Block>() == this) continue;
@@ -86,29 +81,6 @@ namespace GridGame.Blocks
         public bool IsOriented<T>(Vector3Int orientation) where T : BlockBehaviour
         {
             return GetComponent<T>() && Orientation == orientation;
-        }
-
-        void CreateTile()
-        {
-            bool found = false;
-            foreach (Transform child in transform)
-            {
-                if (child.gameObject.CompareTag(Tags.TILE))
-                {
-                    if (found)
-                    {
-                        Debug.LogWarning("Block contains more than one tile", this);
-                    }
-
-                    Tile = new Tile { t = child };
-                    found = true;
-                }
-            }
-
-            if (!found)
-            {
-                Debug.LogWarning("Block contains no tile", this);
-            }
         }
     }
 }

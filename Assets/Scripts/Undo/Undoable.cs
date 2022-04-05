@@ -9,7 +9,7 @@ namespace GridGame.Undo
         UndoEventChannelSO undoEventChannel;
 
         IUndoable[] undoables;
-        History<object>[] histories;
+        History<PersistableState>[] histories;
 
         void Awake()
         {
@@ -33,11 +33,11 @@ namespace GridGame.Undo
 
         void Init()
         {
-            histories = new History<object>[undoables.Length];
+            histories = new History<PersistableState>[undoables.Length];
             for (int i = 0; i < undoables.Length; i++)
             {
-                object initialValue = undoables[i].GetState();
-                histories[i] = new History<object>(initialValue);
+                PersistableState initialValue = undoables[i].GetState();
+                histories[i] = new History<PersistableState>(initialValue);
             }
         }
 
@@ -45,7 +45,7 @@ namespace GridGame.Undo
         {
             for (int i = 0; i < undoables.Length; i++)
             {
-                object value = cancelsCurrentMove ? histories[i].Current() : histories[i].Back();
+                PersistableState value = cancelsCurrentMove ? histories[i].Current() : histories[i].Back();
                 undoables[i].ApplyState(value);
             }
         }

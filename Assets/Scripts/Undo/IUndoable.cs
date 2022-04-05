@@ -2,9 +2,8 @@ namespace GridGame.Undo
 {
     public interface IUndoable
     {
-        public object GetState();
+        public PersistableState GetState();
 
-        // TODO use other base class than object
-        public void ApplyState(object values);
+        public void ApplyState(PersistableState persistableState);
     }
 }

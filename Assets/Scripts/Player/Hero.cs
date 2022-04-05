@@ -287,26 +287,24 @@ namespace GridGame.Player
             }
         }
 
-        class State
+        class HeroState : PersistableState
         {
             public Block onClimbable;
             public bool isAlive;
         }
 
-        public object GetState()
+        public PersistableState GetState()
         {
-            return new State
+            return new HeroState
             {
                 onClimbable = OnClimbable,
                 isAlive = IsAlive
             };
         }
 
-        public void ApplyState(object values)
+        public void ApplyState(PersistableState persistableState)
         {
-            var state = values as State;
-            Debug.Assert(state != null, "Hero received a null undo state");
-
+            var state = persistableState.As<HeroState>();
             IsAlive = state.isAlive;
             OnClimbable = state.onClimbable;
         }

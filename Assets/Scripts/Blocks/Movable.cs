@@ -239,17 +239,17 @@ namespace GridGame.Blocks
             return false;
         }
 
-        class State
+        class MovableState : PersistableState
         {
             public Vector3 position;
             public Vector3 rotation;
             public bool isFalling;
         }
 
-        public object GetState()
+        public PersistableState GetState()
         {
             var tf = transform;
-            return new State
+            return new MovableState
             {
                 position = tf.position,
                 rotation = tf.eulerAngles,
@@ -257,11 +257,9 @@ namespace GridGame.Blocks
             };
         }
 
-        public void ApplyState(object values)
+        public void ApplyState(PersistableState persistableState)
         {
-            var state = values as State;
-            Debug.Assert(state != null, "Movable received a null undo state");
-
+            var state = persistableState.As<MovableState>();
             var tf = transform;
             tf.position = state.position;
             tf.eulerAngles = state.rotation;

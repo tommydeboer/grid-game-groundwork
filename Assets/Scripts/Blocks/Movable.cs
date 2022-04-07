@@ -117,11 +117,6 @@ namespace GridGame.Blocks
         {
             if (neighbour != this)
             {
-                if (!Game.isPolyban)
-                {
-                    return false;
-                }
-
                 if (neighbour.TryMove(dir))
                 {
                     neighbour.ScheduleMove(dir);

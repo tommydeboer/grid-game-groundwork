@@ -7,6 +7,7 @@ using GridGame.Player;
 using GridGame.SO;
 using GridGame.Undo;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
 using Object = System.Object;
 
@@ -81,7 +82,9 @@ namespace GridGame.Blocks
         void OnDestroy()
         {
             sfxMoving.release();
-            CoreComponents.Game.UnregisterMovable(this);
+            Game game = CoreComponents.Game;
+            Debug.Assert(game != null, "null game!!111");
+            game.UnregisterMovable(this);
         }
 
         public bool TryMove(Vector3Int dir)

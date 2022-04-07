@@ -12,7 +12,6 @@ namespace GridGame.SO
     public class LoadEventChannelSO : ScriptableObject
     {
         public UnityAction<SceneReference, bool> OnLoadingRequested;
-        public UnityAction<Scene> OnLevelLoaded;
 
         public void RequestSceneLoad(SceneReference scene, bool showLoadingScreen)
         {
@@ -26,11 +25,6 @@ namespace GridGame.SO
                                  "Check why there is no LevelLoader already present, " +
                                  "and make sure it's listening on this Load Event channel.");
             }
-        }
-
-        public void RaiseLevelLoadedEvent(Scene scene)
-        {
-            OnLevelLoaded?.Invoke(scene);
         }
     }
 }

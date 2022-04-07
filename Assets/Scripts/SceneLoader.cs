@@ -35,16 +35,6 @@ namespace GridGame
 
         void Awake()
         {
-            for (int i = 0; i < SceneManager.sceneCount; i++)
-            {
-                Scene scene = SceneManager.GetSceneAt(i);
-                if (scene.IsLevel())
-                {
-                    loadEventChannel.RaiseLevelLoadedEvent(scene);
-                    break;
-                }
-            }
-
             if (!SceneManager.GetActiveScene().IsLevel())
             {
                 LoadScene(openingLevel, false);
@@ -84,11 +74,6 @@ namespace GridGame
         {
             Scene scene = SceneManager.GetSceneByPath(activeScene.ScenePath);
             SceneManager.SetActiveScene(scene);
-
-            if (scene.IsLevel())
-            {
-                loadEventChannel.OnLevelLoaded(scene);
-            }
         }
 
         void AddScenesToUnload()

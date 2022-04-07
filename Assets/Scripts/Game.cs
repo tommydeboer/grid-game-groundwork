@@ -22,7 +22,6 @@ namespace GridGame
 
         public static bool isMoving;
         public int movingCount;
-        public bool holdingUndo;
         public static bool isPolyban = true;
 
         readonly List<Movable> movables = new();

@@ -26,6 +26,7 @@ namespace GridGame.Player
 
         Movable movable;
         Crushable crushable;
+        bool holdingUndo;
 
         protected override void Awake()
         {
@@ -74,7 +75,13 @@ namespace GridGame.Player
 
         bool CanInput()
         {
-            return !Game.isMoving && !Game.instance.holdingUndo && IsAlive;
+            return !Game.isMoving && !holdingUndo && IsAlive;
+        }
+
+        [UsedImplicitly]
+        public void OnUndo(InputValue value)
+        {
+            holdingUndo = value.isPressed;
         }
 
         [UsedImplicitly]

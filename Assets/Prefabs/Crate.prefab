@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7434155334459483016}
   - component: {fileID: 3525490266949364210}
-  m_Layer: 0
-  m_Name: Tile (1)
+  m_Layer: 9
+  m_Name: Tile
   m_TagString: Tile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94,6 +94,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   material: 1
+  gridPhysicsLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!114 &7970857947129725391
 MonoBehaviour:
   m_ObjectHideFlags: 0

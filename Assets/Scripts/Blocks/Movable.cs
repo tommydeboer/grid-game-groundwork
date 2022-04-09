@@ -54,14 +54,16 @@ namespace GridGame.Blocks
         FMOD.Studio.EventInstance sfxMoving;
         Hero hero;
         Container container;
+        Game game;
 
         void Start()
         {
-            CoreComponents.Game.RegisterMovable(this);
-
+            game = CoreComponents.Game;
             hero = GetComponent<Hero>();
             container = GetComponent<Container>();
             particleSys = GetComponent<ParticleSystem>();
+            
+            game.RegisterMovable(this);
 
             if (!MovingEvent.IsNull)
             {
@@ -82,8 +84,6 @@ namespace GridGame.Blocks
         void OnDestroy()
         {
             sfxMoving.release();
-            Game game = CoreComponents.Game;
-            Debug.Assert(game != null, "null game!!111");
             game.UnregisterMovable(this);
         }
 

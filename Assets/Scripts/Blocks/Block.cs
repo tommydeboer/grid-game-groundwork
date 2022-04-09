@@ -19,10 +19,7 @@ namespace GridGame.Blocks
         [CanBeNull]
         public Block GetNeighbour(Vector3Int direction)
         {
-            // TODO use layer mask for grid objects
-
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, direction, out hit, 1f))
+            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, 1f, (int)Layers.GridPhysics))
             {
                 return hit.collider.gameObject.GetComponentInParent<Block>();
             }
@@ -64,7 +61,14 @@ namespace GridGame.Blocks
 
         public bool Intersects<T>() where T : BlockBehaviour
         {
-            int hits = Physics.OverlapBoxNonAlloc(Position, Vector3.one * .49f, intersections);
+            int hits = Physics.OverlapBoxNonAlloc(
+                Position,
+                Vector3.one * .49f,
+                intersections,
+                Quaternion.identity,
+                (int)Layers.GridPhysics
+            );
+
             for (int i = 0; i < hits; i++)
             {
                 if (intersections[i].gameObject.GetComponentInParent<Block>() == this) continue;

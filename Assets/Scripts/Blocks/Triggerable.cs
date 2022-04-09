@@ -9,9 +9,12 @@ namespace GridGame.Blocks
         [SerializeField]
         UnityEvent action;
 
+        Game game;
+
         void Start()
         {
-            CoreComponents.Game.RegisterTrigger(this);
+            game = CoreComponents.Game;
+            game.RegisterTrigger(this);
         }
 
         public void Check()
@@ -21,7 +24,7 @@ namespace GridGame.Blocks
 
         void OnDestroy()
         {
-            CoreComponents.Game.UnregisterTrigger(this);
+            game.UnregisterTrigger(this);
         }
     }
 }

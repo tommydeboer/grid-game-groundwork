@@ -1,12 +1,18 @@
+using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using JetBrains.Annotations;
+using UnityEditor;
 using UnityEngine;
 
 namespace GridGame.Blocks
 {
     public class Block : MonoBehaviour
     {
+        //TODO should be moved to Movable? what strategy does a ladder have for example? Ladder won't see a Frame with current implementation
+        [SerializeField]
+        QueryStrategy gridQueryStrategy = QueryStrategy.CENTER_RAY;
+
         [SerializeField]
         BlockMaterial material = BlockMaterial.Default;
 
@@ -16,15 +22,17 @@ namespace GridGame.Blocks
         public Vector3Int Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Rotation) * Vector3.back);
         public Vector3 Below => Position + Vector3.down;
 
-        [CanBeNull]
-        public Block GetNeighbour(Vector3Int direction)
+        enum QueryStrategy
         {
-            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, 1f, (int)Layers.GridPhysics))
-            {
-                return hit.collider.gameObject.GetComponentInParent<Block>();
-            }
+            CENTER_RAY,
+            EDGE_RAYS,
+            FULL_SURFACE
+        }
 
-            return null;
+        [CanBeNull]
+        public Block GetNeighbour(Vector3 direction)
+        {
+            return Query(direction);
         }
 
         [CanBeNull]
@@ -85,6 +93,81 @@ namespace GridGame.Blocks
         public bool IsOriented<T>(Vector3Int orientation) where T : BlockBehaviour
         {
             return GetComponent<T>() && Orientation == orientation;
+        }
+
+        [CanBeNull]
+        Block Query(Vector3 direction)
+        {
+            return gridQueryStrategy switch
+            {
+                QueryStrategy.CENTER_RAY => QueryCenterRay(direction),
+                QueryStrategy.EDGE_RAYS => QueryEdgeRays(direction),
+                QueryStrategy.FULL_SURFACE => throw new NotImplementedException(),
+                _ => throw new ArgumentOutOfRangeException(nameof(gridQueryStrategy), gridQueryStrategy, null)
+            };
+        }
+
+        [CanBeNull]
+        Block QueryCenterRay(Vector3 direction)
+        {
+            return DoSphereCast(transform.position, direction, .1f, 1f);
+        }
+
+        [CanBeNull]
+        Block QueryEdgeRays(Vector3 direction)
+        {
+            Vector3 offset = direction.IsVertical() ? Vector3.right : Vector3.up;
+            offset *= .45f;
+
+            for (int i = 0; i < 4; i++)
+            {
+                Vector3 relativePos = Quaternion.AngleAxis(90 * i, direction) * offset;
+                Vector3 rayOrigin = transform.position + relativePos + direction * 0.45f;
+                Block block = DoRayCast(rayOrigin, direction, .8f);
+                if (block) return block;
+            }
+
+            return null;
+        }
+
+        [CanBeNull]
+        static Block DoRayCast(Vector3 origin, Vector3 direction, float distance)
+        {
+            if (Physics.Raycast(origin, direction, out RaycastHit hit, distance, (int)Layers.GridPhysics))
+            {
+                return hit.collider.gameObject.GetComponentInParent<Block>();
+            }
+
+            return null;
+        }
+
+        [CanBeNull]
+        static Block DoSphereCast(Vector3 origin, Vector3 direction, float radius, float distance)
+        {
+            if (Physics.SphereCast(origin, radius, direction, out RaycastHit hit, distance, (int)Layers.GridPhysics))
+            {
+                return hit.collider.gameObject.GetComponentInParent<Block>();
+            }
+
+            return null;
+        }
+
+        void OnDrawGizmosSelected()
+        {
+            Vector3 pos = transform.position;
+            Gizmos.color = Color.red;
+
+            Vector3 direction = Vector3.right;
+            Vector3 offset = direction.IsVertical() ? Vector3.right : Vector3.up;
+            offset *= .45f;
+
+            for (int i = 0; i < 4; i++)
+            {
+                Vector3 rayOrigin = Quaternion.AngleAxis(90 * i, direction) * offset;
+
+                Vector3 relPos = pos + rayOrigin + direction * 0.45f;
+                Gizmos.DrawLine(relPos, relPos + direction * .8f);
+            }
         }
     }
 }

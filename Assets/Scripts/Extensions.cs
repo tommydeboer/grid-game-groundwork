@@ -21,6 +21,12 @@ namespace GridGame
             return DirectionStrings.ContainsKey(dir) ? DirectionStrings[dir] : dir.ToString();
         }
 
+        // TODO introduce Direction class
+        public static bool IsVertical(this Vector3 dir)
+        {
+            return dir == Vector3.up || dir == Vector3.down;
+        }
+
         public static bool IsLevel(this Scene scene)
         {
             return scene.name.StartsWith("Level_");

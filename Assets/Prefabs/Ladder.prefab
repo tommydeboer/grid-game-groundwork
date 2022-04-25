@@ -259,6 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1c96a4f495e436e8bb460d2467d25e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gridQueryStrategy: 1
   material: 0
 --- !u!114 &6933811411895611957
 MonoBehaviour:

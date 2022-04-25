@@ -284,6 +284,9 @@ namespace GridGame.Player
             Vector3 forward = tf.TransformDirection(Vector3.forward);
             Vector3 pos = tf.position;
             Gizmos.DrawLine(pos, pos + forward);
+
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(pos, pos + Vector3.down);
         }
 
         void LogClimbableDebug(string log)

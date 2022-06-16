@@ -1,14 +1,88 @@
+using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using JetBrains.Annotations;
+using UnityEditor;
 using UnityEngine;
 
 namespace GridGame.Blocks
 {
     public class Block : MonoBehaviour
     {
+        [Header("Faces")]
+        [SerializeField]
+        GameObject topFace;
+
+        [SerializeField]
+        GameObject bottomFace;
+
+        [SerializeField]
+        GameObject frontFace;
+
+        [SerializeField]
+        GameObject backFace;
+
+        [SerializeField]
+        GameObject leftFace;
+
+        [SerializeField]
+        GameObject rightFace;
+
+        [Header("Other settings")]
         [SerializeField]
         BlockMaterial material = BlockMaterial.Default;
+
+        readonly Dictionary<Direction, Quaternion> rotationsFromTop = new()
+        {
+            { Direction.Up, Quaternion.Euler(0, 0, 0) },
+            { Direction.Down, Quaternion.Euler(180, 0, 0) },
+            { Direction.Left, Quaternion.Euler(0, 0, 90) },
+            { Direction.Right, Quaternion.Euler(0, 0, -90) },
+            { Direction.Forward, Quaternion.Euler(90, 0, 0) },
+            { Direction.Back, Quaternion.Euler(-90, 0, 0) },
+        };
+
+        public void BuildFaces()
+        {
+            var faces = transform.Find("Faces");
+            if (faces) DestroyImmediate(faces.gameObject);
+            var facesParent = CreateFacesParent();
+
+            Dictionary<Direction, GameObject> faceObjects = GetFaces();
+
+            foreach ((Direction direction, GameObject facePrefab) in faceObjects)
+            {
+                GameObject go = PrefabUtility.InstantiatePrefab(facePrefab, facesParent.transform) as GameObject;
+                Debug.Assert(go != null, "Couldn't instantiate face prefab");
+                go.transform.position = transform.position;
+                go.transform.rotation = rotationsFromTop[direction];
+            }
+        }
+
+        Dictionary<Direction, GameObject> GetFaces()
+        {
+            Dictionary<Direction, GameObject> faceObjects = new();
+            if (topFace) faceObjects[Direction.Up] = topFace;
+            if (bottomFace) faceObjects[Direction.Down] = bottomFace;
+            if (frontFace) faceObjects[Direction.Forward] = frontFace;
+            if (backFace) faceObjects[Direction.Back] = backFace;
+            if (leftFace) faceObjects[Direction.Left] = leftFace;
+            if (rightFace) faceObjects[Direction.Right] = rightFace;
+            return faceObjects;
+        }
+
+        GameObject CreateFacesParent()
+        {
+            return new GameObject
+            {
+                name = "Faces",
+                transform =
+                {
+                    parent = transform
+                }
+            };
+        }
 
         public BlockMaterial Material => material;
         public Vector3 Position => transform.position;

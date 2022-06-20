@@ -69,7 +69,7 @@ namespace GridGame
                         }
                         else
                         {
-                            Static static_ = GetStaticAtPos(tile.position);
+                            Block static_ = GetStaticAtPos(tile.position);
                             if (static_ != null && static_.transform != root)
                             {
                                 root.position += Vector3.back;
@@ -128,16 +128,16 @@ namespace GridGame
 
         // WALLS // 
 
-        public static Static GetStaticAtPos(Vector3Int pos)
+        public static Block GetStaticAtPos(Vector3Int pos)
         {
             Collider[] colliders = GetCollidersAt(pos);
 
             return colliders
-                .Select(t => t.GetComponentInParent<Static>())
-                .FirstOrDefault(static_ => static_ != null);
+                .Select(t => t.GetComponentInParent<Block>())
+                .FirstOrDefault(block => !block.IsDynamic);
         }
 
-        public static Static GetStaticAtPos(Vector3 pos)
+        public static Block GetStaticAtPos(Vector3 pos)
         {
             return GetStaticAtPos(Vec3ToInt(pos));
         }

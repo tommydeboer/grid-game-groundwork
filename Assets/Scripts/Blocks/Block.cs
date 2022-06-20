@@ -18,9 +18,23 @@ namespace GridGame.Blocks
             public GameObject prefab;
         }
 
+        [Tooltip("Face prefabs for each side of the block")]
         [SerializeField]
-        List<FaceObject> faces;
+        List<FaceObject> faces = new(6);
 
+        [Tooltip("If true, empty faces will count as solid faces")]
+        [SerializeField]
+        bool isSolid;
+
+        // TODO remove this concept when Player, Exit, etc. are entities instead of blocks
+        [Tooltip("Non-full sized blocks fit inside full sized blocks")]
+        [SerializeField]
+        bool isFullSized;
+
+        public bool IsDynamic { get; private set; }
+        public bool IsFullSized => isFullSized;
+        public bool IsSolid => isSolid;
+        public Block AttachedTo { get; set; }
         public Vector3 Position => transform.position;
         public Vector3 Rotation => transform.eulerAngles;
         public Vector3Int Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Rotation) * Vector3.back);
@@ -55,8 +69,14 @@ namespace GridGame.Blocks
         }
 #endif
 
+        void Awake()
+        {
+            IsDynamic = GetComponent<Movable>();
+        }
+
         public bool HasFaceAt(Direction direction)
         {
+            if (IsSolid) return true;
             return faces.Find(o => o.direction == direction) != null;
         }
 

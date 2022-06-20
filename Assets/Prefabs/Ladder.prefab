@@ -222,7 +222,6 @@ GameObject:
   - component: {fileID: 1784822460526676318}
   - component: {fileID: 369893530123733422}
   - component: {fileID: 6933811411895611957}
-  - component: {fileID: 8644943673326310905}
   m_Layer: 0
   m_Name: Ladder
   m_TagString: Untagged
@@ -259,7 +258,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1c96a4f495e436e8bb460d2467d25e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: 0
+  faces: []
+  isSolid: 1
+  isFullSized: 1
 --- !u!114 &6933811411895611957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,18 +271,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c748a42053d24ddd9d6cdd800b28e35e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8644943673326310905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1666817577578165055}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d20674ca33c44cda8a959179a8fb2b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2752843967236982481

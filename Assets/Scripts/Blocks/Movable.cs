@@ -52,15 +52,11 @@ namespace GridGame.Blocks
         }
 
         FMOD.Studio.EventInstance sfxMoving;
-        Hero hero;
-        Container container;
         Game game;
 
         void Start()
         {
             game = CoreComponents.Game;
-            hero = GetComponent<Hero>();
-            container = GetComponent<Container>();
             particleSys = GetComponent<ParticleSystem>();
 
             game.RegisterMovable(this);
@@ -96,7 +92,7 @@ namespace GridGame.Blocks
                 if (!TryPush(dir, target.GetComponent<Movable>())) return false;
             }
 
-            if (!hero)
+            if (Block.IsFullSized)
             {
                 TryMoveStacked(dir);
             }
@@ -144,18 +140,9 @@ namespace GridGame.Blocks
 
         bool ShouldFall()
         {
-            if (hero)
+            if (Block.AttachedTo)
             {
-                if (hero.OnClimbable)
-                {
-                    return false;
-                }
-
-                Container containerBelow = Block.GetNeighbouring<Container>(Vector3Int.down);
-                if (containerBelow)
-                {
-                    return !containerBelow.Block.HasFaceAt(Direction.Up);
-                }
+                return false;
             }
 
             if (GroundBelowTile())
@@ -178,7 +165,8 @@ namespace GridGame.Blocks
 
                 transform.DOMove(Block.Below, Game.instance.fallTime).OnComplete(FallAgain).SetEase(Ease.Linear);
 
-                if (!container)
+                // TODO remove and use collisions to crush instead
+                if (Block.IsSolid || Block.HasFaceAt(Direction.Down))
                 {
                     Block.GetNeighbouring<Crushable>(Vector3Int.down)?.Crush();
                 }
@@ -222,16 +210,21 @@ namespace GridGame.Blocks
 
         bool GroundBelowTile()
         {
-            if (Block.HasNeighbouring<Static>(Vector3Int.down))
+            Block below = Block.GetNeighbour(Direction.Down.AsVector());
+            if (!below) return false;
+
+            Movable movableBelow = below.GetComponent<Movable>();
+            if (movableBelow && movableBelow.isFalling)
             {
-                return true;
+                return false;
             }
 
-            Movable below = Block.GetNeighbouring<Movable>(Vector3Int.down);
-            if (below)
+            if (Block.IsFullSized)
             {
-                if (below.isFalling) return false;
-                if (below.GetComponent<Crushable>()) return false;
+                return below.IsFullSized;
+            }
+            else if (below.IsSolid || below.HasFaceAt(Direction.Up))
+            {
                 return true;
             }
 

@@ -102,10 +102,24 @@ namespace GridGame.Player
             transform.DORotate(q.eulerAngles, 0.1f);
         }
 
+        void SetClimbable(Block block)
+        {
+            OnClimbable = block;
+            Block.AttachedTo = block;
+        }
+
+        void ResetClimbable()
+        {
+            OnClimbable = null;
+            Block.AttachedTo = null;
+        }
+
         void TryPlayerMove(Vector3Int dir)
         {
             Block target = GetNearestBlock(dir);
             bool targetIsEmpty = target == null;
+
+            // TODO change with more general ground check (solid block or solid face)
             Block below = Block.GetNeighbour(Vector3Int.down);
 
             if (OnClimbable)
@@ -128,7 +142,7 @@ namespace GridGame.Player
 
                 mountDirection = dir;
                 Move(Vector3Int.down + (Vector3)dir * (1 - ClimbableOffset));
-                OnClimbable = below;
+                SetClimbable(below);
                 LookAt(-dir);
             }
             else if (!targetIsEmpty && target.IsOriented<Climbable>(-dir) && !Block.Intersects<BlockBehaviour>())
@@ -137,15 +151,15 @@ namespace GridGame.Player
 
                 mountDirection = dir;
                 Move((Vector3)dir * ClimbableOffset);
-                OnClimbable = target;
+                SetClimbable(target);
                 LookAt(dir);
             }
-            else if (targetIsEmpty || target.Is<Empty>())
+            else if (targetIsEmpty)
             {
                 Move(dir);
-                OnClimbable = null;
+                ResetClimbable();
             }
-            else if (target.Is<Movable>() && target.Is<Container>())
+            else if (target.IsDynamic && !target.IsSolid)
             {
                 // TODO refactor
                 if (target.Position == Block.Position)
@@ -156,13 +170,13 @@ namespace GridGame.Player
                         if (movable.TryMove(dir, target))
                         {
                             Move(dir);
-                            OnClimbable = null;
+                            ResetClimbable();
                         }
                     }
                     else
                     {
                         Move(dir);
-                        OnClimbable = null;
+                        ResetClimbable();
                     }
                 }
                 else
@@ -173,23 +187,28 @@ namespace GridGame.Player
                         if (movable.TryMove(dir))
                         {
                             Move(dir);
-                            OnClimbable = null;
+                            ResetClimbable();
                         }
                     }
                     else
                     {
                         Move(dir);
-                        OnClimbable = null;
+                        ResetClimbable();
                     }
                 }
             }
-            else if (target.Is<Movable>())
+            else if (target.IsDynamic)
             {
                 if (movable.TryMove(dir))
                 {
                     Move(dir);
-                    OnClimbable = null;
+                    ResetClimbable();
                 }
+            }
+            else if (!target.IsSolid && !target.HasFaceAt((-dir).ToDirection()))
+            {
+                Move(dir);
+                ResetClimbable();
             }
 
 
@@ -236,7 +255,7 @@ namespace GridGame.Player
                     LogClimbableDebug("Climbing up climbable");
 
                     Move(Vector3Int.up);
-                    OnClimbable = aboveClimbable;
+                    SetClimbable(aboveClimbable);
                     LookAt(dir);
                 }
                 else if (aboveClimbable == null)
@@ -244,7 +263,7 @@ namespace GridGame.Player
                     LogClimbableDebug("Climbing up climbable over edge");
 
                     Move(Vector3Int.up + ((Vector3)dir * (1 - ClimbableOffset)));
-                    OnClimbable = null;
+                    ResetClimbable();
                 }
 
                 return;
@@ -257,7 +276,7 @@ namespace GridGame.Player
 
                     Move(dir);
                     // ReSharper disable once PossibleNullReferenceException
-                    OnClimbable = OnClimbable.GetNeighbour(dir);
+                    SetClimbable(OnClimbable.GetNeighbour(dir));
                 }
             }
             else if (OnClimbable == opposite)
@@ -270,21 +289,21 @@ namespace GridGame.Player
                     LogClimbableDebug("Climbing down climbable");
 
                     Move(Vector3Int.down);
-                    OnClimbable = belowClimbable;
+                    SetClimbable(belowClimbable);
                 }
                 else if (belowClimbable == null && below == null)
                 {
                     LogClimbableDebug("Falling down climbable");
 
                     Move(Vector3Int.down + ((Vector3)dir * ClimbableOffset));
-                    OnClimbable = null;
+                    ResetClimbable();
                 }
                 else
                 {
                     LogClimbableDebug("Stepping off climbable");
 
                     Move((Vector3)dir * ClimbableOffset);
-                    OnClimbable = null;
+                    ResetClimbable();
                 }
             }
             else if (target != null && target.IsOriented<Climbable>(-dir))
@@ -293,22 +312,22 @@ namespace GridGame.Player
 
                 Vector3 directionToClimbable = ((Vector3)Block.Position - climbablePos).normalized;
                 Move((directionToClimbable * ClimbableOffset) + ((Vector3)dir * ClimbableOffset));
-                OnClimbable = target;
+                SetClimbable(target);
                 LookAt(dir);
             }
             else
             {
                 Vector3 directionToClimbable = ((Vector3)Block.Position - climbablePos).normalized;
                 LogClimbableDebug("Stepping off climbable sideways");
-                if (target != null && target.Is<Container>())
+                if (target != null && !target.IsSolid && !target.HasFaceAt((-dir).ToDirection()))
                 {
                     Move(dir + (directionToClimbable * ClimbableOffset));
-                    OnClimbable = null;
+                    ResetClimbable();
                 }
                 else if (movable.TryMove(dir))
                 {
                     Move(dir + (directionToClimbable * ClimbableOffset));
-                    OnClimbable = null;
+                    ResetClimbable();
                 }
             }
 
@@ -367,7 +386,7 @@ namespace GridGame.Player
         {
             var state = persistableState.As<HeroState>();
             IsAlive = state.isAlive;
-            OnClimbable = state.onClimbable;
+            SetClimbable(state.onClimbable);
         }
     }
 }

@@ -297,7 +297,6 @@ GameObject:
   - component: {fileID: 6803242094863636482}
   - component: {fileID: 4445390234703586206}
   - component: {fileID: 2122996217392361326}
-  - component: {fileID: 4361077980924387608}
   - component: {fileID: -7647817819501053935}
   - component: {fileID: 6257547981298003601}
   - component: {fileID: 2913512788914276900}
@@ -383,7 +382,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1c96a4f495e436e8bb460d2467d25e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: 0
+  faces: []
+  isSolid: 0
+  isFullSized: 0
 --- !u!114 &4445390234703586206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,18 +433,6 @@ MonoBehaviour:
       Data4: 769724085
     Path: event:/Blocks/Hero Footstep
   debugClimbables: 0
---- !u!114 &4361077980924387608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8790303023509255344}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a14a6da4224294a264c34283a4c84e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-7647817819501053935
 MonoBehaviour:
   m_ObjectHideFlags: 0

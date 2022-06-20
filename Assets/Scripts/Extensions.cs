@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,24 +7,20 @@ namespace GridGame
 {
     public static class Vector3Extensions
     {
-        static readonly Dictionary<Vector3Int, string> DirectionStrings = new()
-        {
-            { Vector3Int.back, "BACK" },
-            { Vector3Int.left, "LEFT" },
-            { Vector3Int.forward, "FORWARD" },
-            { Vector3Int.right, "RIGHT" },
-            { Vector3Int.up, "UP" },
-            { Vector3Int.down, "DOWN" },
-        };
-
-        public static string ToDirectionString(this Vector3Int dir)
-        {
-            return DirectionStrings.ContainsKey(dir) ? DirectionStrings[dir] : dir.ToString();
-        }
-
         public static bool IsLevel(this Scene scene)
         {
             return scene.name.StartsWith("Level_");
+        }
+
+        public static Direction ToDirection(this Vector3Int direction)
+        {
+            if (direction == Vector3.up) return Direction.Up;
+            if (direction == Vector3.down) return Direction.Down;
+            if (direction == Vector3.left) return Direction.Left;
+            if (direction == Vector3.right) return Direction.Right;
+            if (direction == Vector3.forward) return Direction.Forward;
+            if (direction == Vector3.back) return Direction.Back;
+            throw new ArgumentException("Not a valid direction");
         }
     }
 }

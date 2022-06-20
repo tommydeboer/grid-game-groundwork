@@ -62,7 +62,7 @@ namespace GridGame.Blocks
             hero = GetComponent<Hero>();
             container = GetComponent<Container>();
             particleSys = GetComponent<ParticleSystem>();
-            
+
             game.RegisterMovable(this);
 
             if (!MovingEvent.IsNull)
@@ -87,13 +87,13 @@ namespace GridGame.Blocks
             game.UnregisterMovable(this);
         }
 
-        public bool TryMove(Vector3Int dir)
+        public bool TryMove(Vector3Int dir, Block target = null)
         {
-            var neighbour = Block.GetNeighbour(dir);
-            if (neighbour)
+            if (!target) target = Block.GetNeighbour(dir);
+            if (target)
             {
-                if (!neighbour.Is<Movable>()) return false;
-                if (!TryPush(dir, neighbour.GetComponent<Movable>())) return false;
+                if (!target.Is<Movable>()) return false;
+                if (!TryPush(dir, target.GetComponent<Movable>())) return false;
             }
 
             if (!hero)
@@ -151,9 +151,10 @@ namespace GridGame.Blocks
                     return false;
                 }
 
-                if (Block.HasNeighbouring<Container>(Vector3Int.down))
+                Container containerBelow = Block.GetNeighbouring<Container>(Vector3Int.down);
+                if (containerBelow)
                 {
-                    return true;
+                    return !containerBelow.Block.HasFaceAt(Direction.Up);
                 }
             }
 

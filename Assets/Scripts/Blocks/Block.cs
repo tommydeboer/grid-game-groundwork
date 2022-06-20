@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using JetBrains.Annotations;
@@ -10,66 +11,35 @@ namespace GridGame.Blocks
 {
     public class Block : MonoBehaviour
     {
-        [Header("Faces")]
-        [SerializeField]
-        GameObject topFace;
-
-        [SerializeField]
-        GameObject bottomFace;
-
-        [SerializeField]
-        GameObject frontFace;
-
-        [SerializeField]
-        GameObject backFace;
-
-        [SerializeField]
-        GameObject leftFace;
-
-        [SerializeField]
-        GameObject rightFace;
-
-        [Header("Other settings")]
-        [SerializeField]
-        BlockMaterial material = BlockMaterial.Default;
-
-        readonly Dictionary<Direction, Quaternion> rotationsFromTop = new()
+        [Serializable]
+        class FaceObject
         {
-            { Direction.Up, Quaternion.Euler(0, 0, 0) },
-            { Direction.Down, Quaternion.Euler(180, 0, 0) },
-            { Direction.Left, Quaternion.Euler(0, 0, 90) },
-            { Direction.Right, Quaternion.Euler(0, 0, -90) },
-            { Direction.Forward, Quaternion.Euler(90, 0, 0) },
-            { Direction.Back, Quaternion.Euler(-90, 0, 0) },
-        };
-
-        public void BuildFaces()
-        {
-            var faces = transform.Find("Faces");
-            if (faces) DestroyImmediate(faces.gameObject);
-            var facesParent = CreateFacesParent();
-
-            Dictionary<Direction, GameObject> faceObjects = GetFaces();
-
-            foreach ((Direction direction, GameObject facePrefab) in faceObjects)
-            {
-                GameObject go = PrefabUtility.InstantiatePrefab(facePrefab, facesParent.transform) as GameObject;
-                Debug.Assert(go != null, "Couldn't instantiate face prefab");
-                go.transform.position = transform.position;
-                go.transform.rotation = rotationsFromTop[direction];
-            }
+            public Direction direction;
+            public GameObject prefab;
         }
 
-        Dictionary<Direction, GameObject> GetFaces()
+        [SerializeField]
+        List<FaceObject> faces;
+
+        public Vector3 Position => transform.position;
+        public Vector3 Rotation => transform.eulerAngles;
+        public Vector3Int Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Rotation) * Vector3.back);
+        public Vector3 Below => Position + Vector3.down;
+
+#if UNITY_EDITOR
+        public void BuildFaces()
         {
-            Dictionary<Direction, GameObject> faceObjects = new();
-            if (topFace) faceObjects[Direction.Up] = topFace;
-            if (bottomFace) faceObjects[Direction.Down] = bottomFace;
-            if (frontFace) faceObjects[Direction.Forward] = frontFace;
-            if (backFace) faceObjects[Direction.Back] = backFace;
-            if (leftFace) faceObjects[Direction.Left] = leftFace;
-            if (rightFace) faceObjects[Direction.Right] = rightFace;
-            return faceObjects;
+            var facesTransform = transform.Find("Faces");
+            if (facesTransform) DestroyImmediate(facesTransform.gameObject);
+            var facesParent = CreateFacesParent();
+
+            foreach (var face in faces)
+            {
+                GameObject go = PrefabUtility.InstantiatePrefab(face.prefab, facesParent.transform) as GameObject;
+                Debug.Assert(go != null, "Couldn't instantiate face prefab");
+                go.transform.position = transform.position;
+                go.transform.rotation = Direction.Up.RotateTo(face.direction);
+            }
         }
 
         GameObject CreateFacesParent()
@@ -83,22 +53,17 @@ namespace GridGame.Blocks
                 }
             };
         }
+#endif
 
-        public BlockMaterial Material => material;
-        public Vector3 Position => transform.position;
-        public Vector3 Rotation => transform.eulerAngles;
-        public Vector3Int Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Rotation) * Vector3.back);
-        public Vector3 Below => Position + Vector3.down;
+        public bool HasFaceAt(Direction direction)
+        {
+            return faces.Find(o => o.direction == direction) != null;
+        }
 
         [CanBeNull]
         public Block GetNeighbour(Vector3Int direction)
         {
-            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, 1f, (int)Layers.GridPhysics))
-            {
-                return hit.collider.gameObject.GetComponentInParent<Block>();
-            }
-
-            return null;
+            return Utils.GetBlockAtPos(Position + direction);
         }
 
         [CanBeNull]

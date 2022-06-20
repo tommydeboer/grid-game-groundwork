@@ -2,10 +2,9 @@ using UnityEngine;
 
 namespace GridGame.Blocks
 {
-    [RequireComponent(typeof(Block))]
     public class BlockBehaviour : MonoBehaviour
     {
-        public Block Block { get; private set; }
+        public Block Block { get; protected set; }
 
         protected virtual void Awake()
         {

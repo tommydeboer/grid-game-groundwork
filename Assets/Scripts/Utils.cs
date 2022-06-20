@@ -160,7 +160,7 @@ namespace GridGame
         }
 
         [CanBeNull]
-        public static Block GetBlockAtPos(Vector3Int pos)
+        public static Block GetBlockAtPos(Vector3 pos)
         {
             Collider[] colliders = GetCollidersAt(pos);
 

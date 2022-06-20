@@ -104,7 +104,7 @@ namespace GridGame.Player
 
         void TryPlayerMove(Vector3Int dir)
         {
-            Block target = Block.GetNeighbour(dir);
+            Block target = GetNearestBlock(dir);
             bool targetIsEmpty = target == null;
             Block below = Block.GetNeighbour(Vector3Int.down);
 
@@ -140,10 +140,48 @@ namespace GridGame.Player
                 OnClimbable = target;
                 LookAt(dir);
             }
-            else if (targetIsEmpty || target.Is<Empty>() || target.Is<Container>())
+            else if (targetIsEmpty || target.Is<Empty>())
             {
                 Move(dir);
                 OnClimbable = null;
+            }
+            else if (target.Is<Movable>() && target.Is<Container>())
+            {
+                // TODO refactor
+                if (target.Position == Block.Position)
+                {
+                    // standing inside container moving outward
+                    if (target.HasFaceAt(dir.ToDirection()))
+                    {
+                        if (movable.TryMove(dir, target))
+                        {
+                            Move(dir);
+                            OnClimbable = null;
+                        }
+                    }
+                    else
+                    {
+                        Move(dir);
+                        OnClimbable = null;
+                    }
+                }
+                else
+                {
+                    // standing next to container moving inward
+                    if (target.HasFaceAt((-dir).ToDirection()))
+                    {
+                        if (movable.TryMove(dir))
+                        {
+                            Move(dir);
+                            OnClimbable = null;
+                        }
+                    }
+                    else
+                    {
+                        Move(dir);
+                        OnClimbable = null;
+                    }
+                }
             }
             else if (target.Is<Movable>())
             {
@@ -159,6 +197,22 @@ namespace GridGame.Player
             {
                 LookAt(dir);
             }
+        }
+
+        [CanBeNull]
+        Block GetNearestBlock(Vector3Int direction)
+        {
+            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, 1f, (int)Layers.GridPhysics))
+            {
+                if (hit.collider.gameObject.GetComponent<Face>())
+                {
+                    return hit.collider.gameObject.GetComponent<Face>().Block;
+                }
+
+                return hit.collider.gameObject.GetComponentInParent<Block>();
+            }
+
+            return null;
         }
 
         void TryClimb(Vector3Int dir, Block below)

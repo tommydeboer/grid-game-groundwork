@@ -11,6 +11,9 @@ namespace GridGame.Blocks
 {
     public class Block : MonoBehaviour
     {
+        [ReadOnly]
+        public int id;
+
         [Serializable]
         class FaceObject
         {
@@ -72,6 +75,7 @@ namespace GridGame.Blocks
         void Awake()
         {
             IsDynamic = GetComponent<Movable>();
+            id = GetInstanceID();
         }
 
         public bool HasFaceAt(Direction direction)

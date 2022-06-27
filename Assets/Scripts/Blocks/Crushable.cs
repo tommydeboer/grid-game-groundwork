@@ -2,7 +2,7 @@ using UnityEngine.Events;
 
 namespace GridGame.Blocks
 {
-    public class Crushable : BlockBehaviour
+    public class Crushable : GridBehaviour
     {
         public UnityAction OnCrushed;
 

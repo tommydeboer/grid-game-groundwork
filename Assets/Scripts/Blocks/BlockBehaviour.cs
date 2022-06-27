@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace GridGame.Blocks
 {
-    public class BlockBehaviour : MonoBehaviour
+    public class BlockBehaviour : GridBehaviour
     {
         public Block Block { get; protected set; }
 

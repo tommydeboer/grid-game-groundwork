@@ -13,7 +13,7 @@ using Object = System.Object;
 
 namespace GridGame.Blocks
 {
-    public class Movable : BlockBehaviour, IUndoable
+    public class Movable : GridBehaviour, IUndoable
     {
         [SerializeField]
         FMODUnity.EventReference LandedEvent;
@@ -31,6 +31,8 @@ namespace GridGame.Blocks
         Vector3 previousPos;
 
         ParticleSystem particleSys;
+
+        GridElement GridElement;
 
         bool IsMoving
         {
@@ -56,6 +58,10 @@ namespace GridGame.Blocks
 
         void Start()
         {
+            // TODO remove this hack when movable is an interface
+            GridElement = GetComponent<Block>();
+            if (!GridElement) GridElement = GetComponent<Entity>();
+
             game = CoreComponents.Game;
             particleSys = GetComponent<ParticleSystem>();
 
@@ -85,14 +91,14 @@ namespace GridGame.Blocks
 
         public bool TryMove(Vector3Int dir, Block target = null)
         {
-            if (!target) target = Block.GetNeighbour(dir);
+            if (!target) target = GridElement.GetNeighbour(dir);
             if (target)
             {
                 if (!target.Is<Movable>()) return false;
                 if (!TryPush(dir, target.GetComponent<Movable>())) return false;
             }
 
-            if (Block.IsFullSized)
+            if (GridElement.Is<Block>())
             {
                 TryMoveStacked(dir);
             }
@@ -102,7 +108,7 @@ namespace GridGame.Blocks
 
         void TryMoveStacked(Vector3Int dir)
         {
-            Movable stackedMovable = Block.GetNeighbouring<Movable>(Vector3Int.up);
+            Movable stackedMovable = GridElement.GetNeighbouring<Movable>(Vector3Int.up);
             if (stackedMovable)
             {
                 if (stackedMovable.TryMove(dir))
@@ -140,7 +146,7 @@ namespace GridGame.Blocks
 
         bool ShouldFall()
         {
-            if (Block.AttachedTo)
+            if (GridElement.AttachedTo)
             {
                 return false;
             }
@@ -163,12 +169,13 @@ namespace GridGame.Blocks
                     Game.instance.movingCount++;
                 }
 
-                transform.DOMove(Block.Below, Game.instance.fallTime).OnComplete(FallAgain).SetEase(Ease.Linear);
+                transform.DOMove(GridElement.Below, Game.instance.fallTime).OnComplete(FallAgain).SetEase(Ease.Linear);
 
-                // TODO remove and use collisions to crush instead
-                if (Block.IsSolid || Block.HasFaceAt(Direction.Down))
+                // TODO FIXME remove and use collisions to crush instead
+                Block block = GetComponent<Block>();
+                if (block && (block.IsSolid || block.HasFaceAt(Direction.Down)))
                 {
-                    Block.GetNeighbouring<Crushable>(Vector3Int.down)?.Crush();
+                    GridElement.GetNeighbouring<Crushable>(Vector3Int.down)?.Crush();
                 }
             }
             else
@@ -210,7 +217,7 @@ namespace GridGame.Blocks
 
         bool GroundBelowTile()
         {
-            Block below = Block.GetNeighbour(Direction.Down.AsVector());
+            Block below = GridElement.GetNeighbour(Direction.Down.AsVector());
             if (!below) return false;
 
             Movable movableBelow = below.GetComponent<Movable>();
@@ -219,9 +226,9 @@ namespace GridGame.Blocks
                 return false;
             }
 
-            if (Block.IsFullSized)
+            if (GridElement.Is<Block>())
             {
-                return below.IsFullSized;
+                return below.Is<Block>();
             }
             else if (below.IsSolid || below.HasFaceAt(Direction.Up))
             {

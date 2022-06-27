@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 namespace GridGame.Blocks
 {
     [RequireComponent(typeof(Triggerable))]
-    public class Exit : BlockBehaviour
+    public class Exit : EntityBehaviour
     {
         [Header("Levels")]
         [SerializeField]
@@ -28,7 +28,7 @@ namespace GridGame.Blocks
 
         public void Check()
         {
-            if (Block.Intersects<Hero>())
+            if (Entity.Intersects<Hero>())
             {
                 GoToNextLevel();
             }

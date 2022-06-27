@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 namespace GridGame.Player
 {
     [RequireComponent(typeof(Movable))]
-    public class Hero : BlockBehaviour, IUndoable
+    public class Hero : EntityBehaviour, IUndoable
     {
         [SerializeField]
         FMODUnity.EventReference WalkEvent;
@@ -105,13 +105,13 @@ namespace GridGame.Player
         void SetClimbable(Block block)
         {
             OnClimbable = block;
-            Block.AttachedTo = block;
+            Entity.AttachedTo = block;
         }
 
         void ResetClimbable()
         {
             OnClimbable = null;
-            Block.AttachedTo = null;
+            Entity.AttachedTo = null;
         }
 
         void TryPlayerMove(Vector3Int dir)
@@ -120,7 +120,7 @@ namespace GridGame.Player
             bool targetIsEmpty = target == null;
 
             // TODO change with more general ground check (solid block or solid face)
-            Block below = Block.GetNeighbour(Vector3Int.down);
+            Block below = Entity.GetNeighbour(Vector3Int.down);
 
             if (OnClimbable)
             {
@@ -145,7 +145,7 @@ namespace GridGame.Player
                 SetClimbable(below);
                 LookAt(-dir);
             }
-            else if (!targetIsEmpty && target.IsOriented<Climbable>(-dir) && !Block.Intersects<BlockBehaviour>())
+            else if (!targetIsEmpty && target.IsOriented<Climbable>(-dir) && !Entity.Intersects<BlockBehaviour>())
             {
                 LogClimbableDebug("Mounting climbable");
 
@@ -162,7 +162,7 @@ namespace GridGame.Player
             else if (target.IsDynamic && !target.IsSolid)
             {
                 // TODO refactor
-                if (target.Position == Block.Position)
+                if (target.Position == Entity.Position)
                 {
                     // standing inside container moving outward
                     if (target.HasFaceAt(dir.ToDirection()))
@@ -239,9 +239,9 @@ namespace GridGame.Player
             // correct input direction based on climbable's orientation
             dir = Vector3Int.RoundToInt(Quaternion.Euler(OnClimbable.Rotation) * dir);
 
-            var above = Block.GetNeighbour(Vector3Int.up);
-            var opposite = Block.GetNeighbour(-dir);
-            var target = Block.GetNeighbour(dir);
+            var above = Entity.GetNeighbour(Vector3Int.up);
+            var opposite = Entity.GetNeighbour(-dir);
+            var target = Entity.GetNeighbour(dir);
             var climbablePos = OnClimbable.Position;
 
             if (target != null && target == OnClimbable)
@@ -310,14 +310,14 @@ namespace GridGame.Player
             {
                 LogClimbableDebug("Climbing to other climbable in corner");
 
-                Vector3 directionToClimbable = ((Vector3)Block.Position - climbablePos).normalized;
+                Vector3 directionToClimbable = (Entity.Position - climbablePos).normalized;
                 Move((directionToClimbable * ClimbableOffset) + ((Vector3)dir * ClimbableOffset));
                 SetClimbable(target);
                 LookAt(dir);
             }
             else
             {
-                Vector3 directionToClimbable = ((Vector3)Block.Position - climbablePos).normalized;
+                Vector3 directionToClimbable = (Entity.Position - climbablePos).normalized;
                 LogClimbableDebug("Stepping off climbable sideways");
                 if (target != null && !target.IsSolid && !target.HasFaceAt((-dir).ToDirection()))
                 {

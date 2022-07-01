@@ -6,9 +6,10 @@ namespace GridGame.Blocks
     {
         public Block Block { get; protected set; }
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
-            Block = GetComponent<Block>();
+            base.Awake();
+            Block = GridElement as Block;
         }
     }
 }

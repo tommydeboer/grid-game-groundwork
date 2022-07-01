@@ -33,8 +33,6 @@ namespace GridGame.Blocks
 
         ParticleSystem particleSys;
 
-        GridElement GridElement;
-
         bool IsMoving
         {
             set
@@ -59,10 +57,6 @@ namespace GridGame.Blocks
 
         void Start()
         {
-            // TODO remove this hack when movable is an interface
-            GridElement = GetComponent<Block>();
-            if (!GridElement) GridElement = GetComponent<Entity>();
-
             game = CoreComponents.Game;
             particleSys = GetComponent<ParticleSystem>();
 
@@ -144,7 +138,7 @@ namespace GridGame.Blocks
                 Game.moversToMove.Add(this);
             }
         }
-        
+
         public void FallStart()
         {
             if (FallHandler.ShouldFall(GridElement))
@@ -200,7 +194,7 @@ namespace GridGame.Blocks
                 Game.instance.FallEnd();
             }
         }
-        
+
         class MovableState : PersistableState
         {
             public Vector3 position;

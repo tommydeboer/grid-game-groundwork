@@ -52,7 +52,7 @@ namespace GridGame.Blocks
 
         readonly Collider[] intersections = new Collider[3];
 
-        public bool Intersects<T>() where T : GridBehaviour
+        public bool Intersects<T>() where T : GridElement
         {
             int hits = Physics.OverlapBoxNonAlloc(
                 Position,

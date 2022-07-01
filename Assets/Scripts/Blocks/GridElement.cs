@@ -9,7 +9,6 @@ namespace GridGame.Blocks
         public int id;
 
         public bool IsDynamic { get; private set; }
-        public Block AttachedTo { get; set; }
         public Vector3 Position => transform.position;
         public Vector3 Rotation => transform.eulerAngles;
         public Vector3Int Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Rotation) * Vector3.back);

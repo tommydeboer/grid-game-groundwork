@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using GridGame.Blocks.Interactions;
 using GridGame.Player;
 using GridGame.SO;
 using GridGame.Undo;
@@ -143,25 +144,10 @@ namespace GridGame.Blocks
                 Game.moversToMove.Add(this);
             }
         }
-
-        bool ShouldFall()
-        {
-            if (GridElement.AttachedTo)
-            {
-                return false;
-            }
-
-            if (GroundBelowTile())
-            {
-                return false;
-            }
-
-            return true;
-        }
-
+        
         public void FallStart()
         {
-            if (ShouldFall())
+            if (FallHandler.ShouldFall(GridElement))
             {
                 if (!isFalling)
                 {
@@ -214,30 +200,7 @@ namespace GridGame.Blocks
                 Game.instance.FallEnd();
             }
         }
-
-        bool GroundBelowTile()
-        {
-            Block below = GridElement.GetNeighbour(Direction.Down.AsVector());
-            if (!below) return false;
-
-            Movable movableBelow = below.GetComponent<Movable>();
-            if (movableBelow && movableBelow.isFalling)
-            {
-                return false;
-            }
-
-            if (GridElement.Is<Block>())
-            {
-                return below.Is<Block>();
-            }
-            else if (below.IsSolid || below.HasFaceAt(Direction.Up))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
+        
         class MovableState : PersistableState
         {
             public Vector3 position;

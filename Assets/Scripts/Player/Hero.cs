@@ -104,13 +104,11 @@ namespace GridGame.Player
         void SetClimbable(Block block)
         {
             OnClimbable = block;
-            AttachedTo = block;
         }
 
         void ResetClimbable()
         {
             OnClimbable = null;
-            AttachedTo = null;
         }
 
         void TryPlayerMove(Vector3Int dir)

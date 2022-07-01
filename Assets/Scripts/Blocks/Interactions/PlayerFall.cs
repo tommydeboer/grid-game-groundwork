@@ -10,12 +10,19 @@ namespace GridGame.Blocks.Interactions
             return !IsGrounded(player);
         }
 
-        /// A player is grounded if it is on top of a non-moving solid block. If the block
-        /// is not solid a player is only grounded if the block contains a solid face at the
-        /// top side.
+        /// A player is grounded if:
+        /// - it is on top of a non-moving solid block.
+        /// - it is on top of a non-moving non-solid block with a solid face on top
+        /// - it is inside a block with a solid face at the bottom
         /// Entities are ignored: a player will fall on top of them.
         static bool IsGrounded(GridElement player)
         {
+            Block insideBlock = player.GetIntersects<Block>();
+            if (insideBlock && insideBlock.HasFaceAt(Direction.Down))
+            {
+                return true;
+            }
+
             Block below = player.GetNeighbour(Direction.Down.AsVector());
             if (!below) return false;
 

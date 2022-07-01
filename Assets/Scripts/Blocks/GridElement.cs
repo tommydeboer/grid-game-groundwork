@@ -51,7 +51,12 @@ namespace GridGame.Blocks
 
         readonly Collider[] intersections = new Collider[3];
 
-        public bool Intersects<T>() where T : GridElement
+        protected bool Intersects<T>() where T : GridElement
+        {
+            return GetIntersects<T>();
+        }
+
+        public T GetIntersects<T>() where T : GridElement
         {
             int hits = Physics.OverlapBoxNonAlloc(
                 Position,
@@ -63,14 +68,15 @@ namespace GridGame.Blocks
 
             for (int i = 0; i < hits; i++)
             {
-                if (intersections[i].gameObject.GetComponentInParent<GridElement>() == this) continue;
-                if (intersections[i].gameObject.GetComponentInParent<T>())
+                var target = intersections[i].gameObject.GetComponentInParent<T>();
+                if (target)
                 {
-                    return true;
+                    if (target == this) continue;
+                    return target;
                 }
             }
 
-            return false;
+            return null;
         }
 
         // TODO remove when GetNeighbour returns edge before block

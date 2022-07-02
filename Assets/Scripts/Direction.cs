@@ -13,7 +13,7 @@ namespace GridGame
         Back
     }
 
-    static class DirectionExtensions
+    internal static class DirectionExtensions
     {
         public static Vector3Int AsVector(this Direction direction)
         {
@@ -48,6 +48,20 @@ namespace GridGame
             {
                 throw new NotImplementedException();
             }
+        }
+
+        public static Direction Opposite(this Direction direction)
+        {
+            return direction switch
+            {
+                Direction.Up => Direction.Down,
+                Direction.Down => Direction.Up,
+                Direction.Left => Direction.Right,
+                Direction.Right => Direction.Left,
+                Direction.Forward => Direction.Back,
+                Direction.Back => Direction.Forward,
+                _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
+            };
         }
     }
 }

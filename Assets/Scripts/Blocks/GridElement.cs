@@ -8,7 +8,8 @@ namespace GridGame.Blocks
         [ReadOnly, UsedImplicitly]
         public int id;
 
-        public bool IsDynamic { get; private set; }
+        public bool IsDynamic => Movable != null;
+        public Movable Movable { get; private set; }
         public Vector3 Position => transform.position;
         public Vector3 Rotation => transform.eulerAngles;
         public Vector3Int Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Rotation) * Vector3.back);
@@ -16,7 +17,7 @@ namespace GridGame.Blocks
 
         void Awake()
         {
-            IsDynamic = GetComponent<Movable>();
+            Movable = GetComponent<Movable>();
             id = GetInstanceID();
         }
 
@@ -60,7 +61,7 @@ namespace GridGame.Blocks
         {
             int hits = Physics.OverlapBoxNonAlloc(
                 Position,
-                Vector3.one * .49f,
+                Vector3.one * .1f,
                 intersections,
                 Quaternion.identity,
                 (int)Layers.GridPhysics

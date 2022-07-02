@@ -20,7 +20,7 @@ namespace GridGame.Blocks.Interactions
             Block insideBlock = player.GetIntersects<Block>();
             if (insideBlock && insideBlock.HasFaceAt(Direction.Down))
             {
-                if (insideBlock.IsDynamic && insideBlock.GetComponent<Movable>().isFalling)
+                if (insideBlock.IsDynamic && insideBlock.Movable.isFalling)
                 {
                     return false;
                 }
@@ -31,7 +31,7 @@ namespace GridGame.Blocks.Interactions
             Block below = player.GetNeighbour(Direction.Down.AsVector());
             if (!below) return false;
 
-            Movable movableBelow = below.GetComponent<Movable>();
+            Movable movableBelow = below.Movable;
             if (movableBelow && movableBelow.isFalling)
             {
                 return false;

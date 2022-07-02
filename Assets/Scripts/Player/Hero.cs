@@ -151,63 +151,8 @@ namespace GridGame.Player
                 SetClimbable(target);
                 LookAt(dir);
             }
-            else if (targetIsEmpty)
-            {
-                Move(dir);
-                ResetClimbable();
-            }
-            else if (target.IsDynamic && !target.IsSolid)
-            {
-                // TODO refactor
-                if (target.Position == Position)
-                {
-                    // standing inside container moving outward
-                    if (target.HasFaceAt(dir.ToDirection()))
-                    {
-                        if (movable.TryMove(dir, target))
-                        {
-                            Move(dir);
-                            ResetClimbable();
-                        }
-                    }
-                    else
-                    {
-                        Move(dir);
-                        ResetClimbable();
-                    }
-                }
-                else
-                {
-                    // standing next to container moving inward
-                    if (target.HasFaceAt((-dir).ToDirection()))
-                    {
-                        if (movable.TryMove(dir))
-                        {
-                            Move(dir);
-                            ResetClimbable();
-                        }
-                    }
-                    else
-                    {
-                        Move(dir);
-                        ResetClimbable();
-                    }
-                }
-            }
-            else if (target.IsDynamic)
-            {
-                if (movable.TryMove(dir))
-                {
-                    Move(dir);
-                    ResetClimbable();
-                }
-            }
-            else if (!target.IsSolid && !target.HasFaceAt((-dir).ToDirection()))
-            {
-                Move(dir);
-                ResetClimbable();
-            }
 
+            movable.TryMove(dir);
 
             if (!OnClimbable)
             {

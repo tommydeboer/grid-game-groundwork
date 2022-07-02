@@ -84,50 +84,16 @@ namespace GridGame.Blocks
             game.UnregisterMovable(this);
         }
 
-        public bool TryMove(Vector3Int dir, Block target = null)
+        public bool TryMove(Vector3Int dir)
         {
-            if (!target) target = GridElement.GetNeighbour(dir);
-            if (target)
+            bool moved = MoveHandler.TryMove(GridElement, dir.ToDirection());
+            if (moved)
             {
-                if (!target.Is<Movable>()) return false;
-                if (!TryPush(dir, target.GetComponent<Movable>())) return false;
+                ScheduleMove(dir);
+                MoveHandler.TryMoveStacked(GridElement, dir.ToDirection());
             }
 
-            if (GridElement.Is<Block>())
-            {
-                TryMoveStacked(dir);
-            }
-
-            return true;
-        }
-
-        void TryMoveStacked(Vector3Int dir)
-        {
-            Movable stackedMovable = GridElement.GetNeighbouring<Movable>(Vector3Int.up);
-            if (stackedMovable)
-            {
-                if (stackedMovable.TryMove(dir))
-                {
-                    stackedMovable.ScheduleMove(dir);
-                }
-            }
-        }
-
-        bool TryPush(Vector3Int dir, Movable neighbour)
-        {
-            if (neighbour != this)
-            {
-                if (neighbour.TryMove(dir))
-                {
-                    neighbour.ScheduleMove(dir);
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return moved;
         }
 
         public void ScheduleMove(Vector3 dir)

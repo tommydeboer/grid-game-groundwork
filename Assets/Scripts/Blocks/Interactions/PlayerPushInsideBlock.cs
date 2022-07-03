@@ -6,12 +6,12 @@ namespace GridGame.Blocks.Interactions
     {
         static readonly IGridInteraction<Hero, Block> playerPushBlock = new PlayerPushBlock();
 
-        public bool Handle(Hero player, Block block, Direction direction)
+        public MoveResult Handle(Hero player, Block block, Direction direction)
         {
             if (block.IsDynamic && block.HasFaceAt(direction))
             {
-                if (block.HasFaceAt(Direction.Down)) return false;
-                return block.Movable.TryMove(direction.AsVector());
+                if (block.HasFaceAt(Direction.Down)) return MoveResult.Failed();
+                return MoveResult.Of(block.Movable.TryMove(direction.AsVector()));
             }
             else if (!block.HasFaceAt(direction))
             {
@@ -21,10 +21,10 @@ namespace GridGame.Blocks.Interactions
                     return playerPushBlock.Handle(player, target, direction);
                 }
 
-                return true;
+                return MoveResult.Success();
             }
 
-            return false;
+            return MoveResult.Failed();
         }
     }
 }

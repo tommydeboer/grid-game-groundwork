@@ -113,10 +113,8 @@ namespace GridGame.Player
 
         void TryPlayerMove(Vector3Int dir)
         {
-            Block target = GetNearestBlock(dir);
+            Block target = GetNeighbour(dir);
             bool targetIsEmpty = target == null;
-
-            // TODO change with more general ground check (solid block or solid face)
             Block below = GetNeighbour(Vector3Int.down);
 
             if (OnClimbable)
@@ -158,22 +156,6 @@ namespace GridGame.Player
             {
                 LookAt(dir);
             }
-        }
-
-        [CanBeNull]
-        Block GetNearestBlock(Vector3Int direction)
-        {
-            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, 1f, (int)Layers.GridPhysics))
-            {
-                if (hit.collider.gameObject.GetComponent<Face>())
-                {
-                    return hit.collider.gameObject.GetComponent<Face>().Block;
-                }
-
-                return hit.collider.gameObject.GetComponentInParent<Block>();
-            }
-
-            return null;
         }
 
         void TryClimb(Vector3Int dir, Block below)
@@ -285,6 +267,10 @@ namespace GridGame.Player
             movable.ScheduleMove(dir);
         }
 
+        public void Mount(Block climbable, Direction direction)
+        {
+            
+        }
 
         public void OnDrawGizmos()
         {

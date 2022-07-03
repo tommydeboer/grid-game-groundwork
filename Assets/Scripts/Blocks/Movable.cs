@@ -86,14 +86,14 @@ namespace GridGame.Blocks
 
         public bool TryMove(Vector3Int dir)
         {
-            bool moved = MoveHandler.TryMove(GridElement, dir.ToDirection());
-            if (moved)
+            MoveResult result = MoveHandler.TryMove(GridElement, dir.ToDirection());
+            if (result.DidMove)
             {
                 ScheduleMove(dir);
                 MoveHandler.TryMoveStacked(GridElement, dir.ToDirection());
             }
 
-            return moved;
+            return result.DidMove;
         }
 
         public void ScheduleMove(Vector3 dir)

@@ -9,7 +9,7 @@ namespace GridGame.Blocks.Interactions
         static readonly IGridInteraction<Hero, Block> playerPushInsideBlock = new PlayerPushInsideBlock();
         static readonly IGridInteraction<Hero, Block> playerPushBlock = new PlayerPushBlock();
 
-        public static bool TryMove(GridElement element, Direction direction)
+        public static MoveResult TryMove(GridElement element, Direction direction)
         {
             return element switch
             {
@@ -31,20 +31,20 @@ namespace GridGame.Blocks.Interactions
             }
         }
 
-        static bool TryMoveBlock(Direction direction, Block block)
+        static MoveResult TryMoveBlock(Direction direction, Block block)
         {
             Block target = block.GetNeighbour(direction.AsVector());
-            if (!target) return true;
+            if (!target) return MoveResult.Success();
             return blockPushBlock.Handle(block, target, direction);
         }
 
-        static bool TryMovePlayer(Direction direction, Hero player)
+        static MoveResult TryMovePlayer(Direction direction, Hero player)
         {
             Block insideBlock = player.GetIntersects<Block>();
             if (insideBlock) return playerPushInsideBlock.Handle(player, insideBlock, direction);
 
             Block targetBlock = player.GetNeighbour(direction.AsVector());
-            if (!targetBlock) return true;
+            if (!targetBlock) return MoveResult.Success();
             return playerPushBlock.Handle(player, targetBlock, direction);
         }
     }

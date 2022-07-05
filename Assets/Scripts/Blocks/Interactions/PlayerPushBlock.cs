@@ -10,16 +10,17 @@ namespace GridGame.Blocks.Interactions
             {
                 if (block.IsSolid || block.HasFaceAt(direction.Opposite()))
                 {
-                    return MoveResult.Of(block.Movable.TryMove(direction.AsVector()));
+                    bool blockDidMove = block.Movable.TryMove(direction.AsVector());
+                    return MoveResult.Of(blockDidMove, direction.AsVector());
                 }
                 else
                 {
-                    return MoveResult.Success();
+                    return MoveResult.Success(direction.AsVector());
                 }
             }
             else if (!block.IsSolid && !block.HasFaceAt(direction.Opposite()))
             {
-                return MoveResult.Success();
+                return MoveResult.Success(direction.AsVector());
             }
 
             return MoveResult.Failed();

@@ -15,6 +15,12 @@ namespace GridGame.Blocks
         public Vector3Int Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Rotation) * Vector3.back);
         public Vector3 Below => Position + Vector3.down;
 
+        [CanBeNull]
+        public Block BlockBelow => GetNeighbour(Vector3Int.down);
+
+        [CanBeNull]
+        public Block BlockAbove => GetNeighbour(Vector3Int.up);
+
         void Awake()
         {
             Movable = GetComponent<Movable>();

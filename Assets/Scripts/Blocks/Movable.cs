@@ -89,8 +89,7 @@ namespace GridGame.Blocks
             MoveResult result = MoveHandler.TryMove(GridElement, dir.ToDirection());
             if (result.DidMove)
             {
-                ScheduleMove(dir);
-                MoveHandler.TryMoveStacked(GridElement, dir.ToDirection());
+                ScheduleMove(result.Vector);
             }
 
             return result.DidMove;

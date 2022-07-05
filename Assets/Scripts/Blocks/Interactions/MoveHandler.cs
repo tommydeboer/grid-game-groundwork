@@ -8,6 +8,9 @@ namespace GridGame.Blocks.Interactions
         static readonly IGridInteraction<Block, Block> blockPushBlock = new BlockPushBlock();
         static readonly IGridInteraction<Hero, Block> playerPushInsideBlock = new PlayerPushInsideBlock();
         static readonly IGridInteraction<Hero, Block> playerPushBlock = new PlayerPushBlock();
+        static readonly IGridInteraction<Hero, Block> playerMountLadder = new PlayerMountLadder();
+        static readonly IGridInteraction<Hero, Block> playerClimbDownLadder = new PlayerClimbDownLadder();
+        static readonly IGridInteraction<Hero, Block> playerClimbUpLadder = new PlayerClimbUpLadder();
 
         public static MoveResult TryMove(GridElement element, Direction direction)
         {
@@ -19,11 +22,11 @@ namespace GridGame.Blocks.Interactions
             };
         }
 
-        public static void TryMoveStacked(GridElement element, Direction direction)
+        static void TryMoveStacked(GridElement element, Direction direction)
         {
             if (element is Block block)
             {
-                Block above = block.GetNeighbour(Direction.Up.AsVector());
+                Block above = block.BlockAbove;
                 if (above && above.IsDynamic)
                 {
                     above.Movable.TryMove(direction.AsVector());
@@ -33,19 +36,57 @@ namespace GridGame.Blocks.Interactions
 
         static MoveResult TryMoveBlock(Direction direction, Block block)
         {
+            MoveResult result;
             Block target = block.GetNeighbour(direction.AsVector());
-            if (!target) return MoveResult.Success();
-            return blockPushBlock.Handle(block, target, direction);
+
+            if (!target)
+            {
+                result = MoveResult.Success(direction.AsVector());
+            }
+            else
+            {
+                result = blockPushBlock.Handle(block, target, direction);
+            }
+
+            if (result.DidMove)
+            {
+                TryMoveStacked(block, direction);
+            }
+
+            return result;
         }
 
         static MoveResult TryMovePlayer(Direction direction, Hero player)
         {
+            if (player.OnClimbable) return TryPlayerClimb(direction, player);
+
             Block insideBlock = player.GetIntersects<Block>();
             if (insideBlock) return playerPushInsideBlock.Handle(player, insideBlock, direction);
 
             Block targetBlock = player.GetNeighbour(direction.AsVector());
-            if (!targetBlock) return MoveResult.Success();
+            if (!targetBlock) return MoveResult.Success(direction.AsVector());
+
+            if (targetBlock.IsOriented<Climbable>(direction.Opposite().AsVector()))
+            {
+                return playerMountLadder.Handle(player, targetBlock, direction);
+            }
+
             return playerPushBlock.Handle(player, targetBlock, direction);
+        }
+
+        static MoveResult TryPlayerClimb(Direction direction, Hero player)
+        {
+            if (player.GetNeighbour(direction.Opposite().AsVector()) == player.OnClimbable)
+            {
+                return playerClimbDownLadder.Handle(player, player.OnClimbable, direction);
+            }
+
+            if (player.GetNeighbour(direction.AsVector()) == player.OnClimbable)
+            {
+                return playerClimbUpLadder.Handle(player, player.OnClimbable, direction);
+            }
+
+            return MoveResult.Failed();
         }
     }
 }

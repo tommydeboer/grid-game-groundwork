@@ -11,7 +11,8 @@ namespace GridGame.Blocks.Interactions
             if (block.IsDynamic && block.HasFaceAt(direction))
             {
                 if (block.HasFaceAt(Direction.Down)) return MoveResult.Failed();
-                return MoveResult.Of(block.Movable.TryMove(direction.AsVector()));
+                bool blockDidMove = block.Movable.TryMove(direction.AsVector());
+                return MoveResult.Of(blockDidMove, direction.AsVector());
             }
             else if (!block.HasFaceAt(direction))
             {
@@ -21,7 +22,7 @@ namespace GridGame.Blocks.Interactions
                     return playerPushBlock.Handle(player, target, direction);
                 }
 
-                return MoveResult.Success();
+                return MoveResult.Success(direction.AsVector());
             }
 
             return MoveResult.Failed();

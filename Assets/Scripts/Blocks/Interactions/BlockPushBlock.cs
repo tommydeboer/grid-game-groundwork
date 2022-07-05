@@ -6,7 +6,8 @@ namespace GridGame.Blocks.Interactions
         {
             if (pushee.IsDynamic)
             {
-                return MoveResult.Of(pushee.Movable.TryMove(direction.AsVector()));
+                bool pusheeDidMove = pushee.Movable.TryMove(direction.AsVector());
+                return MoveResult.Of(pusheeDidMove, direction.AsVector());
             }
 
             return MoveResult.Failed();

@@ -1,41 +1,32 @@
-using UnityEngine;
+using System.Numerics;
+using Vector3 = UnityEngine.Vector3;
 
 namespace GridGame.Blocks.Interactions
 {
     public class MoveResult
     {
+        public Vector3 Vector;
         public bool DidMove { get; }
-        public Vector3 Offset { get; } = Vector3.zero;
 
-        MoveResult(bool didMove)
+        MoveResult(bool didMove, Vector3 vector)
         {
             DidMove = didMove;
+            Vector = vector;
         }
 
-        MoveResult(bool didMove, Vector3 offset)
+        public static MoveResult Of(bool didMove, Vector3 vector)
         {
-            DidMove = didMove;
-            Offset = offset;
+            return new MoveResult(didMove, vector);
         }
 
-        public static MoveResult Of(bool didMove)
+        public static MoveResult Success(Vector3 vector)
         {
-            return new MoveResult(didMove);
-        }
-
-        public static MoveResult Success()
-        {
-            return new MoveResult(true);
-        }
-
-        public static MoveResult Success(Vector3 offset)
-        {
-            return new MoveResult(true, offset);
+            return new MoveResult(true, vector);
         }
 
         public static MoveResult Failed()
         {
-            return new MoveResult(false);
+            return new MoveResult(false, Vector3.zero);
         }
     }
 }

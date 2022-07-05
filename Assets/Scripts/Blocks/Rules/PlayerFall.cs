@@ -1,6 +1,6 @@
 using GridGame.Player;
 
-namespace GridGame.Blocks.Interactions
+namespace GridGame.Blocks.Rules
 {
     public class PlayerFall : IFall<Hero>
     {

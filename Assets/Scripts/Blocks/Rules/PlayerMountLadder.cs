@@ -1,7 +1,7 @@
 using GridGame.Player;
 using UnityEngine;
 
-namespace GridGame.Blocks.Interactions
+namespace GridGame.Blocks.Rules
 {
     public class PlayerMountLadder : IGridInteraction<Hero, Block>
     {

@@ -1,7 +1,7 @@
 using System;
 using GridGame.Player;
 
-namespace GridGame.Blocks.Interactions
+namespace GridGame.Blocks.Rules
 {
     public static class MoveHandler
     {

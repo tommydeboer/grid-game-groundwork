@@ -1,4 +1,4 @@
-namespace GridGame.Blocks.Interactions
+namespace GridGame.Blocks.Rules
 {
     public class BlockFall : IFall<Block>
     {

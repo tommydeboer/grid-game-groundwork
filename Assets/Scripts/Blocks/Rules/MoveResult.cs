@@ -1,7 +1,6 @@
-using System.Numerics;
 using Vector3 = UnityEngine.Vector3;
 
-namespace GridGame.Blocks.Interactions
+namespace GridGame.Blocks.Rules
 {
     public class MoveResult
     {

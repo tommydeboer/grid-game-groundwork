@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
-using GridGame.Blocks.Interactions;
+using GridGame.Blocks.Rules;
 using GridGame.Player;
 using GridGame.SO;
 using GridGame.Undo;

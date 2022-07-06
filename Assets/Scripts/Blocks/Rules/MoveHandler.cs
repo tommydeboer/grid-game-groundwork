@@ -8,7 +8,8 @@ namespace GridGame.Blocks.Rules
         static readonly IGridInteraction<Block, Block> blockPushBlock = new BlockPushBlock();
         static readonly IGridInteraction<Hero, Block> playerPushInsideBlock = new PlayerPushInsideBlock();
         static readonly IGridInteraction<Hero, Block> playerPushBlock = new PlayerPushBlock();
-        static readonly IGridInteraction<Hero, Block> playerMountLadder = new PlayerMountLadder();
+        static readonly IGridInteraction<Hero, Block> playerMountLadderTop = new PlayerMountLadderTop();
+        static readonly IGridInteraction<Hero, Block> playerMountLadderBottom = new PlayerMountLadderBottom();
         static readonly IGridInteraction<Hero, Block> playerClimbDownLadder = new PlayerClimbDownLadder();
         static readonly IGridInteraction<Hero, Block> playerClimbUpLadder = new PlayerClimbUpLadder();
 
@@ -64,11 +65,22 @@ namespace GridGame.Blocks.Rules
             if (insideBlock) return playerPushInsideBlock.Handle(player, insideBlock, direction);
 
             Block targetBlock = player.GetNeighbour(direction.AsVector());
-            if (!targetBlock) return MoveResult.Success(direction.AsVector());
+            if (!targetBlock)
+            {
+                Block blockBelowPlayer = player.BlockBelow;
+                if (blockBelowPlayer &&
+                    blockBelowPlayer.IsOriented<Climbable>(direction.AsVector()) &&
+                    !blockBelowPlayer.GetNeighbour(direction.AsVector()))
+                {
+                    return playerMountLadderTop.Handle(player, blockBelowPlayer, direction);
+                }
+
+                return MoveResult.Success(direction.AsVector());
+            }
 
             if (targetBlock.IsOriented<Climbable>(direction.Opposite().AsVector()))
             {
-                return playerMountLadder.Handle(player, targetBlock, direction);
+                return playerMountLadderBottom.Handle(player, targetBlock, direction);
             }
 
             return playerPushBlock.Handle(player, targetBlock, direction);

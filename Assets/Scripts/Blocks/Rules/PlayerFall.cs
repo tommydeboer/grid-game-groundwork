@@ -28,7 +28,7 @@ namespace GridGame.Blocks.Rules
                 return true;
             }
 
-            Block below = player.GetNeighbour(Direction.Down.AsVector());
+            Block below = player.GetNeighbour(Direction.Down);
             if (!below) return false;
 
             Movable movableBelow = below.Movable;

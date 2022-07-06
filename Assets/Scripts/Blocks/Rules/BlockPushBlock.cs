@@ -6,7 +6,7 @@ namespace GridGame.Blocks.Rules
         {
             if (pushee.IsDynamic)
             {
-                bool pusheeDidMove = pushee.Movable.TryMove(direction.AsVector());
+                bool pusheeDidMove = pushee.Movable.TryMove(direction);
                 return MoveResult.Of(pusheeDidMove, direction.AsVector());
             }
 

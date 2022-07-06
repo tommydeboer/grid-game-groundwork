@@ -30,7 +30,7 @@ namespace GridGame.Blocks.Rules
                 Block above = block.BlockAbove;
                 if (above && above.IsDynamic)
                 {
-                    above.Movable.TryMove(direction.AsVector());
+                    above.Movable.TryMove(direction);
                 }
             }
         }
@@ -38,7 +38,7 @@ namespace GridGame.Blocks.Rules
         static MoveResult TryMoveBlock(Direction direction, Block block)
         {
             MoveResult result;
-            Block target = block.GetNeighbour(direction.AsVector());
+            Block target = block.GetNeighbour(direction);
 
             if (!target)
             {
@@ -64,13 +64,13 @@ namespace GridGame.Blocks.Rules
             Block insideBlock = player.GetIntersects<Block>();
             if (insideBlock) return playerPushInsideBlock.Handle(player, insideBlock, direction);
 
-            Block targetBlock = player.GetNeighbour(direction.AsVector());
+            Block targetBlock = player.GetNeighbour(direction);
             if (!targetBlock)
             {
                 Block blockBelowPlayer = player.BlockBelow;
                 if (blockBelowPlayer &&
                     blockBelowPlayer.IsOriented<Climbable>(direction.AsVector()) &&
-                    !blockBelowPlayer.GetNeighbour(direction.AsVector()))
+                    !blockBelowPlayer.GetNeighbour(direction))
                 {
                     return playerMountLadderTop.Handle(player, blockBelowPlayer, direction);
                 }
@@ -88,12 +88,12 @@ namespace GridGame.Blocks.Rules
 
         static MoveResult TryPlayerClimb(Direction direction, Hero player)
         {
-            if (player.GetNeighbour(direction.Opposite().AsVector()) == player.OnClimbable)
+            if (player.GetNeighbour(direction.Opposite()) == player.OnClimbable)
             {
                 return playerClimbDownLadder.Handle(player, player.OnClimbable, direction);
             }
 
-            if (player.GetNeighbour(direction.AsVector()) == player.OnClimbable)
+            if (player.GetNeighbour(direction) == player.OnClimbable)
             {
                 return playerClimbUpLadder.Handle(player, player.OnClimbable, direction);
             }

@@ -84,9 +84,9 @@ namespace GridGame.Blocks
             game.UnregisterMovable(this);
         }
 
-        public bool TryMove(Vector3Int dir)
+        public bool TryMove(Direction dir)
         {
-            MoveResult result = MoveHandler.TryMove(GridElement, dir.ToDirection());
+            MoveResult result = MoveHandler.TryMove(GridElement, dir);
             if (result.DidMove)
             {
                 ScheduleMove(result.Vector);
@@ -120,7 +120,7 @@ namespace GridGame.Blocks
                 Block block = GetComponent<Block>();
                 if (block && (block.IsSolid || block.HasFaceAt(Direction.Down)))
                 {
-                    GridElement.GetNeighbouring<Crushable>(Vector3Int.down)?.Crush();
+                    GridElement.GetNeighbouring<Crushable>(Direction.Down)?.Crush();
                 }
             }
             else

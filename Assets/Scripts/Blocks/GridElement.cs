@@ -16,10 +16,10 @@ namespace GridGame.Blocks
         public Vector3 Below => Position + Vector3.down;
 
         [CanBeNull]
-        public Block BlockBelow => GetNeighbour(Vector3Int.down);
+        public Block BlockBelow => GetNeighbour(Direction.Down);
 
         [CanBeNull]
-        public Block BlockAbove => GetNeighbour(Vector3Int.up);
+        public Block BlockAbove => GetNeighbour(Direction.Up);
 
         void Awake()
         {
@@ -28,25 +28,25 @@ namespace GridGame.Blocks
         }
 
         [CanBeNull]
-        public Block GetNeighbour(Vector3Int direction)
+        public Block GetNeighbour(Direction direction)
         {
-            return Utils.GetBlockAtPos(Position + direction);
+            return Utils.GetBlockAtPos(Position + direction.AsVector());
         }
 
         [CanBeNull]
-        public T GetNeighbouring<T>(Vector3Int direction) where T : GridBehaviour
+        public T GetNeighbouring<T>(Direction direction) where T : GridBehaviour
         {
             return GetNeighbour(direction)?.GetComponent<T>();
         }
 
-        public bool HasNeighbouringOriented<T>(Vector3Int direction, Vector3Int orientation) where T : BlockBehaviour
+        public bool HasNeighbouringOriented<T>(Direction direction, Vector3Int orientation) where T : BlockBehaviour
         {
             // TODO add an out parameter
             var neighbour = GetNeighbour(direction);
             return neighbour && neighbour.GetComponent<T>() && neighbour.Orientation == orientation;
         }
 
-        public bool HasEmptyAt(Vector3Int direction)
+        public bool HasEmptyAt(Direction direction)
         {
             return GetNeighbour(direction) == null;
         }

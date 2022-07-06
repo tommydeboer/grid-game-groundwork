@@ -141,7 +141,7 @@ namespace GridGame.Player
             //     LookAt(dir);
             // }
 
-            movable.TryMove(dir);
+            movable.TryMove(dir.ToDirection());
 
             if (!OnClimbable)
             {

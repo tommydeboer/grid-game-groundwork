@@ -10,7 +10,7 @@ namespace GridGame.Blocks.Rules
             {
                 if (block.IsSolid || block.HasFaceAt(direction.Opposite()))
                 {
-                    bool blockDidMove = block.Movable.TryMove(direction.AsVector());
+                    bool blockDidMove = block.Movable.TryMove(direction);
                     return MoveResult.Of(blockDidMove, direction.AsVector());
                 }
                 else

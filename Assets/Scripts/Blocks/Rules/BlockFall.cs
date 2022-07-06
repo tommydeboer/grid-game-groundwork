@@ -11,7 +11,7 @@ namespace GridGame.Blocks.Rules
         /// Entities are ignored: blocks fall on top of them.
         static bool IsGrounded(GridElement block)
         {
-            Block below = block.GetNeighbour(Direction.Down.AsVector());
+            Block below = block.GetNeighbour(Direction.Down);
             if (!below) return false;
 
             Movable movableBelow = below.GetComponent<Movable>();

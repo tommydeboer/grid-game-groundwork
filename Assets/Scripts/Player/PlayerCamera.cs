@@ -31,23 +31,13 @@ namespace GridGame.Player
             {
                 if (Player.OnClimbable)
                 {
-                    // TODO introduce Direction class
-                    if (Player.OnClimbable.Orientation == Vector3Int.right)
+                    return Player.OnClimbable.Orientation switch
                     {
-                        return new Vector2(viewingAngle, -climbingRotation);
-                    }
-                    else if (Player.OnClimbable.Orientation == Vector3Int.left)
-                    {
-                        return new Vector2(viewingAngle, climbingRotation);
-                    }
-                    else if (Player.OnClimbable.Orientation == Vector3Int.back)
-                    {
-                        return new Vector2(viewingAngle, 0f);
-                    }
-                    else
-                    {
-                        return new Vector2(viewingAngle, 180f);
-                    }
+                        Direction.Right => new Vector2(viewingAngle, -climbingRotation),
+                        Direction.Left => new Vector2(viewingAngle, climbingRotation),
+                        Direction.Back => new Vector2(viewingAngle, 0f),
+                        _ => new Vector2(viewingAngle, 180f)
+                    };
                 }
                 else
                 {

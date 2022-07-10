@@ -14,14 +14,11 @@ namespace GridGame.Player
         [SerializeField]
         FMODUnity.EventReference WalkEvent;
 
-        [SerializeField]
-        bool debugClimbables;
-
         public Block OnClimbable { get; set; }
         public const float ClimbableOffset = 0.35f;
 
         Vector3Int currentMovementDir;
-        Vector3Int mountDirection;
+        Vector3 mountDirection;
         bool IsAlive { get; set; }
 
         Movable movable;
@@ -120,26 +117,7 @@ namespace GridGame.Player
             //     return;
             // }
             //
-            // Debug.Assert(below != null, "Trying to move player while not grounded");
-            //
-            // if (below.IsOriented<Climbable>(dir) && targetIsEmpty && below.HasEmptyAt(dir))
-            // {
-            //     LogClimbableDebug("Mounting climbable from above");
-            //
-            //     mountDirection = dir;
-            //     Move(Vector3Int.down + (Vector3)dir * (1 - ClimbableOffset));
-            //     SetClimbable(below);
-            //     LookAt(-dir);
-            // }
-            // else if (!targetIsEmpty && target.IsOriented<Climbable>(-dir) && !Intersects<Block>())
-            // {
-            //     LogClimbableDebug("Mounting climbable");
-            //
-            //     mountDirection = dir;
-            //     Move((Vector3)dir * ClimbableOffset);
-            //     SetClimbable(target);
-            //     LookAt(dir);
-            // }
+
 
             movable.TryMove(dir.ToDirection());
 
@@ -151,76 +129,6 @@ namespace GridGame.Player
 
         void TryClimb(Vector3Int dir, Block below)
         {
-            // correct input direction based on climbable's orientation
-            // dir = Vector3Int.RoundToInt(Quaternion.Euler(OnClimbable.Rotation) * dir);
-            //
-            // var above = GetNeighbour(Vector3Int.up);
-            // var opposite = GetNeighbour(-dir);
-            // var target = GetNeighbour(dir);
-            // var climbablePos = OnClimbable.Position;
-            //
-            // if (target != null && target == OnClimbable)
-            // {
-            //     //TODO decide what to do: new behaviour "Solid"?
-            //     if (above != null) return;
-            //
-            //     var aboveClimbable = OnClimbable.GetNeighbour(Vector3Int.up);
-            //     if (aboveClimbable != null && aboveClimbable.IsOriented<Climbable>(-dir))
-            //     {
-            //         LogClimbableDebug("Climbing up climbable");
-            //
-            //         Move(Vector3Int.up);
-            //         SetClimbable(aboveClimbable);
-            //         LookAt(dir);
-            //     }
-            //     else if (aboveClimbable == null)
-            //     {
-            //         LogClimbableDebug("Climbing up climbable over edge");
-            //
-            //         Move(Vector3Int.up + ((Vector3)dir * (1 - ClimbableOffset)));
-            //         ResetClimbable();
-            //     }
-            //
-            //     return;
-            // }
-            // else if (OnClimbable.HasNeighbouringOriented<Climbable>(dir, OnClimbable.Orientation))
-            // {
-            //     if (movable.TryMove(dir))
-            //     {
-            //         LogClimbableDebug("Climbing to neighbouring climbable");
-            //
-            //         Move(dir);
-            //         // ReSharper disable once PossibleNullReferenceException
-            //         SetClimbable(OnClimbable.GetNeighbour(dir));
-            //     }
-            // }
-            // else if (OnClimbable == opposite)
-            // {
-            //     var belowClimbable = OnClimbable.GetNeighbour(Vector3Int.down);
-            //
-            //     if (belowClimbable != null && belowClimbable.IsOriented<Climbable>(OnClimbable.Orientation) &&
-            //         below == null)
-            //     {
-            //         LogClimbableDebug("Climbing down climbable");
-            //
-            //         Move(Vector3Int.down);
-            //         SetClimbable(belowClimbable);
-            //     }
-            //     else if (belowClimbable == null && below == null)
-            //     {
-            //         LogClimbableDebug("Falling down climbable");
-            //
-            //         Move(Vector3Int.down + ((Vector3)dir * ClimbableOffset));
-            //         ResetClimbable();
-            //     }
-            //     else
-            //     {
-            //         LogClimbableDebug("Stepping off climbable");
-            //
-            //         Move((Vector3)dir * ClimbableOffset);
-            //         ResetClimbable();
-            //     }
-            // }
             // else if (target != null && target.IsOriented<Climbable>(-dir))
             // {
             //     LogClimbableDebug("Climbing to other climbable in corner");
@@ -230,22 +138,7 @@ namespace GridGame.Player
             //     SetClimbable(target);
             //     LookAt(dir);
             // }
-            // else
-            // {
-            //     Vector3 directionToClimbable = (Position - climbablePos).normalized;
-            //     LogClimbableDebug("Stepping off climbable sideways");
-            //     if (target != null && !target.IsSolid && !target.HasFaceAt((-dir).ToDirection()))
-            //     {
-            //         Move(dir + (directionToClimbable * ClimbableOffset));
-            //         ResetClimbable();
-            //     }
-            //     else if (movable.TryMove(dir))
-            //     {
-            //         Move(dir + (directionToClimbable * ClimbableOffset));
-            //         ResetClimbable();
-            //     }
-            // }
-            //
+
             // if (!OnClimbable)
             // {
             //     LookAt(dir);
@@ -272,7 +165,7 @@ namespace GridGame.Player
 
         public void OnDrawGizmos()
         {
-            if (debugClimbables && OnClimbable)
+            if (OnClimbable)
             {
                 Gizmos.color = Color.red;
                 Gizmos.DrawWireCube(OnClimbable.Position, Vector3.one);
@@ -283,14 +176,6 @@ namespace GridGame.Player
             Vector3 forward = tf.TransformDirection(Vector3.forward);
             Vector3 pos = tf.position;
             Gizmos.DrawLine(pos, pos + forward);
-        }
-
-        void LogClimbableDebug(string log)
-        {
-            if (debugClimbables)
-            {
-                Debug.Log(log);
-            }
         }
 
         class HeroState : PersistableState

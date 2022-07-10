@@ -10,7 +10,7 @@ namespace GridGame.Blocks.Rules
             Block blockBelowPlayer = player.BlockBelow;
             Block blockBelowLadder = ladder.BlockBelow;
             bool ladderContinuesBelow =
-                blockBelowLadder && blockBelowLadder.IsOriented<Climbable>(direction.AsVector());
+                blockBelowLadder && blockBelowLadder.IsOriented<Climbable>(direction);
 
             if (blockBelowPlayer || !ladderContinuesBelow)
             {

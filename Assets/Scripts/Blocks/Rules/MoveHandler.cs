@@ -12,6 +12,7 @@ namespace GridGame.Blocks.Rules
         static readonly IGridInteraction<Hero, Block> playerMountLadderBottom = new PlayerMountLadderBottom();
         static readonly IGridInteraction<Hero, Block> playerClimbDownLadder = new PlayerClimbDownLadder();
         static readonly IGridInteraction<Hero, Block> playerClimbUpLadder = new PlayerClimbUpLadder();
+        static readonly IGridInteraction<Hero, Block> playerClimbLadderSideways = new PlayerClimbLadderSideways();
 
         public static MoveResult TryMove(GridElement element, Direction direction)
         {
@@ -69,7 +70,7 @@ namespace GridGame.Blocks.Rules
             {
                 Block blockBelowPlayer = player.BlockBelow;
                 if (blockBelowPlayer &&
-                    blockBelowPlayer.IsOriented<Climbable>(direction.AsVector()) &&
+                    blockBelowPlayer.IsOriented<Climbable>(direction) &&
                     !blockBelowPlayer.GetNeighbour(direction))
                 {
                     return playerMountLadderTop.Handle(player, blockBelowPlayer, direction);
@@ -78,7 +79,7 @@ namespace GridGame.Blocks.Rules
                 return MoveResult.Success(direction.AsVector());
             }
 
-            if (targetBlock.IsOriented<Climbable>(direction.Opposite().AsVector()))
+            if (targetBlock.IsOriented<Climbable>(direction.Opposite()))
             {
                 return playerMountLadderBottom.Handle(player, targetBlock, direction);
             }
@@ -98,7 +99,7 @@ namespace GridGame.Blocks.Rules
                 return playerClimbUpLadder.Handle(player, player.OnClimbable, direction);
             }
 
-            return MoveResult.Failed();
+            return playerClimbLadderSideways.Handle(player, player.OnClimbable, direction);
         }
     }
 }

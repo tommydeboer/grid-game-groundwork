@@ -17,7 +17,7 @@ namespace GridGame.Blocks.Rules
             }
 
             bool ladderContinuesAbove =
-                blockAboveLadder && blockAboveLadder.IsOriented<Climbable>(direction.Opposite().AsVector());
+                blockAboveLadder && blockAboveLadder.IsOriented<Climbable>(direction.Opposite());
             if (ladderContinuesAbove)
             {
                 player.OnClimbable = blockAboveLadder;

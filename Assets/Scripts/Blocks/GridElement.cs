@@ -12,7 +12,7 @@ namespace GridGame.Blocks
         public Movable Movable { get; private set; }
         public Vector3 Position => transform.position;
         public Vector3 Rotation => transform.eulerAngles;
-        public Vector3Int Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Rotation) * Vector3.back);
+        public Direction Orientation => Vector3Int.RoundToInt(Quaternion.Euler(Rotation) * Vector3.back).ToDirection();
         public Vector3 Below => Position + Vector3.down;
 
         [CanBeNull]
@@ -37,18 +37,6 @@ namespace GridGame.Blocks
         public T GetNeighbouring<T>(Direction direction) where T : GridBehaviour
         {
             return GetNeighbour(direction)?.GetComponent<T>();
-        }
-
-        public bool HasNeighbouringOriented<T>(Direction direction, Vector3Int orientation) where T : BlockBehaviour
-        {
-            // TODO add an out parameter
-            var neighbour = GetNeighbour(direction);
-            return neighbour && neighbour.GetComponent<T>() && neighbour.Orientation == orientation;
-        }
-
-        public bool HasEmptyAt(Direction direction)
-        {
-            return GetNeighbour(direction) == null;
         }
 
         public bool Is<T>() where T : MonoBehaviour
@@ -87,9 +75,9 @@ namespace GridGame.Blocks
         }
 
         // TODO remove when GetNeighbour returns edge before block
-        public bool IsOriented<T>(Vector3Int orientation) where T : BlockBehaviour
+        public bool IsOriented<T>(Direction direction) where T : BlockBehaviour
         {
-            return GetComponent<T>() && Orientation == orientation;
+            return GetComponent<T>() && Orientation == direction;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace GridGame
 
     internal static class DirectionExtensions
     {
-        public static Vector3Int AsVector(this Direction direction)
+        public static Vector3 AsVector(this Direction direction)
         {
             return direction switch
             {

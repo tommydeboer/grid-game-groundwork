@@ -8,7 +8,7 @@ namespace GridGame.Blocks.Rules
         {
             if (block.IsDynamic)
             {
-                if (block.IsSolid || block.HasFaceAt(direction.Opposite()))
+                if (block.HasFaceAt(direction.Opposite()))
                 {
                     bool blockDidMove = block.Movable.TryMove(direction);
                     return MoveResult.Of(blockDidMove, direction.AsVector());
@@ -18,7 +18,7 @@ namespace GridGame.Blocks.Rules
                     return MoveResult.Success(direction.AsVector());
                 }
             }
-            else if (!block.IsSolid && !block.HasFaceAt(direction.Opposite()))
+            else if (!block.HasFaceAt(direction.Opposite()))
             {
                 return MoveResult.Success(direction.AsVector());
             }

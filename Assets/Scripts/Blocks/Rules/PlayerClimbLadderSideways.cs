@@ -14,19 +14,40 @@ namespace GridGame.Blocks.Rules
             {
                 if (blockNextToPlayer && blockNextToPlayer.IsDynamic)
                 {
-                    // TODO PlayerPushBlockOnLadder
-                    return MoveResult.Failed();
+                    if (blockNextToPlayer.HasFaceAt(direction.Opposite()))
+                    {
+                        bool didMove = blockNextToPlayer.Movable.TryMove(direction);
+                        if (didMove) player.OnClimbable = blockNextToLadder;
+                        return MoveResult.Of(didMove, direction.AsVector());
+                    }
+                    else
+                    {
+                        return StepOff(player, ladder, direction);
+                    }
                 }
 
                 player.OnClimbable = blockNextToLadder;
                 return MoveResult.Success(direction.AsVector());
             }
 
-            if (blockNextToLadder && blockNextToLadder.IsOriented<Climbable>(direction.Opposite()))
+            if (blockNextToPlayer && blockNextToPlayer.IsDynamic && blockNextToPlayer.HasFaceAt(direction.Opposite()))
             {
-                
+                bool didMove = blockNextToPlayer.Movable.TryMove(direction);
+                if (didMove)
+                {
+                    StepOff(player, ladder, direction);
+                }
+                else
+                {
+                    return MoveResult.Failed();
+                }
             }
 
+            return StepOff(player, ladder, direction);
+        }
+
+        static MoveResult StepOff(Hero player, GridElement ladder, Direction direction)
+        {
             player.Dismount();
             return MoveResult.Success(Hero.ClimbableOffset * ladder.Orientation.AsVector() + direction.AsVector());
         }

@@ -10,6 +10,14 @@ namespace GridGame.Blocks.Rules
             Block blockNextToLadder = ladder.GetNeighbour(direction);
             Block blockNextToPlayer = player.GetNeighbour(direction);
 
+            if (blockNextToPlayer && blockNextToPlayer.IsOriented<Climbable>(direction.Opposite()))
+            {
+                player.OnClimbable = blockNextToPlayer;
+                player.LookAt(direction.AsVector());
+                return MoveResult.Success((Hero.ClimbableOffset * ladder.Orientation.AsVector()) +
+                                          (Hero.ClimbableOffset * direction.AsVector()));
+            }
+
             if (blockNextToLadder && blockNextToLadder.IsOriented<Climbable>(ladder.Orientation))
             {
                 if (blockNextToPlayer && blockNextToPlayer.IsDynamic)

@@ -92,7 +92,7 @@ namespace GridGame.Player
             }
         }
 
-        void LookAt(Vector3 dir)
+        public void LookAt(Vector3 dir)
         {
             var q = Quaternion.LookRotation(dir);
             transform.DORotate(q.eulerAngles, 0.1f);
@@ -101,54 +101,19 @@ namespace GridGame.Player
 
         void TryPlayerMove(Vector3Int dir)
         {
-            // Block target = GetNeighbour(dir);
-            // bool targetIsEmpty = target == null;
-            // Block below = GetNeighbour(Vector3Int.down);
-            //
-            // if (OnClimbable)
-            // {
-            //     if ((dir != Vector3Int.forward && dir != Vector3Int.back) && mountDirection == dir)
-            //     {
-            //         // prevent climbing when we just mounted a ladder sideways to prevent immediately stepping off
-            //         return;
-            //     }
-            //
-            //     TryClimb(dir, below);
-            //     return;
-            // }
-            //
+            if (OnClimbable && (dir != Vector3Int.forward && dir != Vector3Int.back) && mountDirection == dir)
+            {
+                // prevent climbing when we just mounted a ladder sideways to prevent immediately stepping off
+                return;
+            }
 
-
-            movable.TryMove(dir.ToDirection());
+            bool didMove = movable.TryMove(dir.ToDirection());
+            if (didMove) FMODUnity.RuntimeManager.PlayOneShot(WalkEvent, transform.position);
 
             if (!OnClimbable)
             {
                 LookAt(dir);
             }
-        }
-
-        void TryClimb(Vector3Int dir, Block below)
-        {
-            // else if (target != null && target.IsOriented<Climbable>(-dir))
-            // {
-            //     LogClimbableDebug("Climbing to other climbable in corner");
-            //
-            //     Vector3 directionToClimbable = (Position - climbablePos).normalized;
-            //     Move((directionToClimbable * ClimbableOffset) + ((Vector3)dir * ClimbableOffset));
-            //     SetClimbable(target);
-            //     LookAt(dir);
-            // }
-
-            // if (!OnClimbable)
-            // {
-            //     LookAt(dir);
-            // }
-        }
-
-        void Move(Vector3 dir)
-        {
-            FMODUnity.RuntimeManager.PlayOneShot(WalkEvent, transform.position);
-            movable.ScheduleMove(dir);
         }
 
         public void Mount(Block climbable, Direction direction)

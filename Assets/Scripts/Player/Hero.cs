@@ -101,19 +101,30 @@ namespace GridGame.Player
 
         void TryPlayerMove(Vector3Int dir)
         {
-            if (OnClimbable && (dir != Vector3Int.forward && dir != Vector3Int.back) && mountDirection == dir)
+            if (OnClimbable)
             {
-                // prevent climbing when we just mounted a ladder sideways to prevent immediately stepping off
-                return;
+                if ((dir != Vector3Int.forward && dir != Vector3Int.back) && mountDirection == dir)
+                {
+                    // prevent climbing when we just mounted a ladder sideways to prevent immediately stepping off
+                    return;
+                }
+
+                // correct input direction based on climbable's orientation
+                dir = Vector3Int.RoundToInt(Quaternion.Euler(OnClimbable.Rotation) * dir);
             }
 
             bool didMove = movable.TryMove(dir.ToDirection());
-            if (didMove) FMODUnity.RuntimeManager.PlayOneShot(WalkEvent, transform.position);
+            if (didMove) PlayWalkSound();
 
             if (!OnClimbable)
             {
                 LookAt(dir);
             }
+        }
+
+        void PlayWalkSound()
+        {
+            FMODUnity.RuntimeManager.PlayOneShot(WalkEvent, transform.position);
         }
 
         public void Mount(Block climbable, Direction direction)

@@ -54,11 +54,13 @@ namespace GridGame.Blocks
 
         FMOD.Studio.EventInstance sfxMoving;
         Game game;
+        Removable removable;
 
         void Start()
         {
             game = CoreComponents.Game;
             particleSys = GetComponent<ParticleSystem>();
+            removable = GetComponent<Removable>();
 
             game.RegisterMovable(this);
 
@@ -95,7 +97,7 @@ namespace GridGame.Blocks
             return result.DidMove;
         }
 
-        public void ScheduleMove(Vector3 dir)
+        void ScheduleMove(Vector3 dir)
         {
             if (!Game.moversToMove.Contains(this))
             {
@@ -108,7 +110,7 @@ namespace GridGame.Blocks
         {
             if (transform.position.y < 0)
             {
-                GridElement.SetDestroyed();
+                removable.Remove();
                 game.movingCount--;
                 game.FallEnd();
                 return;

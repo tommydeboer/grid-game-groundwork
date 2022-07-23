@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GridGame.Blocks
 {
-    public class GridElement : MonoBehaviour, IRemovable
+    public class GridElement : MonoBehaviour
     {
         [ReadOnly, UsedImplicitly]
         public int id;
@@ -82,39 +82,6 @@ namespace GridGame.Blocks
         public bool IsOriented<T>(Direction direction) where T : BlockBehaviour
         {
             return GetComponent<T>() && Orientation == direction;
-        }
-
-        public void SetDestroyed()
-        {
-            if (undoable) undoable.Remove();
-        }
-
-        public void OnRemove()
-        {
-            ToggleColliders(false);
-            ToggleRenderers(false);
-        }
-
-        public void OnReplace()
-        {
-            ToggleColliders(true);
-            ToggleRenderers(true);
-        }
-
-        void ToggleColliders(bool enable)
-        {
-            foreach (var c in GetComponentsInChildren<Collider>())
-            {
-                c.enabled = enable;
-            }
-        }
-
-        void ToggleRenderers(bool enable)
-        {
-            foreach (var r in GetComponentsInChildren<Renderer>())
-            {
-                r.enabled = enable;
-            }
         }
     }
 }

@@ -10,16 +10,11 @@ namespace GridGame.Undo
         UndoEventChannelSO undoEventChannel;
 
         IUndoable[] undoables;
-        IRemovable[] removables;
         History<PersistableState>[] histories;
-
-        int index;
-        int removedAtIndex = -1;
 
         void Awake()
         {
             undoables = GetComponents<IUndoable>();
-            removables = GetComponents<IRemovable>();
             Init();
         }
 
@@ -37,24 +32,6 @@ namespace GridGame.Undo
             undoEventChannel.OnSaveRequested -= Save;
         }
 
-        public void Remove()
-        {
-            removedAtIndex = index;
-            foreach (IRemovable removable in removables)
-            {
-                removable.OnRemove();
-            }
-        }
-
-        void Replace()
-        {
-            removedAtIndex = -1;
-            foreach (IRemovable removable in removables)
-            {
-                removable.OnReplace();
-            }
-        }
-
         void Init()
         {
             histories = new History<PersistableState>[undoables.Length];
@@ -67,13 +44,6 @@ namespace GridGame.Undo
 
         void Undo(bool cancelsCurrentMove)
         {
-            index = Math.Max(0, index - 1);
-            int checkIndex = cancelsCurrentMove ? removedAtIndex - 1 : removedAtIndex;
-            if (index == checkIndex)
-            {
-                Replace();
-            }
-
             for (int i = 0; i < undoables.Length; i++)
             {
                 PersistableState value = cancelsCurrentMove ? histories[i].Current() : histories[i].Back();
@@ -83,10 +53,6 @@ namespace GridGame.Undo
 
         void Restart()
         {
-            if (removedAtIndex > -1) Replace();
-            index = 0;
-            removedAtIndex = -1;
-
             for (int i = 0; i < undoables.Length; i++)
             {
                 undoables[i].ApplyState(histories[i].Reset());
@@ -95,9 +61,6 @@ namespace GridGame.Undo
 
         void Save()
         {
-            index++;
-            if (removedAtIndex > -1) return;
-
             for (int i = 0; i < undoables.Length; i++)
             {
                 histories[i].Push(undoables[i].GetState());

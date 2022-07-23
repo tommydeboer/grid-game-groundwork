@@ -19,17 +19,17 @@ namespace GridGame.Player
 
         Vector3Int currentMovementDir;
         Vector3 mountDirection;
-        bool IsAlive { get; set; }
 
         Movable movable;
         Crushable crushable;
+        Removable removable;
         bool holdingUndo;
 
         void Awake()
         {
             movable = GetComponent<Movable>();
             crushable = GetComponent<Crushable>();
-            IsAlive = true;
+            removable = GetComponent<Removable>();
         }
 
         void OnEnable()
@@ -44,7 +44,7 @@ namespace GridGame.Player
 
         void OnCrush()
         {
-            SetDestroyed();
+            removable.Remove();
         }
 
         void Start()
@@ -71,7 +71,7 @@ namespace GridGame.Player
 
         bool CanInput()
         {
-            return !Game.isMoving && !holdingUndo && IsAlive;
+            return !Game.isMoving && !holdingUndo && removable.IsAlive;
         }
 
         [UsedImplicitly]
@@ -171,16 +171,6 @@ namespace GridGame.Player
         {
             var state = persistableState.As<HeroState>();
             OnClimbable = state.onClimbable;
-        }
-
-        public void Kill()
-        {
-            IsAlive = false;
-        }
-
-        public void Revive()
-        {
-            IsAlive = true;
         }
     }
 }

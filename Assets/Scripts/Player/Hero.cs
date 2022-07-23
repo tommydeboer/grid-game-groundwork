@@ -44,7 +44,7 @@ namespace GridGame.Player
 
         void OnCrush()
         {
-            IsAlive = false;
+            SetDestroyed();
         }
 
         void Start()
@@ -157,7 +157,6 @@ namespace GridGame.Player
         class HeroState : PersistableState
         {
             public Block onClimbable;
-            public bool isAlive;
         }
 
         public PersistableState GetState()
@@ -165,15 +164,23 @@ namespace GridGame.Player
             return new HeroState
             {
                 onClimbable = OnClimbable,
-                isAlive = IsAlive
             };
         }
 
         public void ApplyState(PersistableState persistableState)
         {
             var state = persistableState.As<HeroState>();
-            IsAlive = state.isAlive;
             OnClimbable = state.onClimbable;
+        }
+
+        public void Kill()
+        {
+            IsAlive = false;
+        }
+
+        public void Revive()
+        {
+            IsAlive = true;
         }
     }
 }

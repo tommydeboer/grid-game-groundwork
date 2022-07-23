@@ -1,9 +1,10 @@
+using GridGame.Undo;
 using JetBrains.Annotations;
 using UnityEngine;
 
 namespace GridGame.Blocks
 {
-    public class GridElement : MonoBehaviour
+    public class GridElement : MonoBehaviour, IRemovable
     {
         [ReadOnly, UsedImplicitly]
         public int id;
@@ -21,9 +22,12 @@ namespace GridGame.Blocks
         [CanBeNull]
         public Block BlockAbove => GetNeighbour(Direction.Up);
 
+        Undoable undoable;
+
         void Awake()
         {
             Movable = GetComponent<Movable>();
+            undoable = GetComponent<Undoable>();
             id = GetInstanceID();
         }
 
@@ -78,6 +82,39 @@ namespace GridGame.Blocks
         public bool IsOriented<T>(Direction direction) where T : BlockBehaviour
         {
             return GetComponent<T>() && Orientation == direction;
+        }
+
+        public void SetDestroyed()
+        {
+            if (undoable) undoable.Remove();
+        }
+
+        public void OnRemove()
+        {
+            ToggleColliders(false);
+            ToggleRenderers(false);
+        }
+
+        public void OnReplace()
+        {
+            ToggleColliders(true);
+            ToggleRenderers(true);
+        }
+
+        void ToggleColliders(bool enable)
+        {
+            foreach (var c in GetComponentsInChildren<Collider>())
+            {
+                c.enabled = enable;
+            }
+        }
+
+        void ToggleRenderers(bool enable)
+        {
+            foreach (var r in GetComponentsInChildren<Renderer>())
+            {
+                r.enabled = enable;
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ using Object = System.Object;
 
 namespace GridGame.Blocks
 {
-    public class Movable : GridBehaviour, IUndoable
+    public class Movable : GridBehaviour, IUndoable, IRemovable
     {
         [SerializeField]
         FMODUnity.EventReference LandedEvent;
@@ -106,6 +106,14 @@ namespace GridGame.Blocks
 
         public void FallStart()
         {
+            if (transform.position.y < 0)
+            {
+                GridElement.SetDestroyed();
+                game.movingCount--;
+                game.FallEnd();
+                return;
+            }
+
             if (FallHandler.ShouldFall(GridElement))
             {
                 if (!isFalling)
@@ -155,8 +163,8 @@ namespace GridGame.Blocks
                 }
 
                 isFalling = false;
-                Game.instance.movingCount--;
-                Game.instance.FallEnd();
+                game.movingCount--;
+                game.FallEnd();
             }
         }
 
@@ -185,6 +193,16 @@ namespace GridGame.Blocks
             tf.position = state.position;
             tf.eulerAngles = state.rotation;
             isFalling = state.isFalling;
+        }
+
+        public void OnRemove()
+        {
+            game.UnregisterMovable(this);
+        }
+
+        public void OnReplace()
+        {
+            game.RegisterMovable(this);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using GridGame.Player;
+using UnityEngine;
 
 namespace GridGame.Blocks.Rules
 {
@@ -16,12 +17,19 @@ namespace GridGame.Blocks.Rules
 
         public static MoveResult TryMove(GridElement element, Direction direction)
         {
-            return element switch
+            var result = element switch
             {
                 Block block => TryMoveBlock(direction, block),
                 Hero player => TryMovePlayer(direction, player),
                 _ => throw new ArgumentException("No interaction implemented for " + element.name)
             };
+
+            if (result.DidMove && MovedOutOfBounds(element.Position + result.Vector))
+            {
+                return MoveResult.Failed();
+            }
+
+            return result;
         }
 
         static void TryMoveStacked(GridElement element, Direction direction)
@@ -100,6 +108,12 @@ namespace GridGame.Blocks.Rules
             }
 
             return playerClimbLadderSideways.Handle(player, player.OnClimbable, direction);
+        }
+
+        static bool MovedOutOfBounds(Vector3 position)
+        {
+            return !(Physics.Raycast(position + Vector3.down * .45f, Vector3.down, out RaycastHit hit, Mathf.Infinity,
+                (int)Layers.GridPhysics));
         }
     }
 }

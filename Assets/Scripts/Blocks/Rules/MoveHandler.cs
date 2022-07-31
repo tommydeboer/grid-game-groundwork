@@ -24,7 +24,7 @@ namespace GridGame.Blocks.Rules
                 _ => throw new ArgumentException("No interaction implemented for " + element.name)
             };
 
-            if (result.DidMove && MovedOutOfBounds(element.Position + result.Vector))
+            if (MovedOutOfBounds(element, result))
             {
                 return MoveResult.Failed();
             }
@@ -110,10 +110,19 @@ namespace GridGame.Blocks.Rules
             return playerClimbLadderSideways.Handle(player, player.OnClimbable, direction);
         }
 
-        static bool MovedOutOfBounds(Vector3 position)
+        static bool MovedOutOfBounds(GridElement element, MoveResult result)
         {
-            return !(Physics.Raycast(position + Vector3.down * .45f, Vector3.down, out RaycastHit hit, Mathf.Infinity,
-                (int)Layers.GridPhysics));
+            if (result.DidMove)
+            {
+                return !(Physics.Raycast(
+                    element.Position + result.Vector + Vector3.down * .45f,
+                    Vector3.down,
+                    out RaycastHit _,
+                    Mathf.Infinity,
+                    (int)Layers.GridPhysics));
+            }
+
+            return false;
         }
     }
 }

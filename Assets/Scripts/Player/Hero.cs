@@ -77,8 +77,10 @@ namespace GridGame.Player
         {
             if (CanInput() && currentMovementDir != Vector3Int.zero)
             {
-                TryPlayerMove(currentMovementDir);
-                turnLifecycleEventChannel.EndInput();
+                if (TryPlayerMove(currentMovementDir))
+                {
+                    turnLifecycleEventChannel.EndInput();
+                }
             }
         }
 
@@ -112,14 +114,14 @@ namespace GridGame.Player
         }
 
 
-        void TryPlayerMove(Vector3Int dir)
+        bool TryPlayerMove(Vector3Int dir)
         {
             if (OnClimbable)
             {
                 if ((dir != Vector3Int.forward && dir != Vector3Int.back) && mountDirection == dir)
                 {
                     // prevent climbing when we just mounted a ladder sideways to prevent immediately stepping off
-                    return;
+                    return false;
                 }
 
                 // correct input direction based on climbable's orientation
@@ -133,6 +135,8 @@ namespace GridGame.Player
             {
                 LookAt(dir);
             }
+
+            return didMove;
         }
 
         void PlayWalkSound()

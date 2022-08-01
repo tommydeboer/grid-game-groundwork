@@ -108,13 +108,7 @@ namespace GridGame.Blocks
 
         public void FallStart()
         {
-            if (transform.position.y < 0)
-            {
-                removable.Remove();
-                game.movingCount--;
-                game.FallEnd();
-                return;
-            }
+            if (RemoveBelow0()) return;
 
             if (FallHandler.ShouldFall(GridElement))
             {
@@ -137,6 +131,19 @@ namespace GridGame.Blocks
             {
                 FallEnd();
             }
+        }
+
+        bool RemoveBelow0()
+        {
+            if (transform.position.y < 0)
+            {
+                removable.Remove();
+                game.movingCount--;
+                game.FallEnd();
+                return true;
+            }
+
+            return false;
         }
 
         void FallAgain()

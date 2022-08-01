@@ -9,8 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df95a73eca8e47e1927a0e6d729fa4f3, type: 3}
-  m_Name: UndoEventChannel
+  m_Script: {fileID: 11500000, guid: 04875eecdae84892a1681eaf3449f8f0, type: 3}
+  m_Name: TurnLifecycleEventChannel
   m_EditorClassIdentifier: 
-  turnLifecycleEventChannel: {fileID: 11400000, guid: 16574b2e8cb9cb5478d9e9daf933d6d1,
-    type: 2}

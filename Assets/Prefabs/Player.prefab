@@ -412,6 +412,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  turnLifecycleEventChannel: {fileID: 11400000, guid: 16574b2e8cb9cb5478d9e9daf933d6d1,
+    type: 2}
   WalkEvent:
     Guid:
       Data1: 708870944

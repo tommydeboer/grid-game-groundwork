@@ -7,6 +7,9 @@ namespace GridGame.SO
     [CreateAssetMenu(menuName = "SO/Undo Event Channel")]
     public class UndoEventChannelSO : ScriptableObject
     {
+        [SerializeField]
+        TurnLifecycleEventChannelSO turnLifecycleEventChannel;
+
         public UnityAction<bool> OnUndoRequested;
         public UnityAction OnResetRequested;
         public UnityAction OnSaveRequested;
@@ -14,11 +17,13 @@ namespace GridGame.SO
         public void RequestUndo(bool cancelsCurrentMove)
         {
             OnUndoRequested?.Invoke(cancelsCurrentMove);
+            turnLifecycleEventChannel.CancelTurn();
         }
 
         public void RequestReset()
         {
             OnResetRequested?.Invoke();
+            turnLifecycleEventChannel.CancelTurn();
         }
 
         public void RequestSave()

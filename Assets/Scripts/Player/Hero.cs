@@ -1,6 +1,7 @@
 ﻿using System;
 using DG.Tweening;
 using GridGame.Blocks;
+using GridGame.SO;
 using GridGame.Undo;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -12,10 +13,15 @@ namespace GridGame.Player
     public class Hero : Entity, IUndoable
     {
         [SerializeField]
+        TurnLifecycleEventChannelSO turnLifecycleEventChannel;
+
+        [SerializeField]
         FMODUnity.EventReference WalkEvent;
 
         public Block OnClimbable { get; set; }
         public const float ClimbableOffset = 0.35f;
+
+        bool InputAllowed { get; set; } = true;
 
         Vector3Int currentMovementDir;
         Vector3 mountDirection;
@@ -35,12 +41,19 @@ namespace GridGame.Player
         void OnEnable()
         {
             crushable.OnCrushed += OnCrush;
+            turnLifecycleEventChannel.OnInputStart += OnInputStart;
+            turnLifecycleEventChannel.OnInputEnd += OnInputEnd;
         }
 
         void OnDisable()
         {
             crushable.OnCrushed -= OnCrush;
+            turnLifecycleEventChannel.OnInputStart -= OnInputStart;
+            turnLifecycleEventChannel.OnInputEnd -= OnInputEnd;
         }
+
+        void OnInputStart() => InputAllowed = true;
+        void OnInputEnd() => InputAllowed = false;
 
         void OnCrush()
         {
@@ -65,13 +78,13 @@ namespace GridGame.Player
             if (CanInput() && currentMovementDir != Vector3Int.zero)
             {
                 TryPlayerMove(currentMovementDir);
-                Game.instance.DoScheduledMoves();
+                turnLifecycleEventChannel.EndInput();
             }
         }
 
         bool CanInput()
         {
-            return !Game.isMoving && !holdingUndo && removable.IsAlive;
+            return InputAllowed && !holdingUndo && removable.IsAlive;
         }
 
         [UsedImplicitly]

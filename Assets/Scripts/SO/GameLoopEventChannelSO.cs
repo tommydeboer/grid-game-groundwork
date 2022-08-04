@@ -4,8 +4,8 @@ using UnityEngine.Events;
 
 namespace GridGame.SO
 {
-    [CreateAssetMenu(menuName = "SO/Turn Lifecycle Event Channel")]
-    public class TurnLifecycleEventChannelSO : ScriptableObject
+    [CreateAssetMenu(menuName = "SO/Game Loop Event Channel")]
+    public class GameLoopEventChannelSO : ScriptableObject
     {
         public UnityAction OnInputStart;
         public UnityAction OnInputEnd;
@@ -33,7 +33,7 @@ namespace GridGame.SO
             OnInputStart?.Invoke();
         }
 
-        public void CancelTurn()
+        public void Reset()
         {
             OnInputStart?.Invoke();
         }

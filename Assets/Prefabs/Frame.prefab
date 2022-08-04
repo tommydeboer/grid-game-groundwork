@@ -928,7 +928,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   undoEventChannel: {fileID: 11400000, guid: 18f539e9cb2a7a048ac267509007ceb8, type: 2}
-  turnLifecycleEventChannel: {fileID: 11400000, guid: 16574b2e8cb9cb5478d9e9daf933d6d1,
+  gameLoopEventChannelSo: {fileID: 11400000, guid: 87b5caa48b855294d8ecc4df1f1d1863,
     type: 2}
 --- !u!114 &7380597729637237148
 MonoBehaviour:

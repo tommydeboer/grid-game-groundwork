@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 04875eecdae84892a1681eaf3449f8f0, type: 3}
-  m_Name: TurnLifecycleEventChannel
+  m_Name: GameLoopEventChannel
   m_EditorClassIdentifier: 

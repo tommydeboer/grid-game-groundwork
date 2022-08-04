@@ -13,7 +13,7 @@ namespace GridGame.Player
     public class Hero : Entity, IUndoable
     {
         [SerializeField]
-        TurnLifecycleEventChannelSO turnLifecycleEventChannel;
+        GameLoopEventChannelSO gameLoopEventChannelSo;
 
         [SerializeField]
         FMODUnity.EventReference WalkEvent;
@@ -41,15 +41,15 @@ namespace GridGame.Player
         void OnEnable()
         {
             crushable.OnCrushed += OnCrush;
-            turnLifecycleEventChannel.OnInputStart += OnInputStart;
-            turnLifecycleEventChannel.OnInputEnd += OnInputEnd;
+            gameLoopEventChannelSo.OnInputStart += OnInputStart;
+            gameLoopEventChannelSo.OnInputEnd += OnInputEnd;
         }
 
         void OnDisable()
         {
             crushable.OnCrushed -= OnCrush;
-            turnLifecycleEventChannel.OnInputStart -= OnInputStart;
-            turnLifecycleEventChannel.OnInputEnd -= OnInputEnd;
+            gameLoopEventChannelSo.OnInputStart -= OnInputStart;
+            gameLoopEventChannelSo.OnInputEnd -= OnInputEnd;
         }
 
         void OnInputStart() => InputAllowed = true;
@@ -79,7 +79,7 @@ namespace GridGame.Player
             {
                 if (TryPlayerMove(currentMovementDir))
                 {
-                    turnLifecycleEventChannel.EndInput();
+                    gameLoopEventChannelSo.EndInput();
                 }
             }
         }

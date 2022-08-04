@@ -8,7 +8,7 @@ namespace GridGame.SO
     public class UndoEventChannelSO : ScriptableObject
     {
         [SerializeField]
-        TurnLifecycleEventChannelSO turnLifecycleEventChannel;
+        GameLoopEventChannelSO gameLoopEventChannelSo;
 
         public UnityAction<bool> OnUndoRequested;
         public UnityAction OnResetRequested;
@@ -16,13 +16,13 @@ namespace GridGame.SO
         public void RequestUndo(bool cancelsCurrentMove)
         {
             OnUndoRequested?.Invoke(cancelsCurrentMove);
-            turnLifecycleEventChannel.CancelTurn();
+            gameLoopEventChannelSo.Reset();
         }
 
         public void RequestReset()
         {
             OnResetRequested?.Invoke();
-            turnLifecycleEventChannel.CancelTurn();
+            gameLoopEventChannelSo.Reset();
         }
     }
 }

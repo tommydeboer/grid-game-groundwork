@@ -11,10 +11,7 @@ namespace GridGame
     public class Game : MonoBehaviour
     {
         [SerializeField]
-        TurnLifecycleEventChannelSO turnLifecycleEventChannel;
-
-        [SerializeField]
-        UndoEventChannelSO undoEventChannel;
+        GameLoopEventChannelSO gameLoopEventChannelSo;
 
         public static Game instance;
 
@@ -41,14 +38,14 @@ namespace GridGame
 
         void OnEnable()
         {
-            turnLifecycleEventChannel.OnMoveStart += DoScheduledMoves;
-            turnLifecycleEventChannel.OnFallStart += FallStart;
+            gameLoopEventChannelSo.OnMoveStart += DoScheduledMoves;
+            gameLoopEventChannelSo.OnFallStart += FallStart;
         }
 
         void OnDisable()
         {
-            turnLifecycleEventChannel.OnMoveStart -= DoScheduledMoves;
-            turnLifecycleEventChannel.OnFallStart -= FallStart;
+            gameLoopEventChannelSo.OnMoveStart -= DoScheduledMoves;
+            gameLoopEventChannelSo.OnFallStart -= FallStart;
         }
 
         public void Refresh()
@@ -84,7 +81,7 @@ namespace GridGame
         {
             if (moversToMove.Count == 0)
             {
-                turnLifecycleEventChannel.EndMove();
+                gameLoopEventChannelSo.EndMove();
             }
 
             isMoving = true;
@@ -100,7 +97,7 @@ namespace GridGame
             movingCount--;
             if (movingCount == 0)
             {
-                turnLifecycleEventChannel.EndMove();
+                gameLoopEventChannelSo.EndMove();
             }
         }
 
@@ -121,7 +118,7 @@ namespace GridGame
             {
                 Refresh();
                 CheckTriggers();
-                turnLifecycleEventChannel.EndFall();
+                gameLoopEventChannelSo.EndFall();
             }
         }
 

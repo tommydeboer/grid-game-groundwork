@@ -446,6 +446,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   undoEventChannel: {fileID: 11400000, guid: 18f539e9cb2a7a048ac267509007ceb8, type: 2}
+  turnLifecycleEventChannel: {fileID: 11400000, guid: 16574b2e8cb9cb5478d9e9daf933d6d1,
+    type: 2}
 --- !u!136 &2913512788914276900
 CapsuleCollider:
   m_ObjectHideFlags: 0

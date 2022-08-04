@@ -121,7 +121,6 @@ namespace GridGame
             {
                 Refresh();
                 CheckTriggers();
-                undoEventChannel.RequestSave();
                 turnLifecycleEventChannel.EndFall();
             }
         }

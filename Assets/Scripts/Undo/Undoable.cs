@@ -9,6 +9,9 @@ namespace GridGame.Undo
         [SerializeField]
         UndoEventChannelSO undoEventChannel;
 
+        [SerializeField]
+        TurnLifecycleEventChannelSO turnLifecycleEventChannel;
+
         IUndoable[] undoables;
         History<PersistableState>[] histories;
 
@@ -22,14 +25,14 @@ namespace GridGame.Undo
         {
             undoEventChannel.OnUndoRequested += Undo;
             undoEventChannel.OnResetRequested += Restart;
-            undoEventChannel.OnSaveRequested += Save;
+            turnLifecycleEventChannel.OnFallEnd += Save;
         }
 
         void OnDisable()
         {
             undoEventChannel.OnUndoRequested -= Undo;
             undoEventChannel.OnResetRequested -= Restart;
-            undoEventChannel.OnSaveRequested -= Save;
+            turnLifecycleEventChannel.OnFallEnd -= Save;
         }
 
         void Init()

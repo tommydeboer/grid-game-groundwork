@@ -12,7 +12,6 @@ namespace GridGame.SO
 
         public UnityAction<bool> OnUndoRequested;
         public UnityAction OnResetRequested;
-        public UnityAction OnSaveRequested;
 
         public void RequestUndo(bool cancelsCurrentMove)
         {
@@ -24,11 +23,6 @@ namespace GridGame.SO
         {
             OnResetRequested?.Invoke();
             turnLifecycleEventChannel.CancelTurn();
-        }
-
-        public void RequestSave()
-        {
-            OnSaveRequested?.Invoke();
         }
     }
 }

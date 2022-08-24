@@ -70,6 +70,14 @@ namespace GridGame.SO
             return _list.GetEnumerator();
         }
 
+        public void ForEach(Action<T> action)
+        {
+            foreach (var item in this)
+            {
+                action.Invoke(item);
+            }
+        }
+
         public override string ToString()
         {
             return "Collection<" + typeof(T) + ">(" + Count + ")";

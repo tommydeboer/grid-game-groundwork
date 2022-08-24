@@ -17,7 +17,6 @@ namespace GridGame
 
         public static readonly List<Movable> moversToMove = new();
 
-        public float moveTime = 0.18f; // time it takes to move 1 unit
         public float fallTime = 0.1f; // time it takes to fall 1 unit
 
         public static bool isMoving;
@@ -38,13 +37,11 @@ namespace GridGame
 
         void OnEnable()
         {
-            gameLoopEventChannelSo.OnMoveStart += DoScheduledMoves;
             gameLoopEventChannelSo.OnFallStart += FallStart;
         }
 
         void OnDisable()
         {
-            gameLoopEventChannelSo.OnMoveStart -= DoScheduledMoves;
             gameLoopEventChannelSo.OnFallStart -= FallStart;
         }
 
@@ -76,30 +73,6 @@ namespace GridGame
         }
 
         /////////////////////////////////////////////////////////////////// MOVE
-
-        void DoScheduledMoves()
-        {
-            if (moversToMove.Count == 0)
-            {
-                gameLoopEventChannelSo.EndMove();
-            }
-
-            isMoving = true;
-            foreach (Movable m in moversToMove)
-            {
-                movingCount++;
-                m.transform.DOMove(m.goalPosition, moveTime).OnComplete(MoveEnd).SetEase(Ease.Linear);
-            }
-        }
-
-        void MoveEnd()
-        {
-            movingCount--;
-            if (movingCount == 0)
-            {
-                gameLoopEventChannelSo.EndMove();
-            }
-        }
 
         void FallStart()
         {

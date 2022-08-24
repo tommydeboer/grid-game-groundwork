@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using GridGame.Blocks.Rules;
+using GridGame.Grid;
 using GridGame.Player;
 using GridGame.SO;
 using GridGame.Undo;
@@ -17,13 +18,13 @@ namespace GridGame.Blocks
     public class Movable : GridBehaviour, IUndoable, IRemovable
     {
         [SerializeField]
+        GridAnimationCollection scheduledMoves;
+
+        [SerializeField]
         FMODUnity.EventReference LandedEvent;
 
         [SerializeField]
         FMODUnity.EventReference MovingEvent;
-
-        [HideInInspector]
-        public Vector3 goalPosition;
 
         [HideInInspector]
         public bool isFalling;
@@ -91,19 +92,14 @@ namespace GridGame.Blocks
             MoveResult result = MoveHandler.TryMove(GridElement, dir);
             if (result.DidMove)
             {
-                ScheduleMove(result.Vector);
+                scheduledMoves.Add(new LinearMove
+                {
+                    Movable = this,
+                    targetPosition = transform.position + result.Vector
+                });
             }
 
             return result.DidMove;
-        }
-
-        void ScheduleMove(Vector3 dir)
-        {
-            if (!Game.moversToMove.Contains(this))
-            {
-                goalPosition = transform.position + dir;
-                Game.moversToMove.Add(this);
-            }
         }
 
         public void FallStart()

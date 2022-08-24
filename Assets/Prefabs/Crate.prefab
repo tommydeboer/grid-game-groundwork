@@ -109,6 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9523338d1f7b468dacd3002a3e9a2b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scheduledMoves: {fileID: 11400000, guid: 44f8687a0e9cc8f42b25d4ce26a697ba, type: 2}
   LandedEvent:
     Guid:
       Data1: 1624458031

@@ -487,8 +487,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameLoopEventChannel: {fileID: 11400000, guid: 87b5caa48b855294d8ecc4df1f1d1863,
     type: 2}
-  scheduledMoves: {fileID: 11400000, guid: 44f8687a0e9cc8f42b25d4ce26a697ba, type: 2}
+  scheduledAnimations: {fileID: 11400000, guid: 44f8687a0e9cc8f42b25d4ce26a697ba,
+    type: 2}
+  allMovables: {fileID: 11400000, guid: fee3a912993d5c5458c54b2aebfb1ced, type: 2}
   moveTime: 0.18
+  fallTime: 0.1
 --- !u!4 &2145442157
 Transform:
   m_ObjectHideFlags: 0

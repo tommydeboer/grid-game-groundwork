@@ -21,6 +21,9 @@ namespace GridGame.Blocks
         GridAnimationCollection scheduledMoves;
 
         [SerializeField]
+        MovableCollection allMovables;
+
+        [SerializeField]
         FMODUnity.EventReference LandedEvent;
 
         [SerializeField]
@@ -54,16 +57,12 @@ namespace GridGame.Blocks
         }
 
         FMOD.Studio.EventInstance sfxMoving;
-        Game game;
         Removable removable;
 
         void Start()
         {
-            game = CoreComponents.Game;
             particleSys = GetComponent<ParticleSystem>();
             removable = GetComponent<Removable>();
-
-            game.RegisterMovable(this);
 
             if (!MovingEvent.IsNull)
             {
@@ -84,7 +83,16 @@ namespace GridGame.Blocks
         void OnDestroy()
         {
             sfxMoving.release();
-            game.UnregisterMovable(this);
+        }
+
+        void OnEnable()
+        {
+            allMovables.Add(this);
+        }
+
+        void OnDisable()
+        {
+            allMovables.Remove(this);
         }
 
         public bool TryMove(Direction dir)
@@ -102,7 +110,7 @@ namespace GridGame.Blocks
             return result.DidMove;
         }
 
-        public void FallStart()
+        public void Fall()
         {
             if (RemoveBelow0()) return;
 
@@ -111,10 +119,13 @@ namespace GridGame.Blocks
                 if (!isFalling)
                 {
                     isFalling = true;
-                    Game.instance.movingCount++;
                 }
 
-                transform.DOMove(GridElement.Below, Game.instance.fallTime).OnComplete(FallAgain).SetEase(Ease.Linear);
+                scheduledMoves.Add(new LinearMove
+                {
+                    Movable = this,
+                    targetPosition = GridElement.Below
+                });
 
                 // TODO FIXME remove and use collisions to crush instead
                 Block block = GetComponent<Block>();
@@ -134,23 +145,10 @@ namespace GridGame.Blocks
             if (transform.position.y < 0)
             {
                 removable.Remove();
-                game.movingCount--;
-                game.FallEnd();
                 return true;
             }
 
             return false;
-        }
-
-        void FallAgain()
-        {
-            StartCoroutine(DoFallAgain());
-        }
-
-        IEnumerator DoFallAgain()
-        {
-            yield return WaitFor.EndOfFrame;
-            FallStart();
         }
 
         void FallEnd()
@@ -168,8 +166,6 @@ namespace GridGame.Blocks
                 }
 
                 isFalling = false;
-                game.movingCount--;
-                game.FallEnd();
             }
         }
 
@@ -202,12 +198,14 @@ namespace GridGame.Blocks
 
         public void OnRemove()
         {
-            game.UnregisterMovable(this);
+            allMovables.Remove(this);
+            enabled = false;
         }
 
         public void OnReplace()
         {
-            game.RegisterMovable(this);
+            allMovables.Add(this);
+            enabled = true;
         }
     }
 }

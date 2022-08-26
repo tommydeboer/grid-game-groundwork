@@ -900,6 +900,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scheduledMoves: {fileID: 11400000, guid: 44f8687a0e9cc8f42b25d4ce26a697ba, type: 2}
+  allMovables: {fileID: 11400000, guid: fee3a912993d5c5458c54b2aebfb1ced, type: 2}
   LandedEvent:
     Guid:
       Data1: 275342565
@@ -914,7 +915,6 @@ MonoBehaviour:
       Data3: -1549452359
       Data4: -1570850525
     Path: event:/Blocks/Frame Slide
-  goalPosition: {x: 0, y: 0, z: 0}
   isFalling: 0
 --- !u!114 &3348465030477602526
 MonoBehaviour:

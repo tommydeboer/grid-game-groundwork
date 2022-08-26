@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using GridGame.Blocks;
+using GridGame.Grid;
 using GridGame.SO;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -20,14 +21,11 @@ namespace GridGame
         [SerializeField]
         UndoEventChannelSO undoEventChannel;
 
-        Game game;
+        // TODO replace with an EnumSO containing the game's current state (input, move, fall)
+        [SerializeField]
+        GridAnimator gridAnimator;
 
         bool holdingUndo;
-
-        void Awake()
-        {
-            game = CoreComponents.Game;
-        }
 
         [UsedImplicitly]
         public void OnUndo(InputValue value)
@@ -53,8 +51,7 @@ namespace GridGame
         void DoUndo()
         {
             DOTween.KillAll();
-            undoEventChannel.RequestUndo(Game.isMoving);
-            game.Refresh();
+            undoEventChannel.RequestUndo(gridAnimator.IsAnimating);
         }
 
         void UndoRepeat()
@@ -75,7 +72,6 @@ namespace GridGame
         void DoReset()
         {
             DOTween.KillAll();
-            game.Refresh();
             undoEventChannel.RequestReset();
         }
     }

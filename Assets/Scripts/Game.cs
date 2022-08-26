@@ -10,57 +10,7 @@ namespace GridGame
 {
     public class Game : MonoBehaviour
     {
-        [SerializeField]
-        GameLoopEventChannelSO gameLoopEventChannelSo;
-
-        public static Game instance;
-
-        public static readonly List<Movable> moversToMove = new();
-
-        public float fallTime = 0.1f; // time it takes to fall 1 unit
-
-        public static bool isMoving;
-        public int movingCount;
-
-        readonly List<Movable> movables = new();
         readonly List<Triggerable> triggers = new();
-
-        void Awake()
-        {
-            instance = this;
-        }
-
-        void Start()
-        {
-            isMoving = false;
-        }
-
-        void OnEnable()
-        {
-            gameLoopEventChannelSo.OnFallStart += FallStart;
-        }
-
-        void OnDisable()
-        {
-            gameLoopEventChannelSo.OnFallStart -= FallStart;
-        }
-
-        public void Refresh()
-        {
-            isMoving = false;
-            moversToMove.Clear();
-            movingCount = 0;
-        }
-
-        public void RegisterMovable(Movable movable)
-        {
-            movables.Add(movable);
-        }
-
-        public void UnregisterMovable(Movable movable)
-        {
-            movables.Remove(movable);
-        }
 
         public void RegisterTrigger(Triggerable triggerable)
         {
@@ -70,29 +20,6 @@ namespace GridGame
         public void UnregisterTrigger(Triggerable triggerable)
         {
             triggers.Remove(triggerable);
-        }
-
-        /////////////////////////////////////////////////////////////////// MOVE
-
-        void FallStart()
-        {
-            isMoving = true;
-            movables.OrderBy(mover => mover.transform.position.y).ToList().ForEach(mover => mover.FallStart());
-
-            if (movingCount == 0)
-            {
-                FallEnd();
-            }
-        }
-
-        public void FallEnd()
-        {
-            if (movingCount == 0)
-            {
-                Refresh();
-                CheckTriggers();
-                gameLoopEventChannelSo.EndFall();
-            }
         }
 
         void CheckTriggers()

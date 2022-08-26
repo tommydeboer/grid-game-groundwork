@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using GridGame.Blocks;
 using GridGame.SO;
 using UnityEngine;
@@ -25,6 +26,11 @@ namespace GridGame.Grid
         float fallTime = 0.1f; // time it takes to fall 1 unit
 
         public bool IsAnimating { get; private set; }
+
+        public static void CancelAll()
+        {
+            DOTween.KillAll();
+        }
 
         void Awake()
         {

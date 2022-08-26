@@ -21,7 +21,6 @@ namespace GridGame
         [SerializeField]
         UndoEventChannelSO undoEventChannel;
 
-        // TODO replace with an EnumSO containing the game's current state (input, move, fall)
         [SerializeField]
         GridAnimator gridAnimator;
 
@@ -50,7 +49,7 @@ namespace GridGame
 
         void DoUndo()
         {
-            DOTween.KillAll();
+            GridAnimator.CancelAll();
             undoEventChannel.RequestUndo(gridAnimator.IsAnimating);
         }
 
@@ -71,7 +70,7 @@ namespace GridGame
 
         void DoReset()
         {
-            DOTween.KillAll();
+            GridAnimator.CancelAll();
             undoEventChannel.RequestReset();
         }
     }

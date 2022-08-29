@@ -22,12 +22,9 @@ namespace GridGame.Blocks
         [CanBeNull]
         public Block BlockAbove => GetNeighbour(Direction.Up);
 
-        Undoable undoable;
-
         void Awake()
         {
             Movable = GetComponent<Movable>();
-            undoable = GetComponent<Undoable>();
             id = GetInstanceID();
         }
 

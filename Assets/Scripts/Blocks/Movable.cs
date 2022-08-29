@@ -100,11 +100,18 @@ namespace GridGame.Blocks
             MoveResult result = MoveHandler.TryMove(GridElement, dir);
             if (result.DidMove)
             {
-                scheduledMoves.Add(new LinearMove
-                {
-                    Movable = this,
-                    targetPosition = transform.position + result.Vector
-                });
+                scheduledMoves.Add(GridAnimationFactory.Create(this, result));
+            }
+
+            return result.DidMove;
+        }
+
+        public bool TryTopple(Direction dir)
+        {
+            MoveResult result = ToppleHandler.TryTopple(GridElement, dir);
+            if (result.DidMove)
+            {
+                scheduledMoves.Add(GridAnimationFactory.Create(this, result));
             }
 
             return result.DidMove;
@@ -121,13 +128,14 @@ namespace GridGame.Blocks
                     isFalling = true;
                 }
 
-                scheduledMoves.Add(new LinearMove
+                scheduledMoves.Add(new LinearAnimation
                 {
                     Movable = this,
-                    targetPosition = GridElement.Below
+                    TargetPosition = GridElement.Below
                 });
 
                 // TODO FIXME remove and use collisions to crush instead
+                // TODO crushing should be a Rule?
                 Block block = GetComponent<Block>();
                 if (block && (block.IsSolid || block.HasFaceAt(Direction.Down)))
                 {

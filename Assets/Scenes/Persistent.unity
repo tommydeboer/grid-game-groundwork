@@ -405,6 +405,7 @@ MonoBehaviour:
   holdUndoDelay: 0.75
   holdUndoInterval: 0.075
   undoEventChannel: {fileID: 11400000, guid: 18f539e9cb2a7a048ac267509007ceb8, type: 2}
+  gridAnimator: {fileID: 2145442156}
 --- !u!1 &2064284049
 GameObject:
   m_ObjectHideFlags: 0

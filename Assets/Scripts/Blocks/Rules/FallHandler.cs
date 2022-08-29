@@ -8,6 +8,7 @@ namespace GridGame.Blocks.Rules
         static readonly IFall<Hero> playerFall = new PlayerFall();
         static readonly IFall<Block> blockFall = new BlockFall();
 
+        // TODO use MoveResult
         public static bool ShouldFall(GridElement element)
         {
             return element switch

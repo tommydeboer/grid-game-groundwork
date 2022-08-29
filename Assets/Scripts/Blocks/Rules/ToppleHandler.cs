@@ -16,6 +16,11 @@ namespace GridGame.Blocks.Rules
                 _ => throw new ArgumentException("No interaction implemented for " + element.name)
             };
 
+            if (RuleUtils.MovedOutOfBounds(element, result))
+            {
+                return MoveResult.Failed();
+            }
+
             return result;
         }
 

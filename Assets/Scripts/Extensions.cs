@@ -22,5 +22,10 @@ namespace GridGame
             if (direction == Vector3.back) return Direction.Back;
             throw new ArgumentException("Not a valid direction");
         }
+
+        public static Direction ToDirection(this Vector3 direction)
+        {
+            return ToDirection(Vector3Int.RoundToInt(direction));
+        }
     }
 }

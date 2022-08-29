@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
+using Quaternion = UnityEngine.Quaternion;
 
 namespace GridGame.Blocks
 {
@@ -60,7 +62,8 @@ namespace GridGame.Blocks
         public bool HasFaceAt(Direction direction)
         {
             if (IsSolid) return true;
-            return faces.Find(o => o.direction == direction) != null;
+            var correctedDirection = Quaternion.Inverse(transform.rotation) * direction.AsVector();
+            return faces.Find(o => o.direction == correctedDirection.ToDirection()) != null;
         }
     }
 }

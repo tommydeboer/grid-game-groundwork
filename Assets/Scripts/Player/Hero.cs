@@ -27,6 +27,7 @@ namespace GridGame.Player
 
         Vector3Int currentMovementDir;
         Vector3 mountDirection;
+        bool hasDirectionChanged;
 
         Movable movable;
         Crushable crushable;
@@ -79,6 +80,12 @@ namespace GridGame.Player
         {
             if (CanInput() && currentMovementDir != Vector3Int.zero)
             {
+                if (IsBlocked && !hasDirectionChanged)
+                {
+                    // prevent evaluating the same impossible move every frame
+                    return;
+                }
+
                 if (TryPlayerMove(currentMovementDir))
                 {
                     gameLoopEventChannelSo.EndInput();
@@ -109,7 +116,10 @@ namespace GridGame.Player
         public void OnMove(InputValue value)
         {
             var movement = value.Get<Vector2>();
-            currentMovementDir = new Vector3Int((int)movement.x, 0, (int)movement.y);
+            var dir = new Vector3Int((int)movement.x, 0, (int)movement.y);
+
+            hasDirectionChanged = dir != currentMovementDir;
+            currentMovementDir = dir;
 
             if (currentMovementDir == Vector3Int.zero)
             {

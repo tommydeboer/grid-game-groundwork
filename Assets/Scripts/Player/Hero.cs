@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using DG.Tweening;
 using GridGame.Blocks;
 using GridGame.SO;
@@ -20,6 +21,7 @@ namespace GridGame.Player
 
         public Block OnClimbable { get; set; }
         public const float ClimbableOffset = 0.35f;
+        public bool IsBlocked { get; private set; }
 
         bool InputAllowed { get; set; } = true;
 
@@ -81,6 +83,14 @@ namespace GridGame.Player
                 {
                     gameLoopEventChannelSo.EndInput();
                 }
+                else
+                {
+                    IsBlocked = true;
+                }
+            }
+            else
+            {
+                IsBlocked = false;
             }
         }
 

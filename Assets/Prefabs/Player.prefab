@@ -106,16 +106,16 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5918212888113533655}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: -0.076, z: 0}
-  m_LocalScale: {x: 0.79671, y: 0.79671, z: 0.79671}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.362, z: 0}
+  m_LocalScale: {x: 0.7967101, y: 0.79671, z: 0.7967101}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5450689129246623550}
   - {fileID: 8128607573351118425}
   - {fileID: 6896035623923779227}
   - {fileID: 4918871046507972642}
-  m_Father: {fileID: 8509588148537724625}
+  m_Father: {fileID: 7140840439168245239}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &5998289744017452723
@@ -201,6 +201,38 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6099001315240437631
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7140840439168245239}
+  m_Layer: 9
+  m_Name: Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7140840439168245239
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6099001315240437631}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.438, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6250191171303434906}
+  m_Father: {fileID: 8509588148537724625}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7761611565439874287
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,7 +353,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6250191171303434906}
+  - {fileID: 7140840439168245239}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -501,8 +533,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdff5a211af34a908886050b6553c8bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  model: {fileID: 6250191171303434906}
-  pivot: {fileID: 0}
+  pivot: {fileID: 7140840439168245239}
   pushCurve:
     serializedVersion: 2
     m_Curve:
@@ -539,6 +570,8 @@ MonoBehaviour:
   timeToMaxPush: 1.5
   timeToReturnFromPush: 0.25
   maxPushDistance: 0.25
+  timeToMaxTilt: 0.3
+  maxTiltAngle: 10
 --- !u!1001 &5489331177064587477
 PrefabInstance:
   m_ObjectHideFlags: 0

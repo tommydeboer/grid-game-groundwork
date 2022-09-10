@@ -69,9 +69,9 @@ namespace GridGame.Player
         void Update()
         {
             moveTime.Evaluate(isPressingMove);
-            pushTime.Evaluate(hero.IsBlocked);
+            pushTime.Evaluate(hero.IsPushing);
             
-            if (hero.IsBlocked && !hero.OnClimbable)
+            if (hero.IsPushing && !hero.OnClimbable)
             {
                 Push();
             }

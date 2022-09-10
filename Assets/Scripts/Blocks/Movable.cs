@@ -95,7 +95,7 @@ namespace GridGame.Blocks
             allMovables.Remove(this);
         }
 
-        public bool TryMove(Direction dir)
+        public MoveResult TryMove(Direction dir)
         {
             MoveResult result = MoveHandler.TryMove(GridElement, dir);
             if (result.DidMove)
@@ -103,10 +103,10 @@ namespace GridGame.Blocks
                 scheduledMoves.Add(GridAnimationFactory.Create(this, result));
             }
 
-            return result.DidMove;
+            return result;
         }
 
-        public bool TryTopple(Direction dir)
+        public MoveResult TryTopple(Direction dir)
         {
             MoveResult result = ToppleHandler.TryTopple(GridElement, dir);
             if (result.DidMove)
@@ -114,7 +114,7 @@ namespace GridGame.Blocks
                 scheduledMoves.Add(GridAnimationFactory.Create(this, result));
             }
 
-            return result.DidMove;
+            return result;
         }
 
         public void Fall()

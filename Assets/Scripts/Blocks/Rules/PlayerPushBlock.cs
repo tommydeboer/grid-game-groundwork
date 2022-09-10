@@ -10,8 +10,8 @@ namespace GridGame.Blocks.Rules
             {
                 if (block.HasFaceAt(direction.Opposite()))
                 {
-                    bool blockDidMove = block.Movable.TryMove(direction);
-                    return MoveResult.Of(blockDidMove, direction.AsVector());
+                    var blockMoveResult = block.Movable.TryMove(direction);
+                    return MoveResult.Of(blockMoveResult);
                 }
                 else
                 {

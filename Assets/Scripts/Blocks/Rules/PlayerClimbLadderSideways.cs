@@ -24,9 +24,9 @@ namespace GridGame.Blocks.Rules
                 {
                     if (blockNextToPlayer.HasFaceAt(direction.Opposite()))
                     {
-                        bool didMove = blockNextToPlayer.Movable.TryMove(direction);
-                        if (didMove) player.OnClimbable = blockNextToLadder;
-                        return MoveResult.Of(didMove, direction.AsVector());
+                        var blockMoveResult = blockNextToPlayer.Movable.TryMove(direction);
+                        if (blockMoveResult.DidMove) player.OnClimbable = blockNextToLadder;
+                        return MoveResult.Of(blockMoveResult);
                     }
                     else
                     {
@@ -40,14 +40,14 @@ namespace GridGame.Blocks.Rules
 
             if (blockNextToPlayer && blockNextToPlayer.IsDynamic && blockNextToPlayer.HasFaceAt(direction.Opposite()))
             {
-                bool didMove = blockNextToPlayer.Movable.TryMove(direction);
-                if (didMove)
+                var blockMoveResult = blockNextToPlayer.Movable.TryMove(direction);
+                if (blockMoveResult.DidMove)
                 {
                     StepOff(player, ladder, direction);
                 }
                 else
                 {
-                    return MoveResult.Failed();
+                    return MoveResult.FailedBy(blockMoveResult);
                 }
             }
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using DG.Tweening;
 using GridGame.Blocks;
+using GridGame.Blocks.Rules;
 using GridGame.SO;
 using GridGame.Undo;
 using JetBrains.Annotations;
@@ -21,7 +22,7 @@ namespace GridGame.Player
 
         public Block OnClimbable { get; set; }
         public const float ClimbableOffset = 0.35f;
-        public bool IsBlocked { get; private set; }
+        public bool IsPushing { get; private set; }
 
         bool InputAllowed { get; set; } = true;
 
@@ -80,24 +81,24 @@ namespace GridGame.Player
         {
             if (CanInput() && currentMovementDir != Vector3Int.zero)
             {
-                if (IsBlocked && !hasDirectionChanged)
+                if (IsPushing && !hasDirectionChanged)
                 {
                     // prevent evaluating the same impossible move every frame
                     return;
                 }
 
-                if (TryPlayerMove(currentMovementDir))
+                if (TryPlayerMove(currentMovementDir).DidMove)
                 {
                     gameLoopEventChannelSo.EndInput();
                 }
                 else
                 {
-                    IsBlocked = true;
+                    IsPushing = true;
                 }
             }
             else
             {
-                IsBlocked = false;
+                IsPushing = false;
             }
         }
 
@@ -134,29 +135,29 @@ namespace GridGame.Player
         }
 
 
-        bool TryPlayerMove(Vector3Int dir)
+        MoveResult TryPlayerMove(Vector3Int dir)
         {
             if (OnClimbable)
             {
                 if ((dir != Vector3Int.forward && dir != Vector3Int.back) && mountDirection == dir)
                 {
                     // prevent climbing when we just mounted a ladder sideways to prevent immediately stepping off
-                    return false;
+                    return MoveResult.Failed();
                 }
 
                 // correct input direction based on climbable's orientation
                 dir = Vector3Int.RoundToInt(Quaternion.Euler(OnClimbable.Rotation) * dir);
             }
 
-            bool didMove = movable.TryMove(dir.ToDirection());
-            if (didMove) PlayWalkSound();
+            var result = movable.TryMove(dir.ToDirection());
+            if (result.DidMove) PlayWalkSound();
 
             if (!OnClimbable)
             {
                 LookAt(dir);
             }
 
-            return didMove;
+            return result;
         }
 
         void PlayWalkSound()

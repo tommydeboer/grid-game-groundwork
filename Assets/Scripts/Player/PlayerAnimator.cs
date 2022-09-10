@@ -70,7 +70,7 @@ namespace GridGame.Player
         {
             moveTime.Evaluate(isPressingMove);
             pushTime.Evaluate(hero.IsPushing);
-            
+
             if (hero.IsPushing && !hero.OnClimbable)
             {
                 Push();

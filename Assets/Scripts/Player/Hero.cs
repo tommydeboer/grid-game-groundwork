@@ -79,26 +79,29 @@ namespace GridGame.Player
 
         void Update()
         {
-            if (CanInput() && currentMovementDir != Vector3Int.zero)
-            {
-                if (IsPushing && !hasDirectionChanged)
-                {
-                    // prevent evaluating the same impossible move every frame
-                    return;
-                }
-
-                if (TryPlayerMove(currentMovementDir).DidMove)
-                {
-                    gameLoopEventChannelSo.EndInput();
-                }
-                else
-                {
-                    IsPushing = true;
-                }
-            }
-            else
+            if (CanInput())
             {
                 IsPushing = false;
+                if (currentMovementDir != Vector3Int.zero)
+                {
+                    if (IsPushing && !hasDirectionChanged)
+                    {
+                        // prevent evaluating the same impossible move every frame
+                        return;
+                    }
+
+                    var result = TryPlayerMove(currentMovementDir);
+                    if (result.DidMove)
+                    {
+                        IsPushing = result.DidMoveOther;
+
+                        gameLoopEventChannelSo.EndInput();
+                    }
+                    else
+                    {
+                        IsPushing = true;
+                    }
+                }
             }
         }
 

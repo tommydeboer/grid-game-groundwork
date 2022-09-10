@@ -8,26 +8,24 @@ namespace GridGame.Blocks.Rules
     {
         public MoveType Type;
         public Vector3 Vector;
-        public MoveResult MovedOther = null;
+
 
         //TODO DidMove based on Type
         public bool DidMove { get; }
+        public MoveResult MovedOther { get; }
+        public bool DidMoveOther => MovedOther != null;
 
         MoveResult(bool didMove, Vector3 vector, MoveType type, MoveResult movedOther)
         {
             DidMove = didMove;
             Vector = vector;
             Type = type;
+            MovedOther = movedOther;
         }
 
         public static MoveResult Of(MoveResult other, MoveType type = MoveType.SLIDE)
         {
             return new MoveResult(other.DidMove, other.Vector, type, other);
-        }
-
-        public static MoveResult Of(bool didMove, Vector3 vector, MoveType type = MoveType.SLIDE)
-        {
-            return new MoveResult(didMove, vector, type, null);
         }
 
         public static MoveResult Success(Vector3 vector, MoveType type = MoveType.SLIDE)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using GridGame.Blocks;
 using GridGame.Blocks.Rules;
@@ -24,40 +25,30 @@ namespace GridGame.Player
         public const float ClimbableOffset = 0.35f;
         public bool IsPushing { get; private set; }
 
-        bool InputAllowed { get; set; } = true;
-
-        Vector3Int currentMovementDir;
         Vector3 mountDirection;
-        bool hasDirectionChanged;
 
         Movable movable;
         Crushable crushable;
         Removable removable;
-        bool holdingUndo;
+        PlayerInputController inputController;
 
         void Awake()
         {
             movable = GetComponent<Movable>();
             crushable = GetComponent<Crushable>();
             removable = GetComponent<Removable>();
+            inputController = GetComponent<PlayerInputController>();
         }
 
         void OnEnable()
         {
             crushable.OnCrushed += OnCrush;
-            gameLoopEventChannelSo.OnInputStart += OnInputStart;
-            gameLoopEventChannelSo.OnInputEnd += OnInputEnd;
         }
 
         void OnDisable()
         {
             crushable.OnCrushed -= OnCrush;
-            gameLoopEventChannelSo.OnInputStart -= OnInputStart;
-            gameLoopEventChannelSo.OnInputEnd -= OnInputEnd;
         }
-
-        void OnInputStart() => InputAllowed = true;
-        void OnInputEnd() => InputAllowed = false;
 
         void OnCrush()
         {
@@ -82,15 +73,15 @@ namespace GridGame.Player
             if (CanInput())
             {
                 IsPushing = false;
-                if (currentMovementDir != Vector3Int.zero)
+                if (inputController.CurrentMovementDir != Vector3Int.zero)
                 {
-                    if (IsPushing && !hasDirectionChanged)
+                    if (IsPushing && !inputController.HasDirectionChanged)
                     {
                         // prevent evaluating the same impossible move every frame
                         return;
                     }
 
-                    var result = TryPlayerMove(currentMovementDir);
+                    var result = TryPlayerMove(inputController.CurrentMovementDir);
                     if (result.DidMove)
                     {
                         IsPushing = result.DidMoveOther;
@@ -102,34 +93,18 @@ namespace GridGame.Player
                         IsPushing = true;
                     }
                 }
+                else
+                {
+                    mountDirection = Vector3Int.zero;
+                }
             }
         }
 
         bool CanInput()
         {
-            return InputAllowed && !holdingUndo && removable.IsAlive;
+            return inputController.InputAllowed && !inputController.HoldingUndo && removable.IsAlive;
         }
 
-        [UsedImplicitly]
-        public void OnUndo(InputValue value)
-        {
-            holdingUndo = value.isPressed;
-        }
-
-        [UsedImplicitly]
-        public void OnMove(InputValue value)
-        {
-            var movement = value.Get<Vector2>();
-            var dir = new Vector3Int((int)movement.x, 0, (int)movement.y);
-
-            hasDirectionChanged = dir != currentMovementDir;
-            currentMovementDir = dir;
-
-            if (currentMovementDir == Vector3Int.zero)
-            {
-                mountDirection = Vector3Int.zero;
-            }
-        }
 
         public void LookAt(Vector3 dir)
         {

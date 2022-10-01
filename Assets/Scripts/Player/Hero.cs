@@ -21,8 +21,10 @@ namespace GridGame.Player
         [SerializeField]
         FMODUnity.EventReference WalkEvent;
 
+        [SerializeField]
+        Animator modelAnimator;
+
         public Block OnClimbable { get; set; }
-        public const float ClimbableOffset = 0.35f;
         public bool IsPushing { get; private set; }
 
         Vector3 mountDirection;
@@ -31,6 +33,7 @@ namespace GridGame.Player
         Crushable crushable;
         Removable removable;
         PlayerInputController inputController;
+        static readonly int isClimbing = Animator.StringToHash("IsClimbing");
 
         void Awake()
         {
@@ -147,11 +150,13 @@ namespace GridGame.Player
         {
             mountDirection = direction.AsVector();
             OnClimbable = climbable;
+            modelAnimator.SetBool(isClimbing, true);
             LookAt(direction.AsVector());
         }
 
         public void Dismount()
         {
+            modelAnimator.SetBool(isClimbing, false);
             OnClimbable = null;
         }
 

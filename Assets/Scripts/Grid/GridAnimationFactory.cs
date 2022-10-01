@@ -12,7 +12,10 @@ namespace GridGame.Grid
             var position = movable.transform.position;
             return moveResult.Type switch
             {
-                MoveType.NONE => throw new NotImplementedException(),
+                MoveType.NONE => new NullAnimation
+                {
+                    Movable = movable
+                },
                 MoveType.SLIDE => new LinearAnimation
                 {
                     Movable = movable, TargetPosition = position + moveResult.Vector

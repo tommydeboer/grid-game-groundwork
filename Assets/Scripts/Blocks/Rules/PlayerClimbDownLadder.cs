@@ -15,7 +15,7 @@ namespace GridGame.Blocks.Rules
             if (blockBelowPlayer || !ladderContinuesBelow)
             {
                 player.Dismount();
-                return MoveResult.Success(Hero.ClimbableOffset * (Vector3)direction.AsVector());
+                return MoveResult.Success(Vector3.zero, MoveType.NONE);
             }
 
             player.OnClimbable = blockBelowLadder;

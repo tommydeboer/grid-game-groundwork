@@ -211,6 +211,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7140840439168245239}
+  - component: {fileID: 155829352721646538}
   m_Layer: 9
   m_Name: Pivot
   m_TagString: Untagged
@@ -234,6 +235,26 @@ Transform:
   m_Father: {fileID: 8509588148537724625}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &155829352721646538
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6099001315240437631}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6dd3582b0f33a2d4e8e60eb5f1833154, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &7761611565439874287
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,6 +478,7 @@ MonoBehaviour:
       Data3: -2026474832
       Data4: 769724085
     Path: event:/Blocks/Hero Footstep
+  modelAnimator: {fileID: 155829352721646538}
 --- !u!114 &-7647817819501053935
 MonoBehaviour:
   m_ObjectHideFlags: 0

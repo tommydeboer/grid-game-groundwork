@@ -12,10 +12,10 @@ namespace GridGame.Blocks.Rules
 
             if (blockNextToPlayer && blockNextToPlayer.IsOriented<Climbable>(direction.Opposite()))
             {
+                // climb to other ladder in corner
                 player.OnClimbable = blockNextToPlayer;
                 player.LookAt(direction.AsVector());
-                return MoveResult.Success((Hero.ClimbableOffset * ladder.Orientation.AsVector()) +
-                                          (Hero.ClimbableOffset * direction.AsVector()));
+                return MoveResult.Success(Vector3.zero, MoveType.NONE);
             }
 
             if (blockNextToLadder && blockNextToLadder.IsOriented<Climbable>(ladder.Orientation))
@@ -30,7 +30,7 @@ namespace GridGame.Blocks.Rules
                     }
                     else
                     {
-                        return StepOff(player, ladder, direction);
+                        return StepOff(player, direction);
                     }
                 }
 
@@ -43,7 +43,7 @@ namespace GridGame.Blocks.Rules
                 var blockMoveResult = blockNextToPlayer.Movable.TryMove(direction);
                 if (blockMoveResult.DidMove)
                 {
-                    StepOff(player, ladder, direction);
+                    StepOff(player, direction);
                 }
                 else
                 {
@@ -51,13 +51,13 @@ namespace GridGame.Blocks.Rules
                 }
             }
 
-            return StepOff(player, ladder, direction);
+            return StepOff(player, direction);
         }
 
-        static MoveResult StepOff(Hero player, GridElement ladder, Direction direction)
+        static MoveResult StepOff(Hero player, Direction direction)
         {
             player.Dismount();
-            return MoveResult.Success(Hero.ClimbableOffset * ladder.Orientation.AsVector() + direction.AsVector());
+            return MoveResult.Success(direction.AsVector());
         }
     }
 }

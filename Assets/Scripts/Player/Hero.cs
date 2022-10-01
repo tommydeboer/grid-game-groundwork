@@ -27,13 +27,19 @@ namespace GridGame.Player
         public Block OnClimbable { get; set; }
         public bool IsPushing { get; private set; }
 
+        bool IsRunning
+        {
+            set => modelAnimator.SetBool(isRunningAnimationParam, value);
+        }
+
         Vector3 mountDirection;
 
         Movable movable;
         Crushable crushable;
         Removable removable;
         PlayerInputController inputController;
-        static readonly int isClimbing = Animator.StringToHash("IsClimbing");
+        static readonly int isClimbingAnimationParam = Animator.StringToHash("IsClimbing");
+        static readonly int isRunningAnimationParam = Animator.StringToHash("IsRunning");
 
         void Awake()
         {
@@ -76,6 +82,7 @@ namespace GridGame.Player
             if (CanInput())
             {
                 IsPushing = false;
+                IsRunning = false;
                 if (inputController.CurrentMovementDir != Vector3Int.zero)
                 {
                     if (IsPushing && !inputController.HasDirectionChanged)
@@ -88,12 +95,13 @@ namespace GridGame.Player
                     if (result.DidMove)
                     {
                         IsPushing = result.DidMoveOther;
+                        IsRunning = !IsPushing;
 
                         gameLoopEventChannelSo.EndInput();
                     }
                     else
                     {
-                        IsPushing = true;
+                        IsPushing = false;
                     }
                 }
                 else
@@ -150,13 +158,13 @@ namespace GridGame.Player
         {
             mountDirection = direction.AsVector();
             OnClimbable = climbable;
-            modelAnimator.SetBool(isClimbing, true);
+            modelAnimator.SetBool(isClimbingAnimationParam, true);
             LookAt(direction.AsVector());
         }
 
         public void Dismount()
         {
-            modelAnimator.SetBool(isClimbing, false);
+            modelAnimator.SetBool(isClimbingAnimationParam, false);
             OnClimbable = null;
         }
 

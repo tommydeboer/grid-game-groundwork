@@ -1,13 +1,15 @@
 using System;
 using GridGame.Blocks;
 using GridGame.Blocks.Rules;
+using GridGame.Player;
 using UnityEngine;
 
 namespace GridGame.Grid
 {
     public static class GridAnimationFactory
     {
-        public static GridAnimation Create(Movable movable, MoveResult moveResult)
+        public static GridAnimation Create(Movable movable, MoveResult moveResult,
+            AnimationEventListener animationEventListener)
         {
             var position = movable.transform.position;
             return moveResult.Type switch
@@ -24,8 +26,20 @@ namespace GridGame.Grid
                 {
                     Movable = movable, TargetPosition = position + moveResult.Vector
                 },
+                MoveType.PLAYER_CLIMB_ON_TOP => InstantAnimation(movable, moveResult, position, animationEventListener),
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
+
+        static InstantAnimation InstantAnimation(Movable movable, MoveResult moveResult, Vector3 position,
+            AnimationEventListener animationEventListener)
+        {
+            var animation = new InstantAnimation
+            {
+                Movable = movable, TargetPosition = position + moveResult.Vector
+            };
+            animationEventListener.AnimationCompletedCallback = animation.AnimationCallback;
+            return animation;
         }
     }
 }

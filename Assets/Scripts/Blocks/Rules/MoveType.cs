@@ -4,6 +4,7 @@ namespace GridGame.Blocks.Rules
     {
         NONE,
         SLIDE,
-        TOPPLE
+        TOPPLE,
+        PLAYER_CLIMB_ON_TOP
     }
 }

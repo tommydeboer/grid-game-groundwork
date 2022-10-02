@@ -13,7 +13,7 @@ namespace GridGame.Blocks.Rules
             if (!blockAbovePlayer && !blockAboveLadder)
             {
                 player.Dismount();
-                return MoveResult.Success(direction.AsVector() + Vector3.up);
+                return MoveResult.Success(direction.AsVector() + Vector3.up, MoveType.PLAYER_CLIMB_ON_TOP);
             }
 
             bool ladderContinuesAbove =

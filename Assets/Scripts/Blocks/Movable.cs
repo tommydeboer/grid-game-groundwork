@@ -36,6 +36,7 @@ namespace GridGame.Blocks
         Vector3 previousPos;
 
         ParticleSystem particleSys;
+        AnimationEventListener animationEventListener;
 
         bool IsMoving
         {
@@ -61,6 +62,7 @@ namespace GridGame.Blocks
 
         void Start()
         {
+            animationEventListener = GetComponentInChildren<AnimationEventListener>();
             particleSys = GetComponent<ParticleSystem>();
             removable = GetComponent<Removable>();
 
@@ -100,7 +102,7 @@ namespace GridGame.Blocks
             MoveResult result = MoveHandler.TryMove(GridElement, dir);
             if (result.DidMove)
             {
-                scheduledMoves.Add(GridAnimationFactory.Create(this, result));
+                scheduledMoves.Add(GridAnimationFactory.Create(this, result, animationEventListener));
             }
 
             return result;
@@ -111,7 +113,7 @@ namespace GridGame.Blocks
             MoveResult result = ToppleHandler.TryTopple(GridElement, dir);
             if (result.DidMove)
             {
-                scheduledMoves.Add(GridAnimationFactory.Create(this, result));
+                scheduledMoves.Add(GridAnimationFactory.Create(this, result, animationEventListener));
             }
 
             return result;

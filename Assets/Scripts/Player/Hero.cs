@@ -48,6 +48,7 @@ namespace GridGame.Player
         static readonly int isClimbingAnimationParam = Animator.StringToHash("IsClimbing");
         static readonly int isRunningAnimationParam = Animator.StringToHash("IsRunning");
         static readonly int isPushingAnimationParam = Animator.StringToHash("IsPushing");
+        static readonly int climbOnTopAnimationParam = Animator.StringToHash("ClimbOnTop");
 
         void Awake()
         {
@@ -102,8 +103,17 @@ namespace GridGame.Player
                     var result = TryPlayerMove(inputController.CurrentMovementDir);
                     if (result.DidMove)
                     {
-                        IsPushing = result.DidMoveOther;
-                        IsRunning = !IsPushing;
+                        if (result.Type == MoveType.PLAYER_CLIMB_ON_TOP)
+                        {
+                            modelAnimator.SetTrigger(climbOnTopAnimationParam);
+                            IsPushing = false;
+                            IsRunning = false;
+                        }
+                        else
+                        {
+                            IsPushing = result.DidMoveOther;
+                            IsRunning = !IsPushing;
+                        }
 
                         gameLoopEventChannelSo.EndInput();
                     }

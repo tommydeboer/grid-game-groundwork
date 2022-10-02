@@ -25,7 +25,14 @@ namespace GridGame.Player
         Animator modelAnimator;
 
         public Block OnClimbable { get; set; }
-        public bool IsPushing { get; private set; }
+
+        bool isPushing;
+
+        bool IsPushing
+        {
+            get => modelAnimator.GetBool(isPushingAnimationParam);
+            set => modelAnimator.SetBool(isPushingAnimationParam, value);
+        }
 
         bool IsRunning
         {
@@ -40,6 +47,7 @@ namespace GridGame.Player
         PlayerInputController inputController;
         static readonly int isClimbingAnimationParam = Animator.StringToHash("IsClimbing");
         static readonly int isRunningAnimationParam = Animator.StringToHash("IsRunning");
+        static readonly int isPushingAnimationParam = Animator.StringToHash("IsPushing");
 
         void Awake()
         {
@@ -138,10 +146,11 @@ namespace GridGame.Player
                 dir = Vector3Int.RoundToInt(Quaternion.Euler(OnClimbable.Rotation) * dir);
             }
 
+            bool wasClimbing = OnClimbable;
             var result = movable.TryMove(dir.ToDirection());
             if (result.DidMove) PlayWalkSound();
 
-            if (!OnClimbable)
+            if (!OnClimbable && !wasClimbing)
             {
                 LookAt(dir);
             }

@@ -34,9 +34,9 @@ namespace GridGame.Player
             set => modelAnimator.SetBool(isPushingAnimationParam, value);
         }
 
-        bool IsRunning
+        bool IsMoving
         {
-            set => modelAnimator.SetBool(isRunningAnimationParam, value);
+            set => modelAnimator.SetBool(isMovingAnimationParam, value);
         }
 
         Vector3 mountDirection;
@@ -46,7 +46,7 @@ namespace GridGame.Player
         Removable removable;
         PlayerInputController inputController;
         static readonly int isClimbingAnimationParam = Animator.StringToHash("IsClimbing");
-        static readonly int isRunningAnimationParam = Animator.StringToHash("IsRunning");
+        static readonly int isMovingAnimationParam = Animator.StringToHash("IsMoving");
         static readonly int isPushingAnimationParam = Animator.StringToHash("IsPushing");
         static readonly int climbOnTopAnimationParam = Animator.StringToHash("ClimbOnTop");
 
@@ -91,7 +91,7 @@ namespace GridGame.Player
             if (CanInput())
             {
                 IsPushing = false;
-                IsRunning = false;
+                IsMoving = false;
                 if (inputController.CurrentMovementDir != Vector3Int.zero)
                 {
                     if (IsPushing && !inputController.HasDirectionChanged)
@@ -107,12 +107,12 @@ namespace GridGame.Player
                         {
                             modelAnimator.SetTrigger(climbOnTopAnimationParam);
                             IsPushing = false;
-                            IsRunning = false;
+                            IsMoving = false;
                         }
                         else
                         {
                             IsPushing = result.DidMoveOther;
-                            IsRunning = !IsPushing;
+                            IsMoving = true;
                         }
 
                         gameLoopEventChannelSo.EndInput();

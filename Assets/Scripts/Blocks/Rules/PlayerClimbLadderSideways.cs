@@ -50,6 +50,11 @@ namespace GridGame.Blocks.Rules
                     return MoveResult.FailedBy(blockMoveResult);
                 }
             }
+            else if (blockNextToPlayer && !blockNextToPlayer.IsDynamic &&
+                     blockNextToPlayer.HasFaceAt(direction.Opposite()))
+            {
+                return MoveResult.Failed();
+            }
 
             return StepOff(player, direction);
         }

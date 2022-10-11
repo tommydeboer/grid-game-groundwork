@@ -151,7 +151,8 @@ namespace GridGame.Player
                     }
                     else
                     {
-                        IsPushing = false;
+                        IsMoving = inputController.IsMoving;
+                        IsPushing = inputController.IsMoving;
                     }
                 }
                 else

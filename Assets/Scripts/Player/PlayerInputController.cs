@@ -11,6 +11,7 @@ namespace GridGame.Player
         GameLoopEventChannelSO gameLoopEventChannelSo;
 
         public bool HoldingUndo { get; private set; }
+        public bool IsMoving => CurrentMovementDir != Vector3Int.zero;
         public bool HasDirectionChanged { get; private set; }
         public Vector3Int CurrentMovementDir { get; private set; }
         public bool InputAllowed { get; private set; } = true;

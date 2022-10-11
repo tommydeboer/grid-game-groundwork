@@ -15,7 +15,7 @@ namespace GridGame.Blocks.Rules
             if (!below) return false;
 
             Movable movableBelow = below.GetComponent<Movable>();
-            if (movableBelow && movableBelow.isFalling)
+            if (movableBelow && movableBelow.IsFalling)
             {
                 return false;
             }

@@ -39,6 +39,16 @@ namespace GridGame.Player
             set => modelAnimator.SetBool(isMovingAnimationParam, value);
         }
 
+        bool IsFalling
+        {
+            set => modelAnimator.SetBool(isFallingAnimationParam, value);
+        }
+
+        bool IsClimbing
+        {
+            set => modelAnimator.SetBool(isClimbingAnimationParam, value);
+        }
+
         Vector3 mountDirection;
 
         Movable movable;
@@ -48,6 +58,7 @@ namespace GridGame.Player
         static readonly int isClimbingAnimationParam = Animator.StringToHash("IsClimbing");
         static readonly int isMovingAnimationParam = Animator.StringToHash("IsMoving");
         static readonly int isPushingAnimationParam = Animator.StringToHash("IsPushing");
+        static readonly int isFallingAnimationParam = Animator.StringToHash("IsFalling");
         static readonly int climbOnTopAnimationParam = Animator.StringToHash("ClimbOnTop");
 
         void Awake()
@@ -61,11 +72,21 @@ namespace GridGame.Player
         void OnEnable()
         {
             crushable.OnCrushed += OnCrush;
+            movable.OnFallingChanged += OnFallingChanged;
         }
 
         void OnDisable()
         {
             crushable.OnCrushed -= OnCrush;
+            movable.OnFallingChanged -= OnFallingChanged;
+        }
+
+        void OnFallingChanged(bool isFalling)
+        {
+            IsFalling = isFalling;
+            IsPushing = false;
+            IsMoving = false;
+            IsClimbing = false;
         }
 
         void OnCrush()
@@ -92,6 +113,7 @@ namespace GridGame.Player
             {
                 IsPushing = false;
                 IsMoving = false;
+                IsFalling = false;
                 if (inputController.CurrentMovementDir != Vector3Int.zero)
                 {
                     if (IsPushing && !inputController.HasDirectionChanged)
@@ -177,13 +199,13 @@ namespace GridGame.Player
         {
             mountDirection = direction.AsVector();
             OnClimbable = climbable;
-            modelAnimator.SetBool(isClimbingAnimationParam, true);
+            IsClimbing = true;
             LookAt(direction.AsVector());
         }
 
         public void Dismount()
         {
-            modelAnimator.SetBool(isClimbingAnimationParam, false);
+            IsClimbing = false;
             OnClimbable = null;
         }
 

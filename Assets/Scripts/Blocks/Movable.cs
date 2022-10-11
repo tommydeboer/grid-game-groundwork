@@ -10,6 +10,7 @@ using GridGame.SO;
 using GridGame.Undo;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using Object = System.Object;
 
@@ -29,8 +30,19 @@ namespace GridGame.Blocks
         [SerializeField]
         FMODUnity.EventReference MovingEvent;
 
-        [HideInInspector]
-        public bool isFalling;
+        public UnityAction<bool> OnFallingChanged;
+
+        bool isFalling;
+
+        public bool IsFalling
+        {
+            get => isFalling;
+            private set
+            {
+                isFalling = value;
+                OnFallingChanged?.Invoke(isFalling);
+            }
+        }
 
         bool isMoving;
         Vector3 previousPos;
@@ -78,7 +90,7 @@ namespace GridGame.Blocks
         void Update()
         {
             var pos = transform.position;
-            IsMoving = !isFalling && pos != previousPos;
+            IsMoving = !IsFalling && pos != previousPos;
             previousPos = pos;
         }
 
@@ -125,10 +137,7 @@ namespace GridGame.Blocks
 
             if (FallHandler.ShouldFall(GridElement))
             {
-                if (!isFalling)
-                {
-                    isFalling = true;
-                }
+                IsFalling = true;
 
                 scheduledMoves.Add(new LinearAnimation
                 {
@@ -163,7 +172,7 @@ namespace GridGame.Blocks
 
         void FallEnd()
         {
-            if (isFalling)
+            if (IsFalling)
             {
                 if (!LandedEvent.IsNull)
                 {
@@ -175,7 +184,7 @@ namespace GridGame.Blocks
                     particleSys.Play();
                 }
 
-                isFalling = false;
+                IsFalling = false;
             }
         }
 
@@ -193,7 +202,7 @@ namespace GridGame.Blocks
             {
                 position = tf.position,
                 rotation = tf.eulerAngles,
-                isFalling = isFalling
+                isFalling = IsFalling
             };
         }
 
@@ -203,7 +212,7 @@ namespace GridGame.Blocks
             var tf = transform;
             tf.position = state.position;
             tf.eulerAngles = state.rotation;
-            isFalling = state.isFalling;
+            IsFalling = state.isFalling;
         }
 
         public void OnRemove()

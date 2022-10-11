@@ -20,7 +20,7 @@ namespace GridGame.Blocks.Rules
             Block insideBlock = player.GetIntersects<Block>();
             if (insideBlock && insideBlock.HasFaceAt(Direction.Down))
             {
-                if (insideBlock.IsDynamic && insideBlock.Movable.isFalling)
+                if (insideBlock.IsDynamic && insideBlock.Movable.IsFalling)
                 {
                     return false;
                 }
@@ -32,7 +32,7 @@ namespace GridGame.Blocks.Rules
             if (!below) return false;
 
             Movable movableBelow = below.Movable;
-            if (movableBelow && movableBelow.isFalling)
+            if (movableBelow && movableBelow.IsFalling)
             {
                 return false;
             }

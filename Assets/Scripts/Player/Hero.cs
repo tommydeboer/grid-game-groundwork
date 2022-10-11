@@ -61,6 +61,7 @@ namespace GridGame.Player
         static readonly int isPushingAnimationParam = Animator.StringToHash("IsPushing");
         static readonly int isFallingAnimationParam = Animator.StringToHash("IsFalling");
         static readonly int climbOnTopAnimationParam = Animator.StringToHash("ClimbOnTop");
+        static readonly int climbFromTopAnimationParam = Animator.StringToHash("ClimbFromTop");
         const string climbingIdleAnimation = "PlayerClimbingIdle";
         const string idleAnimation = "PlayerIdle";
 
@@ -128,16 +129,22 @@ namespace GridGame.Player
                     var result = TryPlayerMove(inputController.CurrentMovementDir);
                     if (result.DidMove)
                     {
-                        if (result.Type == MoveType.PLAYER_CLIMB_ON_TOP)
+                        switch (result.Type)
                         {
-                            modelAnimator.SetTrigger(climbOnTopAnimationParam);
-                            IsPushing = false;
-                            IsMoving = false;
-                        }
-                        else
-                        {
-                            IsPushing = result.DidMoveOther;
-                            IsMoving = true;
+                            case MoveType.PLAYER_CLIMB_ON_TOP:
+                                modelAnimator.SetTrigger(climbOnTopAnimationParam);
+                                IsPushing = false;
+                                IsMoving = false;
+                                break;
+                            case MoveType.PLAYER_CLIMB_FROM_TOP:
+                                modelAnimator.SetTrigger(climbFromTopAnimationParam);
+                                IsPushing = false;
+                                IsMoving = false;
+                                break;
+                            default:
+                                IsPushing = result.DidMoveOther;
+                                IsMoving = true;
+                                break;
                         }
 
                         gameLoopEventChannelSo.EndInput();

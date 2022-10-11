@@ -8,7 +8,7 @@ namespace GridGame.Blocks.Rules
         public MoveResult Handle(Hero player, Block ladder, Direction direction)
         {
             player.Mount(ladder, direction.Opposite());
-            return MoveResult.Success(direction.AsVector() + Vector3.down);
+            return MoveResult.Success(direction.AsVector() + Vector3.down, MoveType.PLAYER_CLIMB_FROM_TOP);
         }
     }
 }

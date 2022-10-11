@@ -27,6 +27,8 @@ namespace GridGame.Grid
                     Movable = movable, TargetPosition = position + moveResult.Vector
                 },
                 MoveType.PLAYER_CLIMB_ON_TOP => InstantAnimation(movable, moveResult, position, animationEventListener),
+                MoveType.PLAYER_CLIMB_FROM_TOP => InstantAnimation(movable, moveResult, position,
+                    animationEventListener),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }

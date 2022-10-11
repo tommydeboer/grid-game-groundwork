@@ -27,9 +27,10 @@ namespace GridGame.Grid
 
         public bool IsAnimating { get; private set; }
 
-        public static void CancelAll()
+        public void CancelAll()
         {
             DOTween.KillAll();
+            IsAnimating = false;
         }
 
         void Awake()

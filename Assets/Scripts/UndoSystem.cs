@@ -49,8 +49,9 @@ namespace GridGame
 
         void DoUndo()
         {
-            GridAnimator.CancelAll();
-            undoEventChannel.RequestUndo(gridAnimator.IsAnimating);
+            bool cancelsCurrentMove = gridAnimator.IsAnimating;
+            gridAnimator.CancelAll();
+            undoEventChannel.RequestUndo(cancelsCurrentMove);
         }
 
         void UndoRepeat()
@@ -70,7 +71,7 @@ namespace GridGame
 
         void DoReset()
         {
-            GridAnimator.CancelAll();
+            gridAnimator.CancelAll();
             undoEventChannel.RequestReset();
         }
     }

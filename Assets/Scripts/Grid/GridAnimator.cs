@@ -31,6 +31,7 @@ namespace GridGame.Grid
         {
             DOTween.KillAll();
             IsAnimating = false;
+            scheduledAnimations.Clear();
         }
 
         void Awake()

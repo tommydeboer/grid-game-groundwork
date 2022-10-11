@@ -46,6 +46,7 @@ namespace GridGame.Player
 
         bool IsClimbing
         {
+            get => modelAnimator.GetBool(isClimbingAnimationParam);
             set => modelAnimator.SetBool(isClimbingAnimationParam, value);
         }
 
@@ -60,6 +61,8 @@ namespace GridGame.Player
         static readonly int isPushingAnimationParam = Animator.StringToHash("IsPushing");
         static readonly int isFallingAnimationParam = Animator.StringToHash("IsFalling");
         static readonly int climbOnTopAnimationParam = Animator.StringToHash("ClimbOnTop");
+        const string climbingIdleAnimation = "PlayerClimbingIdle";
+        const string idleAnimation = "PlayerIdle";
 
         void Awake()
         {
@@ -241,6 +244,16 @@ namespace GridGame.Player
         {
             var state = persistableState.As<HeroState>();
             OnClimbable = state.onClimbable;
+            IsClimbing = OnClimbable;
+
+            if (IsClimbing)
+            {
+                modelAnimator.Play(climbingIdleAnimation);
+            }
+            else
+            {
+                modelAnimator.Play(idleAnimation);
+            }
         }
     }
 }

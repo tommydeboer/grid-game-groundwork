@@ -24,13 +24,8 @@ namespace GridGame.Blocks
         [SerializeField]
         MovableCollection allMovables;
 
-        [SerializeField]
-        FMODUnity.EventReference LandedEvent;
-
-        [SerializeField]
-        FMODUnity.EventReference MovingEvent;
-
         public UnityAction<bool> OnFallingChanged;
+        public UnityAction<MovableEventType> OnMovableEvent;
 
         bool isFalling;
 
@@ -39,64 +34,22 @@ namespace GridGame.Blocks
             get => isFalling;
             private set
             {
+                OnFallingChanged?.Invoke(value);
+                if (isFalling && !value) OnMovableEvent?.Invoke(MovableEventType.LANDED);
                 isFalling = value;
-                OnFallingChanged?.Invoke(isFalling);
             }
         }
 
         bool isMoving;
-        Vector3 previousPos;
 
-        ParticleSystem particleSys;
         AnimationEventListener animationEventListener;
 
-        bool IsMoving
-        {
-            set
-            {
-                if (value == isMoving || MovingEvent.IsNull) return;
-                if (value)
-                {
-                    sfxMoving.start();
-                    FMODUnity.RuntimeManager.AttachInstanceToGameObject(sfxMoving, GetComponent<Transform>());
-                }
-                else
-                {
-                    sfxMoving.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-                }
-
-                isMoving = value;
-            }
-        }
-
-        FMOD.Studio.EventInstance sfxMoving;
         Removable removable;
 
         void Start()
         {
             animationEventListener = GetComponentInChildren<AnimationEventListener>();
-            particleSys = GetComponent<ParticleSystem>();
             removable = GetComponent<Removable>();
-
-            if (!MovingEvent.IsNull)
-            {
-                sfxMoving = FMODUnity.RuntimeManager.CreateInstance(MovingEvent);
-                FMODUnity.RuntimeManager.AttachInstanceToGameObject(sfxMoving, GetComponent<Transform>());
-            }
-
-            previousPos = transform.position;
-        }
-
-        void Update()
-        {
-            var pos = transform.position;
-            IsMoving = !IsFalling && pos != previousPos;
-            previousPos = pos;
-        }
-
-        void OnDestroy()
-        {
-            sfxMoving.release();
         }
 
         void OnEnable()
@@ -155,7 +108,7 @@ namespace GridGame.Blocks
             }
             else
             {
-                FallEnd();
+                IsFalling = false;
             }
         }
 
@@ -168,24 +121,6 @@ namespace GridGame.Blocks
             }
 
             return false;
-        }
-
-        void FallEnd()
-        {
-            if (IsFalling)
-            {
-                if (!LandedEvent.IsNull)
-                {
-                    FMODUnity.RuntimeManager.PlayOneShot(LandedEvent, transform.position);
-                }
-
-                if (particleSys)
-                {
-                    particleSys.Play();
-                }
-
-                IsFalling = false;
-            }
         }
 
         class MovableState : PersistableState

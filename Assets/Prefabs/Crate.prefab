@@ -58,6 +58,7 @@ GameObject:
   - component: {fileID: 7970857947129725391}
   - component: {fileID: -1149260153962788822}
   - component: {fileID: 1135226095192007266}
+  - component: {fileID: -8188192658509662090}
   m_Layer: 0
   m_Name: Crate
   m_TagString: Untagged
@@ -111,21 +112,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scheduledMoves: {fileID: 11400000, guid: 44f8687a0e9cc8f42b25d4ce26a697ba, type: 2}
   allMovables: {fileID: 11400000, guid: fee3a912993d5c5458c54b2aebfb1ced, type: 2}
-  LandedEvent:
-    Guid:
-      Data1: 1624458031
-      Data2: 1331207701
-      Data3: -1004798787
-      Data4: 180433516
-    Path: event:/Blocks/Crate Fall
-  MovingEvent:
-    Guid:
-      Data1: -1430845289
-      Data2: 1168408983
-      Data3: 10213005
-      Data4: 549634434
-    Path: event:/Blocks/Crate Slide
-  isFalling: 0
 --- !u!114 &-1149260153962788822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,6 +139,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da0af9233e5d481386f8961de5d09574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-8188192658509662090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6619286987503457898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3a45f861474c8282195ad89df56a6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LandedEvent:
+    Guid:
+      Data1: 1624458031
+      Data2: 1331207701
+      Data3: -1004798787
+      Data4: 180433516
+    Path: event:/Blocks/Crate Fall
+  SlidingEvent:
+    Guid:
+      Data1: -1430845289
+      Data2: 1168408983
+      Data3: 10213005
+      Data4: 549634434
+    Path: event:/Blocks/Crate Slide
 --- !u!1001 &4987693278947189513
 PrefabInstance:
   m_ObjectHideFlags: 0

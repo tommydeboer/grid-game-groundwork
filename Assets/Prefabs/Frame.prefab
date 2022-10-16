@@ -848,6 +848,7 @@ GameObject:
   - component: {fileID: 1714611783194975711}
   - component: {fileID: 3348465030477602526}
   - component: {fileID: 7380597729637237148}
+  - component: {fileID: 5148231494273111835}
   m_Layer: 0
   m_Name: Frame
   m_TagString: Untagged
@@ -901,21 +902,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scheduledMoves: {fileID: 11400000, guid: 44f8687a0e9cc8f42b25d4ce26a697ba, type: 2}
   allMovables: {fileID: 11400000, guid: fee3a912993d5c5458c54b2aebfb1ced, type: 2}
-  LandedEvent:
-    Guid:
-      Data1: 275342565
-      Data2: 1083490910
-      Data3: 1347279508
-      Data4: -1908903390
-    Path: event:/Blocks/Frame Fall
-  MovingEvent:
-    Guid:
-      Data1: -1311528064
-      Data2: 1158248417
-      Data3: -1549452359
-      Data4: -1570850525
-    Path: event:/Blocks/Frame Slide
-  isFalling: 0
 --- !u!114 &3348465030477602526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -943,6 +929,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da0af9233e5d481386f8961de5d09574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5148231494273111835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6619286987503457898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3a45f861474c8282195ad89df56a6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LandedEvent:
+    Guid:
+      Data1: 275342565
+      Data2: 1083490910
+      Data3: 1347279508
+      Data4: -1908903390
+    Path: event:/Blocks/Frame Fall
+  SlidingEvent:
+    Guid:
+      Data1: -1311528064
+      Data2: 1158248417
+      Data3: -1549452359
+      Data4: -1570850525
+    Path: event:/Blocks/Frame Slide
 --- !u!1 &7180954295541973409
 GameObject:
   m_ObjectHideFlags: 0

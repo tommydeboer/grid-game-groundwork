@@ -41,6 +41,7 @@ namespace GridGame.Player
 
         bool IsFalling
         {
+            get => modelAnimator.GetBool(isFallingAnimationParam);
             set => modelAnimator.SetBool(isFallingAnimationParam, value);
         }
 
@@ -87,10 +88,13 @@ namespace GridGame.Player
 
         void OnFallingChanged(bool isFalling)
         {
-            IsFalling = isFalling;
-            IsPushing = false;
-            IsMoving = false;
-            IsClimbing = false;
+            if (IsFalling != isFalling)
+            {
+                IsFalling = isFalling;
+                IsPushing = false;
+                IsMoving = false;
+                IsClimbing = false;
+            }
         }
 
         void OnCrush()

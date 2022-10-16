@@ -453,21 +453,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scheduledMoves: {fileID: 11400000, guid: 44f8687a0e9cc8f42b25d4ce26a697ba, type: 2}
   allMovables: {fileID: 11400000, guid: fee3a912993d5c5458c54b2aebfb1ced, type: 2}
-  LandedEvent:
-    Guid:
-      Data1: 708870944
-      Data2: 1207873543
-      Data3: -2026474832
-      Data4: 769724085
-    Path: event:/Blocks/Hero Footstep
-  MovingEvent:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  isFalling: 0
+  gameLoopEventChannel: {fileID: 11400000, guid: 87b5caa48b855294d8ecc4df1f1d1863,
+    type: 2}
 --- !u!114 &2122996217392361326
 MonoBehaviour:
   m_ObjectHideFlags: 0

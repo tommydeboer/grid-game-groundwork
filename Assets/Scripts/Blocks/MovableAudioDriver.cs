@@ -1,5 +1,8 @@
 using System;
+using System.Collections;
+using FMOD.Studio;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GridGame.Blocks
 {
@@ -15,26 +18,6 @@ namespace GridGame.Blocks
         FMOD.Studio.EventInstance sfxMoving;
 
         bool isSliding;
-        Vector3 previousPos;
-
-        bool IsSliding
-        {
-            set
-            {
-                if (value == isSliding || SlidingEvent.IsNull) return;
-                if (value)
-                {
-                    sfxMoving.start();
-                    FMODUnity.RuntimeManager.AttachInstanceToGameObject(sfxMoving, GetComponent<Transform>());
-                }
-                else
-                {
-                    sfxMoving.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-                }
-
-                isSliding = value;
-            }
-        }
 
         void Awake()
         {
@@ -46,17 +29,7 @@ namespace GridGame.Blocks
             if (!SlidingEvent.IsNull)
             {
                 sfxMoving = FMODUnity.RuntimeManager.CreateInstance(SlidingEvent);
-                FMODUnity.RuntimeManager.AttachInstanceToGameObject(sfxMoving, GetComponent<Transform>());
             }
-
-            previousPos = transform.position;
-        }
-
-        void Update()
-        {
-            var pos = transform.position;
-            IsSliding = !movable.IsFalling && pos != previousPos;
-            previousPos = pos;
         }
 
         void OnEnable()
@@ -74,21 +47,22 @@ namespace GridGame.Blocks
             sfxMoving.release();
         }
 
-
         void HandleMoveEvent(MovableEventType e)
         {
             switch (e)
             {
                 case MovableEventType.NONE:
                     break;
-                case MovableEventType.SLIDING:
-                    break;
-                case MovableEventType.TOPPLING:
-                    break;
-                case MovableEventType.FALLING:
+                case MovableEventType.TOPPLED:
                     break;
                 case MovableEventType.LANDED:
                     PlayLandedSound();
+                    break;
+                case MovableEventType.START_SLIDE:
+                    StartPlayingSlideSound();
+                    break;
+                case MovableEventType.STOP_SLIDE:
+                    StopPlayingSlideSound();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(e), e, null);
@@ -100,6 +74,34 @@ namespace GridGame.Blocks
             if (!LandedEvent.IsNull)
             {
                 FMODUnity.RuntimeManager.PlayOneShot(LandedEvent, transform.position);
+            }
+        }
+
+        void StartPlayingSlideSound()
+        {
+            if (isSliding || SlidingEvent.IsNull) return;
+            isSliding = true;
+            sfxMoving.StartIfNotPlaying();
+            FMODUnity.RuntimeManager.AttachInstanceToGameObject(sfxMoving, GetComponent<Transform>());
+        }
+
+        void StopPlayingSlideSound()
+        {
+            if (!isSliding || SlidingEvent.IsNull) return;
+            isSliding = false;
+            StartCoroutine(StopPlayingSlideSoundConditionally());
+        }
+
+        /// The slide sound continues when a player keeps pushing and nothing falls between two moves. To make sure the
+        /// player has stopped pushing, we wait for two frames and then stop the sound.
+        IEnumerator StopPlayingSlideSoundConditionally()
+        {
+            yield return WaitFor.EndOfFrame;
+            yield return WaitFor.EndOfFrame;
+
+            if (!isSliding)
+            {
+                sfxMoving.stop(STOP_MODE.ALLOWFADEOUT);
             }
         }
     }

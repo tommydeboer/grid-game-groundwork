@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using FMOD.Studio;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace GridGame
 {
-    public static class Vector3Extensions
+    public static class Extensions
     {
         public static bool IsLevel(this Scene scene)
         {
@@ -26,6 +27,20 @@ namespace GridGame
         public static Direction ToDirection(this Vector3 direction)
         {
             return ToDirection(Vector3Int.RoundToInt(direction));
+        }
+
+        public static bool IsPlaying(this EventInstance sfx)
+        {
+            sfx.getPlaybackState(out PLAYBACK_STATE state);
+            return (state == PLAYBACK_STATE.PLAYING);
+        }
+
+        public static void StartIfNotPlaying(this EventInstance sfx)
+        {
+            if (!sfx.IsPlaying())
+            {
+                sfx.start();
+            }
         }
     }
 }

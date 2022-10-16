@@ -112,6 +112,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scheduledMoves: {fileID: 11400000, guid: 44f8687a0e9cc8f42b25d4ce26a697ba, type: 2}
   allMovables: {fileID: 11400000, guid: fee3a912993d5c5458c54b2aebfb1ced, type: 2}
+  gameLoopEventChannel: {fileID: 11400000, guid: 87b5caa48b855294d8ecc4df1f1d1863,
+    type: 2}
 --- !u!114 &-1149260153962788822
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -3,9 +3,9 @@ namespace GridGame.Blocks
     public enum MovableEventType
     {
         NONE,
-        SLIDING,
-        TOPPLING,
-        FALLING,
+        START_SLIDE,
+        STOP_SLIDE,
+        TOPPLED,
         LANDED
     }
 }

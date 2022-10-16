@@ -24,6 +24,9 @@ namespace GridGame.Blocks
         [SerializeField]
         MovableCollection allMovables;
 
+        [SerializeField]
+        GameLoopEventChannelSO gameLoopEventChannel;
+
         public UnityAction<bool> OnFallingChanged;
         public UnityAction<MovableEventType> OnMovableEvent;
 
@@ -34,13 +37,25 @@ namespace GridGame.Blocks
             get => isFalling;
             private set
             {
+                // TODO use MovableEvent instead of OnFallingChanged (used by Hero)
                 OnFallingChanged?.Invoke(value);
+
                 if (isFalling && !value) OnMovableEvent?.Invoke(MovableEventType.LANDED);
                 isFalling = value;
             }
         }
 
-        bool isMoving;
+        bool isSliding;
+
+        bool IsSliding
+        {
+            set
+            {
+                if (!isSliding && value) OnMovableEvent?.Invoke(MovableEventType.START_SLIDE);
+                if (isSliding && !value) OnMovableEvent?.Invoke(MovableEventType.STOP_SLIDE);
+                isSliding = value;
+            }
+        }
 
         AnimationEventListener animationEventListener;
 
@@ -55,11 +70,18 @@ namespace GridGame.Blocks
         void OnEnable()
         {
             allMovables.Add(this);
+            gameLoopEventChannel.OnFallStart += OnFallStart;
         }
 
         void OnDisable()
         {
             allMovables.Remove(this);
+            gameLoopEventChannel.OnFallStart -= OnFallStart;
+        }
+
+        void OnFallStart()
+        {
+            IsSliding = false;
         }
 
         public MoveResult TryMove(Direction dir)
@@ -67,6 +89,7 @@ namespace GridGame.Blocks
             MoveResult result = MoveHandler.TryMove(GridElement, dir);
             if (result.DidMove)
             {
+                IsSliding = true;
                 scheduledMoves.Add(GridAnimationFactory.Create(this, result, animationEventListener));
             }
 

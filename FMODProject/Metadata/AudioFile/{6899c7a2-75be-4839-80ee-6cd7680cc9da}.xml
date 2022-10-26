@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{6899c7a2-75be-4839-80ee-6cd7680cc9da}">
+		<property name="assetPath">
+			<value>zapsplat_foley_wood_box_hollow_empty_knocking_on_side_004_62993.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.512</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{7a6a42c0-19c8-4b38-87e6-9debbc0185ca}</destination>
+		</relationship>
+	</object>
+</objects>

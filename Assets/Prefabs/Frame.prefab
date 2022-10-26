@@ -957,6 +957,13 @@ MonoBehaviour:
       Data3: -1549452359
       Data4: -1570850525
     Path: event:/Blocks/Frame Slide
+  ToppledEvent:
+    Guid:
+      Data1: -916462439
+      Data2: 1293675218
+      Data3: -216620135
+      Data4: 1899616138
+    Path: event:/Blocks/Frame Topple
 --- !u!1 &7180954295541973409
 GameObject:
   m_ObjectHideFlags: 0

@@ -23,10 +23,38 @@ MonoBehaviour:
   IsStream: 0
   Is3D: 1
   IsOneShot: 1
+  Parameters:
+  - {fileID: 8427243170718520653}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &-8006474318962025585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Blocks/Frame Topple
+  m_EditorClassIdentifier: 
+  Path: event:/Blocks/Frame Topple
+  Guid:
+    Data1: -916462439
+    Data2: 1293675218
+    Data3: -216620135
+    Data4: 1899616138
+  Banks:
+  - {fileID: -4298956383549704354}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 150
+  Length: 200
 --- !u!114 &-4298956383549704354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42,10 +70,10 @@ MonoBehaviour:
   Path: FMODProject/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 637802574242405496
+  lastModified: 638024005932255683
   FileSizes:
   - Name: Desktop
-    Value: 118016
+    Value: 141632
   Exists: 1
 --- !u!114 &-234262934537755046
 MonoBehaviour:
@@ -62,10 +90,10 @@ MonoBehaviour:
   Path: FMODProject/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 637802574242425487
+  lastModified: 638024005932285685
   FileSizes:
   - Name: Desktop
-    Value: 960
+    Value: 1046
   Exists: 1
 --- !u!114 &-159902005928820309
 MonoBehaviour:
@@ -115,12 +143,13 @@ MonoBehaviour:
   - {fileID: -9214468905559490386}
   - {fileID: 7203649717694045503}
   - {fileID: 672413349714141647}
+  - {fileID: -8006474318962025585}
   EditorParameters: []
   MasterBanks:
   - {fileID: -4298956383549704354}
   StringsBanks:
   - {fileID: -234262934537755046}
-  cacheTime: 637802574242425487
+  cacheTime: 638024005932285685
   cacheVersion: 10
 --- !u!114 &672413349714141647
 MonoBehaviour:
@@ -203,3 +232,29 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 3384
+--- !u!114 &8427243170718520653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Hero Footstep/Material
+  m_EditorClassIdentifier: 
+  Name: Material
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 530480538
+    data2: 1107875353
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - Default
+  - Wood
+  Exists: 1

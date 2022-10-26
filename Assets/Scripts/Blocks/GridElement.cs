@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GridGame.Blocks
 {
-    public class GridElement : MonoBehaviour
+    public abstract class GridElement : MonoBehaviour
     {
         [ReadOnly, UsedImplicitly]
         public int id;
@@ -80,5 +80,7 @@ namespace GridGame.Blocks
         {
             return GetComponent<T>() && Orientation == direction;
         }
+
+        public abstract bool IsGrounded();
     }
 }

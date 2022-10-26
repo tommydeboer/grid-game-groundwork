@@ -65,5 +65,21 @@ namespace GridGame.Blocks
             var correctedDirection = Quaternion.Inverse(transform.rotation) * direction.AsVector();
             return faces.Find(o => o.direction == correctedDirection.ToDirection()) != null;
         }
+
+        /// Blocks are grounded if there is a non-moving block beneath them.
+        /// Entities are ignored: blocks fall on top of them.
+        public override bool IsGrounded()
+        {
+            Block below = GetNeighbour(Direction.Down);
+            if (!below) return false;
+
+            Movable movableBelow = below.GetComponent<Movable>();
+            if (movableBelow && movableBelow.IsFalling)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

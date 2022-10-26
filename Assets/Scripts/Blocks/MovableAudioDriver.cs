@@ -14,8 +14,11 @@ namespace GridGame.Blocks
         [SerializeField]
         FMODUnity.EventReference SlidingEvent;
 
+        [SerializeField]
+        FMODUnity.EventReference ToppledEvent;
+
         Movable movable;
-        FMOD.Studio.EventInstance sfxMoving;
+        EventInstance sfxMoving;
 
         bool isSliding;
 
@@ -29,6 +32,7 @@ namespace GridGame.Blocks
             if (!SlidingEvent.IsNull)
             {
                 sfxMoving = FMODUnity.RuntimeManager.CreateInstance(SlidingEvent);
+                FMODUnity.RuntimeManager.AttachInstanceToGameObject(sfxMoving, GetComponent<Transform>());
             }
         }
 
@@ -53,9 +57,7 @@ namespace GridGame.Blocks
             {
                 case MovableEventType.NONE:
                     break;
-                case MovableEventType.TOPPLED:
-                    break;
-                case MovableEventType.LANDED:
+                case MovableEventType.LANDED_FALL:
                     PlayLandedSound();
                     break;
                 case MovableEventType.START_SLIDE:
@@ -63,6 +65,9 @@ namespace GridGame.Blocks
                     break;
                 case MovableEventType.STOP_SLIDE:
                     StopPlayingSlideSound();
+                    break;
+                case MovableEventType.LANDED_TOPPLE:
+                    PlayToppledSound();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(e), e, null);
@@ -102,6 +107,14 @@ namespace GridGame.Blocks
             if (!isSliding)
             {
                 sfxMoving.stop(STOP_MODE.ALLOWFADEOUT);
+            }
+        }
+
+        void PlayToppledSound()
+        {
+            if (!ToppledEvent.IsNull)
+            {
+                FMODUnity.RuntimeManager.PlayOneShot(ToppledEvent, transform.position);
             }
         }
     }

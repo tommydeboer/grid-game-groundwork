@@ -40,10 +40,12 @@ namespace GridGame.Blocks
                 // TODO use MovableEvent instead of OnFallingChanged (used by Hero)
                 OnFallingChanged?.Invoke(value);
 
-                if (isFalling && !value) OnMovableEvent?.Invoke(MovableEventType.LANDED);
+                if (isFalling && !value) OnMovableEvent?.Invoke(MovableEventType.LANDED_FALL);
                 isFalling = value;
             }
         }
+
+        bool IsToppling { get; set; }
 
         bool isSliding;
 
@@ -82,6 +84,13 @@ namespace GridGame.Blocks
         void OnFallStart()
         {
             IsSliding = false;
+
+            if (IsToppling && GridElement.IsGrounded())
+            {
+                OnMovableEvent?.Invoke(MovableEventType.LANDED_TOPPLE);
+            }
+
+            IsToppling = false;
         }
 
         public MoveResult TryMove(Direction dir)
@@ -101,6 +110,7 @@ namespace GridGame.Blocks
             MoveResult result = ToppleHandler.TryTopple(GridElement, dir);
             if (result.DidMove)
             {
+                IsToppling = true;
                 scheduledMoves.Add(GridAnimationFactory.Create(this, result, animationEventListener));
             }
 

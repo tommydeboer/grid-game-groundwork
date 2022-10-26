@@ -5,7 +5,7 @@ namespace GridGame.Blocks
         NONE,
         START_SLIDE,
         STOP_SLIDE,
-        TOPPLED,
-        LANDED
+        LANDED_TOPPLE,
+        LANDED_FALL
     }
 }

@@ -964,6 +964,13 @@ MonoBehaviour:
       Data3: -216620135
       Data4: 1899616138
     Path: event:/Blocks/Frame Topple
+  ToppleStartEvent:
+    Guid:
+      Data1: 1367986024
+      Data2: 1241212042
+      Data3: -677658739
+      Data4: -1960842480
+    Path: event:/Blocks/Frame Topple Whoosh
 --- !u!1 &7180954295541973409
 GameObject:
   m_ObjectHideFlags: 0

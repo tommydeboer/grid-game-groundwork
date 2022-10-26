@@ -45,7 +45,26 @@ namespace GridGame.Blocks
             }
         }
 
-        bool IsToppling { get; set; }
+        bool isToppling;
+
+        bool IsToppling
+        {
+            get => isToppling;
+            set
+            {
+                if (isToppling && !value && GridElement.IsGrounded())
+                {
+                    OnMovableEvent?.Invoke(MovableEventType.LANDED_TOPPLE);
+                }
+
+                if (!isToppling && value)
+                {
+                    OnMovableEvent?.Invoke(MovableEventType.START_TOPPLE);
+                }
+
+                isToppling = value;
+            }
+        }
 
         bool isSliding;
 
@@ -84,12 +103,6 @@ namespace GridGame.Blocks
         void OnFallStart()
         {
             IsSliding = false;
-
-            if (IsToppling && GridElement.IsGrounded())
-            {
-                OnMovableEvent?.Invoke(MovableEventType.LANDED_TOPPLE);
-            }
-
             IsToppling = false;
         }
 

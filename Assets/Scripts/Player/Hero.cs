@@ -195,7 +195,7 @@ namespace GridGame.Player
 
             bool wasClimbing = OnClimbable;
             var result = movable.TryMove(dir.ToDirection());
-            if (result.DidMove) PlayWalkSound();
+            if (result.DidMove && result.Type != MoveType.TOPPLE) PlayWalkSound();
 
             if (!OnClimbable && !wasClimbing)
             {
